@@ -46,8 +46,8 @@
 		position: relative;
 		overflow: hidden;
 		border: 2.5px solid #111111;
-		box-shadow: 3px 3px 0px #111111;
-		transition: transform 0.1s ease, box-shadow 0.1s ease;
+		box-shadow: none;
+		transition: transform 0.1s ease;
 		text-align: left;
 		width: 100%;
 		box-sizing: border-box;
@@ -55,7 +55,7 @@
 
 	.classBlock:hover {
 		transform: translate(-1px, -1px);
-		box-shadow: 4px 4px 0px #111111;
+		box-shadow: none;
 	}
 
 	.classBlock.selected {

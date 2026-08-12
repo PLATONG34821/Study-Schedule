@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Day, Slot, ClassBlock, PaletteColor } from '$lib/types';
+	import { textColorFor } from '$lib/utils';
 	import BlockCard from './BlockCard.svelte';
 
 	interface Props {
@@ -12,6 +13,8 @@
 		dayColumnWidth: number;
 		slotRowHeight: number;
 		isWallpaperMode: boolean;
+		gridLineColor?: string;
+		timeBgColor?: string;
 		onSelectBlock: (id: string) => void;
 		onAddBlock: (dayId: string, timeSlotId: string) => void;
 	}
@@ -26,28 +29,45 @@
 		dayColumnWidth,
 		slotRowHeight,
 		isWallpaperMode,
+		gridLineColor = '#111111',
+		timeBgColor = '#111111',
 		onSelectBlock,
 		onAddBlock
 	}: Props = $props();
+
+	let timeTextColor = $derived(textColorFor(timeBgColor));
 </script>
 
 <div
 	class="scheduleGrid"
-	style="grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, {isWallpaperMode
+	style="border-color: {gridLineColor}; grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, {isWallpaperMode
 		? `${slotRowHeight}px`
 		: 'minmax(150px, auto)'});"
 >
-	<div class="cornerCell"></div>
+	<div class="cornerCell" style="background: {timeBgColor}; border-color: {gridLineColor};"></div>
 
-	{#each days as day (day.id)}
-		<div class="dayHeader">{day.name}</div>
+	{#each days as day, colIdx (day.id)}
+		<div
+			class="dayHeader"
+			style="border-color: {gridLineColor}; border-right-style: {colIdx === days.length - 1 ? 'none' : 'solid'};"
+		>
+			{day.name}
+		</div>
 	{/each}
 
-	{#each slots as slot (slot.id)}
-		<div class="timeCell">{slot.label}</div>
-		{#each days as day (day.id)}
+	{#each slots as slot, rowIdx (slot.id)}
+		<div
+			class="timeCell"
+			style="background: {timeBgColor}; color: {timeTextColor}; border-color: {gridLineColor}; border-bottom-style: {rowIdx === slots.length - 1 ? 'none' : 'solid'};"
+		>
+			{slot.label}
+		</div>
+		{#each days as day, colIdx (day.id)}
 			{@const cellBlocks = blocks.filter((b) => b.dayId === day.id && b.timeSlotId === slot.id)}
-			<div class="dayCell">
+			<div
+				class="dayCell"
+				style="border-color: {gridLineColor}; border-right-style: {colIdx === days.length - 1 ? 'none' : 'solid'}; border-bottom-style: {rowIdx === slots.length - 1 ? 'none' : 'solid'};"
+			>
 				{#each cellBlocks as block (block.id)}
 					<BlockCard
 						{block}
@@ -72,16 +92,16 @@
 <style>
 	.scheduleGrid {
 		display: grid;
-		border: 3px solid #111111;
+		border-width: 3px;
+		border-style: solid;
 		border-radius: 4px;
 		overflow: hidden;
 		box-sizing: border-box;
 	}
 
 	.cornerCell {
-		background: #111111;
-		border-right: 3px solid #111111;
-		border-bottom: 3px solid #111111;
+		border-right: 3px solid;
+		border-bottom: 3px solid;
 		box-sizing: border-box;
 	}
 
@@ -89,38 +109,37 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border-right: 3px solid #111111;
-		border-bottom: 3px solid #111111;
 		font-weight: 700;
 		font-size: 20px;
 		letter-spacing: 1px;
 		text-transform: uppercase;
 		background: #ffffff;
+		border-right: 3px solid;
+		border-bottom: 3px solid;
 		box-sizing: border-box;
 	}
 
 	.timeCell {
-		background: #111111;
-		color: #fff;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		font-family: 'JetBrains Mono', monospace;
 		font-size: 16px;
-		border-right: 3px solid #111111;
-		border-bottom: 3px solid #111111;
+		font-weight: 700;
+		border-right: 3px solid;
+		border-bottom: 3px solid;
 		box-sizing: border-box;
 	}
 
 	.dayCell {
-		border-right: 3px solid #111111;
-		border-bottom: 3px solid #111111;
 		padding: 10px;
 		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
 		background: #ffffff;
+		border-right: 3px solid;
+		border-bottom: 3px solid;
 		box-sizing: border-box;
 	}
 

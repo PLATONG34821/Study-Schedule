@@ -3,8 +3,10 @@
 	import { toPng } from 'html-to-image';
 	import type { Day, Slot, PaletteColor, ClassBlock, PhonePreset } from '$lib/types';
 	import { generateUid } from '$lib/utils';
-	import Sidebar from '$lib/components/Sidebar.svelte';
+	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
+	import RightDrawer from '$lib/components/RightDrawer.svelte';
 	import ScheduleGrid from '$lib/components/ScheduleGrid.svelte';
+	import BlockEditorModal from '$lib/components/BlockEditorModal.svelte';
 
 	const phonePresets: PhonePreset[] = [
 		{ id: 'none', name: 'Original Grid (พอดีตาราง)', width: 0, height: 0, topGapRatio: 0, bottomGapPx: 0 },
@@ -46,6 +48,8 @@
 
 	let selectedId = $state<string | null>(null);
 	let bgColor = $state<string>('#ffffff');
+	let gridLineColor = $state<string>('#111111');
+	let timeBgColor = $state<string>('#111111');
 	let isExporting = $state(false);
 	let captureWrapEl = $state<HTMLDivElement | null>(null);
 
@@ -61,8 +65,8 @@
 	let currentPreset = $derived(phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[0]);
 	let isWallpaperMode = $derived(selectedPresetId !== 'none');
 
-	let gridUnrotatedWidth = $derived(110 + days.length * dayColumnWidth);
-	let gridUnrotatedHeight = $derived(70 + slots.length * slotRowHeight);
+	let gridUnrotatedWidth = $derived(110 + days.length * dayColumnWidth + 6);
+	let gridUnrotatedHeight = $derived(70 + slots.length * slotRowHeight + 6);
 
 	let availableWidth = $derived(isWallpaperMode ? currentPreset.width - 32 : gridUnrotatedWidth);
 	let availableHeight = $derived(
@@ -323,22 +327,10 @@
 </script>
 
 <div class="layoutContainer">
-	<Sidebar
-		{phonePresets}
-		bind:selectedPresetId
-		bind:gridRotationAngle
-		bind:customTopGapPercent
-		bind:scaleMode
-		bind:gridScaleModifier
-		bind:slotRowHeight
-		bind:dayColumnWidth
-		bind:bgColor
+	<LeftSidebar
 		bind:days
 		bind:slots
 		bind:palette
-		{selectedBlock}
-		{currentPreset}
-		{isWallpaperMode}
 		onExport={exportPng}
 		onAddDay={addDay}
 		onRemoveDay={removeDay}
@@ -346,8 +338,6 @@
 		onRemoveSlot={removeSlot}
 		onAddColor={addColor}
 		onRemoveColor={removeColor}
-		onRemoveBlock={removeBlock}
-		onCloseEditor={() => (selectedId = null)}
 	/>
 
 	<div class="canvasArea">
@@ -389,6 +379,8 @@
 									{dayColumnWidth}
 									{slotRowHeight}
 									{isWallpaperMode}
+									{gridLineColor}
+									{timeBgColor}
 									onSelectBlock={(id) => (selectedId = id)}
 									onAddBlock={addBlock}
 								/>
@@ -409,12 +401,37 @@
 					{dayColumnWidth}
 					{slotRowHeight}
 					{isWallpaperMode}
+					{gridLineColor}
+					{timeBgColor}
 					onSelectBlock={(id) => (selectedId = id)}
 					onAddBlock={addBlock}
 				/>
 			</div>
 		{/if}
 	</div>
+
+	<RightDrawer
+		{phonePresets}
+		bind:selectedPresetId
+		bind:gridRotationAngle
+		bind:customTopGapPercent
+		bind:scaleMode
+		bind:gridScaleModifier
+		bind:slotRowHeight
+		bind:dayColumnWidth
+		bind:bgColor
+		bind:gridLineColor
+		bind:timeBgColor
+		{currentPreset}
+		{isWallpaperMode}
+	/>
+
+	<BlockEditorModal
+		block={selectedBlock}
+		{palette}
+		onClose={() => (selectedId = null)}
+		onDelete={removeBlock}
+	/>
 </div>
 
 <style>
@@ -464,7 +481,7 @@
 		flex-direction: column;
 		overflow: hidden;
 		border-radius: 48px;
-		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+		box-shadow: none;
 	}
 
 	.lockscreenTopGap {
