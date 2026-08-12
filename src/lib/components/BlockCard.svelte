@@ -18,117 +18,37 @@
 
 <button
 	type="button"
-	class="classBlock {isSelected ? 'selected' : ''}"
+	class="rounded-[14px] px-3.5 py-3 cursor-pointer relative overflow-hidden border-[2.5px] border-[#111111] shadow-none transition-transform duration-100 ease-in-out text-left w-full box-border hover:-translate-x-px hover:-translate-y-px {isSelected ? 'outline-3 outline-[#6366f1] outline-offset-2' : ''}"
 	style="background: {colorVal}; color: {textVal};"
 	onclick={onSelect}
 >
 	{#if block.pattern}
-		<div class="cbStripe"></div>
+		<div
+			class="absolute inset-0 pointer-events-none"
+			style="background: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.4) 10px, rgba(255,255,255,0.4) 20px);"
+		></div>
 	{/if}
-	<div class="cbContent">
-		<div class="cbTitle">{block.title}</div>
-		<div class="cbTags">
-			{#if block.time}<span class="cbPill">{block.time}</span>{/if}
-			{#if block.room}<span class="cbPill">{block.room}</span>{/if}
+	<div class="relative z-[1] flex flex-col gap-1.5">
+		<div class="font-bold text-[15px] leading-[1.25] break-words">{block.title}</div>
+		<div class="flex flex-wrap gap-1 items-center">
+			{#if block.time}<span
+					class="bg-white/90 text-[#111111] font-[JetBrains_Mono,monospace] text-[11px] font-semibold px-2 py-0.5 rounded-xl border-[1.5px] border-[#111111]"
+				>{block.time}</span
+			>{/if}
+			{#if block.room}<span
+					class="bg-white/90 text-[#111111] font-[JetBrains_Mono,monospace] text-[11px] font-semibold px-2 py-0.5 rounded-xl border-[1.5px] border-[#111111]"
+				>{block.room}</span
+			>{/if}
 		</div>
-		<div class="cbTags">
-			{#if block.section}<span class="cbRectWhite">Sec {block.section}</span>{/if}
-			{#if block.type}<span class="cbRectBlack">{block.type}</span>{/if}
+		<div class="flex flex-wrap gap-1 items-center">
+			{#if block.section}<span
+					class="bg-white text-[#111111] font-[JetBrains_Mono,monospace] text-[11px] font-bold px-1.5 py-0.5 rounded border-[1.5px] border-[#111111]"
+				>Sec {block.section}</span
+			>{/if}
+			{#if block.type}<span
+					class="bg-[#111111] text-white font-[JetBrains_Mono,monospace] text-[11px] font-bold px-1.5 py-0.5 rounded border-[1.5px] border-[#111111] uppercase"
+				>{block.type}</span
+			>{/if}
 		</div>
 	</div>
 </button>
-
-<style>
-	.classBlock {
-		border-radius: 14px;
-		padding: 12px 14px;
-		cursor: pointer;
-		position: relative;
-		overflow: hidden;
-		border: 2.5px solid #111111;
-		box-shadow: none;
-		transition: transform 0.1s ease;
-		text-align: left;
-		width: 100%;
-		box-sizing: border-box;
-	}
-
-	.classBlock:hover {
-		transform: translate(-1px, -1px);
-		box-shadow: none;
-	}
-
-	.classBlock.selected {
-		outline: 3px solid #6366f1;
-		outline-offset: 2px;
-	}
-
-	.cbStripe {
-		position: absolute;
-		inset: 0;
-		background: repeating-linear-gradient(
-			-45deg,
-			transparent,
-			transparent 10px,
-			rgba(255, 255, 255, 0.4) 10px,
-			rgba(255, 255, 255, 0.4) 20px
-		);
-		pointer-events: none;
-	}
-
-	.cbContent {
-		position: relative;
-		z-index: 1;
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	.cbTitle {
-		font-weight: 700;
-		font-size: 15px;
-		line-height: 1.25;
-		word-break: break-word;
-	}
-
-	.cbTags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 4px;
-		align-items: center;
-	}
-
-	.cbPill {
-		background: rgba(255, 255, 255, 0.9);
-		color: #111111;
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 11px;
-		font-weight: 600;
-		padding: 2px 8px;
-		border-radius: 12px;
-		border: 1.5px solid #111111;
-	}
-
-	.cbRectWhite {
-		background: #ffffff;
-		color: #111111;
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 11px;
-		font-weight: 700;
-		padding: 2px 6px;
-		border-radius: 4px;
-		border: 1.5px solid #111111;
-	}
-
-	.cbRectBlack {
-		background: #111111;
-		color: #ffffff;
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 11px;
-		font-weight: 700;
-		padding: 2px 6px;
-		border-radius: 4px;
-		border: 1.5px solid #111111;
-		text-transform: uppercase;
-	}
-</style>

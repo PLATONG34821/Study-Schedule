@@ -34,41 +34,60 @@
 	}: Props = $props();
 </script>
 
-<aside class="rightDrawer">
-	<div class="headerTitle">
-		<h2>ตั้งค่าการแสดงผล</h2>
-		<p>วอลเปเปอร์ มุมหมุน และสีตาราง</p>
+<aside
+	class="w-80 bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-l border-[#27272a] shadow-none z-10 shrink-0"
+>
+	<div>
+		<h2 class="text-xl font-bold m-0 -tracking-[0.5px] text-white">ตั้งค่าการแสดงผล</h2>
+		<p class="text-xs text-[#a1a1aa] mt-1">วอลเปเปอร์ มุมหมุน และสีตาราง</p>
 	</div>
 
-	<div class="sectionLabel">ขนาด / วอลเปเปอร์ (Preset)</div>
-	<select class="presetSelect" bind:value={selectedPresetId}>
+	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-2">
+		ขนาด / วอลเปเปอร์ (Preset)
+	</div>
+	<select
+		class="w-full px-3 py-2.5 rounded-lg border border-[#3f3f46] bg-[#27272a] text-white text-[13px] font-[inherit] cursor-pointer"
+		bind:value={selectedPresetId}
+	>
 		{#each phonePresets as preset (preset.id)}
 			<option value={preset.id}>{preset.name}</option>
 		{/each}
 	</select>
 
 	{#if isWallpaperMode}
-		<div class="wallpaperOptions">
-			<div class="presetBadge">
+		<div class="bg-[#27272a] p-3 rounded-lg border border-[#3f3f46] flex flex-col gap-2.5">
+			<div class="font-[JetBrains_Mono,monospace] text-[11px] text-[#a1a1aa] mb-2.5">
 				{currentPreset.width} × {currentPreset.height} px
 			</div>
 
-			<label class="edLabel" for="gridRotationSelect">หมุนตาราง (Rotate Grid)</label>
-			<select id="gridRotationSelect" class="edInput" bind:value={gridRotationAngle}>
+			<label class="text-xs text-[#a1a1aa] block" for="gridRotationSelect"
+				>หมุนตาราง (Rotate Grid)</label
+			>
+			<select
+				id="gridRotationSelect"
+				class="w-full px-2.5 py-2 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] box-border font-[inherit]"
+				bind:value={gridRotationAngle}
+			>
 				<option value={90}>หมุน 90° (แนวตั้ง / Rotated 90°)</option>
 				<option value={180}>หมุน 180° (กลับหัว / Upside Down 180°)</option>
 				<option value={270}>หมุน 270° (Rotated 270°)</option>
 				<option value={0}>ไม่หมุน 0° (แนวขนาน / Original 0°)</option>
 			</select>
 
-			<label class="edLabel" for="scaleModeSelect">ขยายขนาดตาราง (Scale Mode)</label>
-			<select id="scaleModeSelect" class="edInput" bind:value={scaleMode}>
+			<label class="text-xs text-[#a1a1aa] block" for="scaleModeSelect"
+				>ขยายขนาดตาราง (Scale Mode)</label
+			>
+			<select
+				id="scaleModeSelect"
+				class="w-full px-2.5 py-2 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] box-border font-[inherit]"
+				bind:value={scaleMode}
+			>
 				<option value="fillWidth">ยืดเต็มขอบด้านข้าง (Full Width Edge-to-Edge)</option>
 				<option value="fitBoth">พอดีทั้งกว้างและสูง (Fit Inside Screen)</option>
 			</select>
 
-			<div class="sliderRow">
-				<label class="edLabel" for="clockSpaceRange">
+			<div class="mt-2.5">
+				<label class="text-xs text-[#a1a1aa] block" for="clockSpaceRange">
 					เว้นพื้นที่นาฬิกา: {customTopGapPercent}%
 				</label>
 				<input
@@ -77,11 +96,12 @@
 					min="15"
 					max="45"
 					bind:value={customTopGapPercent}
+					class="w-full accent-[#6366f1] cursor-pointer"
 				/>
 			</div>
 
-			<div class="sliderRow">
-				<label class="edLabel" for="gridScaleRange">
+			<div class="mt-2.5">
+				<label class="text-xs text-[#a1a1aa] block" for="gridScaleRange">
 					ปรับขนาดย่อ/ขยายตาราง: {Math.round(gridScaleModifier * 100)}%
 				</label>
 				<input
@@ -91,11 +111,12 @@
 					max="1.15"
 					step="0.01"
 					bind:value={gridScaleModifier}
+					class="w-full accent-[#6366f1] cursor-pointer"
 				/>
 			</div>
 
-			<div class="sliderRow">
-				<label class="edLabel" for="slotRowHeightRange">
+			<div class="mt-2.5">
+				<label class="text-xs text-[#a1a1aa] block" for="slotRowHeightRange">
 					ความสูงแถวตาราง: {slotRowHeight} px
 				</label>
 				<input
@@ -105,11 +126,12 @@
 					max="300"
 					step="5"
 					bind:value={slotRowHeight}
+					class="w-full accent-[#6366f1] cursor-pointer"
 				/>
 			</div>
 
-			<div class="sliderRow">
-				<label class="edLabel" for="dayColWidthRange">
+			<div class="mt-2.5">
+				<label class="text-xs text-[#a1a1aa] block" for="dayColWidthRange">
 					ปรับความยาวตารางแนวตั้ง (Column Width): {dayColumnWidth} px
 				</label>
 				<input
@@ -119,164 +141,58 @@
 					max="350"
 					step="5"
 					bind:value={dayColumnWidth}
+					class="w-full accent-[#6366f1] cursor-pointer"
 				/>
 			</div>
 		</div>
 	{/if}
 
-	<div class="sectionLabel slotLabelMargin">สีส่วนประกอบตาราง (Grid Colors)</div>
+	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
+		สีส่วนประกอบตาราง (Grid Colors)
+	</div>
 
-	<div class="colorRow">
-		<label class="edLabel" for="gridLineColorInput">สีเส้นตาราง (Line Color)</label>
-		<div class="bgRow">
-			<input id="gridLineColorInput" class="bgInput" type="color" bind:value={gridLineColor} />
-			<span class="bgLabel">{gridLineColor}</span>
+	<div class="flex flex-col gap-1">
+		<label class="text-xs text-[#a1a1aa] block" for="gridLineColorInput"
+			>สีเส้นตาราง (Line Color)</label
+		>
+		<div class="flex items-center gap-2.5">
+			<input
+				id="gridLineColorInput"
+				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				type="color"
+				bind:value={gridLineColor}
+			/>
+			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{gridLineColor}</span>
 		</div>
 	</div>
 
-	<div class="colorRow">
-		<label class="edLabel" for="timeBgColorInput">สีพื้นหลังเวลา (Time Slots Color)</label>
-		<div class="bgRow">
-			<input id="timeBgColorInput" class="bgInput" type="color" bind:value={timeBgColor} />
-			<span class="bgLabel">{timeBgColor}</span>
+	<div class="flex flex-col gap-1">
+		<label class="text-xs text-[#a1a1aa] block" for="timeBgColorInput"
+			>สีพื้นหลังเวลา (Time Slots Color)</label
+		>
+		<div class="flex items-center gap-2.5">
+			<input
+				id="timeBgColorInput"
+				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				type="color"
+				bind:value={timeBgColor}
+			/>
+			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{timeBgColor}</span>
 		</div>
 	</div>
 
-	<div class="colorRow">
-		<label class="edLabel" for="bgColorInput">สีพื้นหลังวอลเปเปอร์ (Wallpaper Background)</label>
-		<div class="bgRow">
-			<input id="bgColorInput" class="bgInput" type="color" bind:value={bgColor} />
-			<span class="bgLabel">{bgColor}</span>
+	<div class="flex flex-col gap-1">
+		<label class="text-xs text-[#a1a1aa] block" for="bgColorInput"
+			>สีพื้นหลังวอลเปเปอร์ (Wallpaper Background)</label
+		>
+		<div class="flex items-center gap-2.5">
+			<input
+				id="bgColorInput"
+				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				type="color"
+				bind:value={bgColor}
+			/>
+			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{bgColor}</span>
 		</div>
 	</div>
 </aside>
-
-<style>
-	.rightDrawer {
-		width: 320px;
-		background: #18181b;
-		color: #e4e4e7;
-		padding: 24px;
-		box-sizing: border-box;
-		overflow-y: auto;
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		border-left: 1px solid #27272a;
-		box-shadow: none;
-		z-index: 10;
-		flex-shrink: 0;
-	}
-
-	.headerTitle h2 {
-		font-size: 20px;
-		font-weight: 700;
-		margin: 0;
-		letter-spacing: -0.5px;
-		color: #fff;
-	}
-
-	.headerTitle p {
-		font-size: 12px;
-		color: #a1a1aa;
-		margin: 4px 0 0 0;
-	}
-
-	.sectionLabel {
-		font-size: 11px;
-		font-weight: 700;
-		letter-spacing: 0.8px;
-		text-transform: uppercase;
-		color: #a1a1aa;
-		margin-top: 8px;
-	}
-
-	.slotLabelMargin {
-		margin-top: 14px;
-	}
-
-	.presetSelect {
-		width: 100%;
-		padding: 10px 12px;
-		border-radius: 8px;
-		border: 1px solid #3f3f46;
-		background: #27272a;
-		color: #fff;
-		font-size: 13px;
-		font-family: inherit;
-		cursor: pointer;
-	}
-
-	.wallpaperOptions {
-		background: #27272a;
-		padding: 12px;
-		border-radius: 8px;
-		border: 1px solid #3f3f46;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.presetBadge {
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 11px;
-		color: #a1a1aa;
-		margin-bottom: 10px;
-	}
-
-	.sliderRow {
-		margin-top: 10px;
-	}
-
-	.sliderRow input[type='range'] {
-		width: 100%;
-		accent-color: #6366f1;
-		cursor: pointer;
-	}
-
-	.colorRow {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.bgRow {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-	}
-
-	.bgInput {
-		width: 40px;
-		height: 32px;
-		border: none;
-		border-radius: 6px;
-		background: none;
-		cursor: pointer;
-		padding: 0;
-	}
-
-	.bgLabel {
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 12px;
-		opacity: 0.7;
-	}
-
-	.edLabel {
-		font-size: 12px;
-		color: #a1a1aa;
-		display: block;
-	}
-
-	.edInput {
-		width: 100%;
-		padding: 8px 10px;
-		border-radius: 6px;
-		border: 1px solid #3f3f46;
-		background: #18181b;
-		color: #fff;
-		font-size: 13px;
-		box-sizing: border-box;
-		font-family: inherit;
-	}
-</style>

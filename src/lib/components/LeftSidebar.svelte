@@ -30,21 +30,42 @@
 	}: Props = $props();
 </script>
 
-<aside class="leftSidebar">
-	<div class="headerTitle">
-		<h1>Schedule Editor</h1>
-		<p>จัดการวัน เวลา และชุดสีตาราง</p>
+<aside
+	class="w-80 bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-r border-[#27272a] shadow-none z-10 shrink-0"
+>
+	<div>
+		<h1 class="text-[22px] font-bold m-0 -tracking-[0.5px] text-white">Schedule Editor</h1>
+		<p class="text-xs text-[#a1a1aa] mt-1">จัดการวัน เวลา และชุดสีตาราง</p>
 	</div>
 
-	<button class="exportBtn" onclick={onExport} disabled={isExporting}>
+	<button
+		class="bg-[#6366f1] text-white border-none px-4 py-3 rounded-lg font-semibold text-sm cursor-pointer flex items-center justify-center gap-2 transition-colors duration-150 ease-in-out mt-2 mb-2 font-[inherit] hover:not-disabled:bg-[#4f46e5] disabled:opacity-60 disabled:cursor-not-allowed"
+		onclick={onExport}
+		disabled={isExporting}
+	>
 		{#if isExporting}
-			<svg class="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				class="animate-spin"
+				width="18"
+				height="18"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
 				<path d="M12 2a10 10 0 0 1 10 10" />
 			</svg>
 			Exporting...
 		{:else}
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="18"
+				height="18"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
 				<polyline points="7 10 12 15 17 10" />
 				<line x1="12" y1="15" x2="12" y2="3" />
@@ -53,214 +74,68 @@
 		{/if}
 	</button>
 
-	<div class="sectionLabel">คอลัมน์ / วัน (Days)</div>
+	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-2">
+		คอลัมน์ / วัน (Days)
+	</div>
 	{#each days as day (day.id)}
-		<div class="rowEdit">
-			<input type="text" bind:value={day.name} />
-			<button class="miniBtn" onclick={() => onRemoveDay(day.id)}>✕</button>
+		<div class="flex gap-1.5 items-center mb-1.5">
+			<input
+				type="text"
+				bind:value={day.name}
+				class="flex-1 px-2 py-1.5 rounded-md border border-[#3f3f46] bg-[#27272a] text-white text-[13px] font-[inherit]"
+			/>
+			<button
+				class="bg-[#3f3f46] text-[#ef4444] border-none rounded-md w-7 h-7 cursor-pointer font-bold hover:bg-[#ef4444] hover:text-white"
+				onclick={() => onRemoveDay(day.id)}>✕</button
+			>
 		</div>
 	{/each}
-	<button class="addBtn" onclick={onAddDay}>+ เพิ่มวัน</button>
+	<button
+		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
+		onclick={onAddDay}>+ เพิ่มวัน</button
+	>
 
-	<div class="sectionLabel slotLabelMargin">แถว / เวลา (Rows)</div>
+	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
+		แถว / เวลา (Rows)
+	</div>
 	{#each slots as slot (slot.id)}
-		<div class="rowEdit">
-			<input class="monoInput" type="text" bind:value={slot.label} />
-			<button class="miniBtn" onclick={() => onRemoveSlot(slot.id)}>✕</button>
+		<div class="flex gap-1.5 items-center mb-1.5">
+			<input
+				type="text"
+				bind:value={slot.label}
+				class="flex-1 px-2 py-1.5 rounded-md border border-[#3f3f46] bg-[#27272a] text-white text-[13px] font-[JetBrains_Mono,monospace]"
+			/>
+			<button
+				class="bg-[#3f3f46] text-[#ef4444] border-none rounded-md w-7 h-7 cursor-pointer font-bold hover:bg-[#ef4444] hover:text-white"
+				onclick={() => onRemoveSlot(slot.id)}>✕</button
+			>
 		</div>
 	{/each}
-	<button class="addBtn" onclick={onAddSlot}>+ เพิ่มแถว</button>
+	<button
+		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
+		onclick={onAddSlot}>+ เพิ่มแถว</button
+	>
 
-	<div class="sectionLabel palLabelMargin">สีวิชา (Subject Colors)</div>
-	<div class="paletteGrid">
+	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
+		สีวิชา (Subject Colors)
+	</div>
+	<div class="flex flex-wrap gap-2 mb-2">
 		{#each palette as item (item.id)}
-			<div class="swatchWrap">
-				<input type="color" bind:value={item.color} />
-				<button class="swatchDel" onclick={() => onRemoveColor(item.id)}>✕</button>
+			<div class="relative flex items-center">
+				<input
+					type="color"
+					bind:value={item.color}
+					class="w-9 h-9 border-2 border-[#3f3f46] rounded-lg bg-none cursor-pointer p-0"
+				/>
+				<button
+					class="absolute -top-1 -right-1 bg-[#ef4444] text-white border-none rounded-full w-4 h-4 text-[9px] cursor-pointer flex items-center justify-center"
+					onclick={() => onRemoveColor(item.id)}>✕</button
+				>
 			</div>
 		{/each}
 	</div>
-	<button class="addBtn" onclick={onAddColor}>+ เพิ่มสี</button>
+	<button
+		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
+		onclick={onAddColor}>+ เพิ่มสี</button
+	>
 </aside>
-
-<style>
-	.leftSidebar {
-		width: 320px;
-		background: #18181b;
-		color: #e4e4e7;
-		padding: 24px;
-		box-sizing: border-box;
-		overflow-y: auto;
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		border-right: 1px solid #27272a;
-		box-shadow: none;
-		z-index: 10;
-		flex-shrink: 0;
-	}
-
-	.headerTitle h1 {
-		font-size: 22px;
-		font-weight: 700;
-		margin: 0;
-		letter-spacing: -0.5px;
-		color: #fff;
-	}
-
-	.headerTitle p {
-		font-size: 12px;
-		color: #a1a1aa;
-		margin: 4px 0 0 0;
-	}
-
-	.exportBtn {
-		background: #6366f1;
-		color: #fff;
-		border: none;
-		padding: 12px 16px;
-		border-radius: 8px;
-		font-weight: 600;
-		font-size: 14px;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 8px;
-		transition: background 0.15s ease;
-		margin-top: 8px;
-		margin-bottom: 8px;
-		font-family: inherit;
-	}
-
-	.exportBtn:hover:not(:disabled) {
-		background: #4f46e5;
-	}
-
-	.exportBtn:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-	}
-
-	.spinner {
-		animation: spin 0.8s linear infinite;
-	}
-
-	@keyframes spin {
-		to {
-			transform: rotate(360deg);
-		}
-	}
-
-	.sectionLabel {
-		font-size: 11px;
-		font-weight: 700;
-		letter-spacing: 0.8px;
-		text-transform: uppercase;
-		color: #a1a1aa;
-		margin-top: 8px;
-	}
-
-	.slotLabelMargin {
-		margin-top: 14px;
-	}
-
-	.palLabelMargin {
-		margin-top: 14px;
-	}
-
-	.rowEdit {
-		display: flex;
-		gap: 6px;
-		align-items: center;
-		margin-bottom: 6px;
-	}
-
-	.rowEdit input[type='text'] {
-		flex: 1;
-		padding: 6px 8px;
-		border-radius: 6px;
-		border: 1px solid #3f3f46;
-		background: #27272a;
-		color: #fff;
-		font-size: 13px;
-		font-family: inherit;
-	}
-
-	.monoInput {
-		font-family: 'JetBrains Mono', monospace !important;
-	}
-
-	.miniBtn {
-		background: #3f3f46;
-		color: #ef4444;
-		border: none;
-		border-radius: 6px;
-		width: 28px;
-		height: 28px;
-		cursor: pointer;
-		font-weight: 700;
-	}
-
-	.miniBtn:hover {
-		background: #ef4444;
-		color: #fff;
-	}
-
-	.addBtn {
-		background: transparent;
-		color: #818cf8;
-		border: 1px dashed #6366f1;
-		border-radius: 6px;
-		padding: 6px 12px;
-		font-size: 12px;
-		font-weight: 600;
-		cursor: pointer;
-		margin-bottom: 12px;
-		font-family: inherit;
-	}
-
-	.addBtn:hover {
-		background: rgba(99, 102, 241, 0.1);
-	}
-
-	.paletteGrid {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		margin-bottom: 8px;
-	}
-
-	.swatchWrap {
-		position: relative;
-		display: flex;
-		align-items: center;
-	}
-
-	.swatchWrap input[type='color'] {
-		width: 36px;
-		height: 36px;
-		border: 2px solid #3f3f46;
-		border-radius: 8px;
-		background: none;
-		cursor: pointer;
-		padding: 0;
-	}
-
-	.swatchDel {
-		position: absolute;
-		top: -4px;
-		right: -4px;
-		background: #ef4444;
-		color: #fff;
-		border: none;
-		border-radius: 50%;
-		width: 16px;
-		height: 16px;
-		font-size: 9px;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-</style>

@@ -326,7 +326,7 @@
 	};
 </script>
 
-<div class="layoutContainer">
+<div class="flex h-screen w-screen overflow-hidden">
 	<LeftSidebar
 		{isExporting}
 		bind:days
@@ -341,33 +341,37 @@
 		onRemoveColor={removeColor}
 	/>
 
-	<div class="canvasArea">
+	<div class="flex-1 overflow-auto p-10 flex justify-center items-start">
 		{#if isWallpaperMode}
-			<div class="wallpaperOuterWrap">
+			<div class="w-fit h-fit origin-top scale-[0.35] -mb-[1500px]">
 				<div
-					class="captureWrap phoneMode"
+					class="p-0 flex flex-col overflow-hidden rounded-[48px] shadow-none"
 					bind:this={captureWrapEl}
 					style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor};"
 				>
 					<div
-						class="lockscreenTopGap"
+						class="flex items-center justify-center box-border relative"
 						style="height: {currentPreset.height * (customTopGapPercent / 100)}px;"
 					>
 						{#if !isExporting}
-							<div class="clockGuideOverlay">
-								<div class="clockGuideTime">12:08</div>
-								<div class="clockGuideSub">พื้นที่เว้นให้ Lock Screen Clock</div>
+							<div
+								class="border-2 border-dashed border-black/15 rounded-[20px] px-10 py-4 text-center text-black/35 font-[Space_Grotesk,sans-serif]"
+							>
+								<div class="text-[64px] font-bold leading-none">12:08</div>
+								<div class="text-sm mt-1.5 font-[JetBrains_Mono,monospace]">
+									พื้นที่เว้นให้ Lock Screen Clock
+								</div>
 							</div>
 						{/if}
 					</div>
 
-					<div class="lockscreenCenterSpace">
+					<div class="flex-1 flex flex-col items-center justify-start pt-2.5 overflow-hidden">
 						<div
-							class="gridTransformWrap"
+							class="relative"
 							style="width: {is90or270 ? gridUnrotatedHeight * finalScale : gridUnrotatedWidth * finalScale}px; height: {is90or270 ? gridUnrotatedWidth * finalScale : gridUnrotatedHeight * finalScale}px;"
 						>
 							<div
-								class="scheduleGridInner"
+								class="absolute top-1/2 left-1/2 origin-center box-border"
 								style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({-gridRotationAngle}deg) scale({finalScale});"
 							>
 								<ScheduleGrid
@@ -391,7 +395,7 @@
 				</div>
 			</div>
 		{:else}
-			<div class="captureWrap" bind:this={captureWrapEl} style="background: {bgColor};">
+			<div class="p-10 inline-block box-border" bind:this={captureWrapEl} style="background: {bgColor};">
 				<ScheduleGrid
 					{days}
 					{slots}
@@ -434,105 +438,3 @@
 		onDelete={removeBlock}
 	/>
 </div>
-
-<style>
-	:global(body) {
-		margin: 0;
-		padding: 0;
-		background: #f4f4f5;
-		font-family: 'Space Grotesk', sans-serif;
-		color: #111111;
-		height: 100vh;
-		overflow: hidden;
-	}
-
-	.layoutContainer {
-		display: flex;
-		height: 100vh;
-		width: 100vw;
-		overflow: hidden;
-	}
-
-	.canvasArea {
-		flex: 1;
-		overflow: auto;
-		padding: 40px;
-		display: flex;
-		justify-content: center;
-		align-items: flex-start;
-	}
-
-	.wallpaperOuterWrap {
-		width: fit-content;
-		height: fit-content;
-		transform-origin: top center;
-		transform: scale(0.35);
-		margin-bottom: -1500px;
-	}
-
-	.captureWrap {
-		padding: 40px;
-		display: inline-block;
-		box-sizing: border-box;
-	}
-
-	.captureWrap.phoneMode {
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		border-radius: 48px;
-		box-shadow: none;
-	}
-
-	.lockscreenTopGap {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		box-sizing: border-box;
-		position: relative;
-	}
-
-	.clockGuideOverlay {
-		border: 2px dashed rgba(0, 0, 0, 0.15);
-		border-radius: 20px;
-		padding: 16px 40px;
-		text-align: center;
-		color: rgba(0, 0, 0, 0.35);
-		font-family: 'Space Grotesk', sans-serif;
-	}
-
-	.clockGuideTime {
-		font-size: 64px;
-		font-weight: 700;
-		line-height: 1;
-	}
-
-	.clockGuideSub {
-		font-size: 14px;
-		margin-top: 6px;
-		font-family: 'JetBrains Mono', monospace;
-	}
-
-	.lockscreenCenterSpace {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: flex-start;
-		padding-top: 10px;
-		overflow: hidden;
-	}
-
-	.gridTransformWrap {
-		position: relative;
-	}
-
-	.scheduleGridInner {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform-origin: center center;
-		box-sizing: border-box;
-	}
-</style>
