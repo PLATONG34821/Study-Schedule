@@ -1,4 +1,7 @@
-export const generateUid = (): string => Math.random().toString(36).substring(2, 9);
+export const generateUid = (): string =>
+	typeof crypto !== 'undefined' && crypto.randomUUID
+		? crypto.randomUUID()
+		: Math.random().toString(36).substring(2, 9);
 
 export const hexToRgb = (hex: string) => {
 	const cleanHex = hex.replace('#', '');
