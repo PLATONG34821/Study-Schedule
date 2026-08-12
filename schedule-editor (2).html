@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="th">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Schedule Editor</title>
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			html,
+			body {
+				background: #f4f4f5;
+				font-family: 'Space Grotesk', sans-serif;
+				color: #111111;
+				height: 100%;
+			}
+
+			::-webkit-scrollbar {
+				width: 10px;
+				height: 10px;
+			}
+			::-webkit-scrollbar-thumb {
+				background: #ccc;
+				border-radius: 6px;
+			}
+			::-webkit-scrollbar-track {
+				background: transparent;
+			}
+
+			button {
+				font-family: inherit;
+				cursor: pointer;
+			}
+			input,
+			select {
+				font-family: inherit;
+			}
+
+			#app {
+				display: flex;
+				min-height: 100vh;
+			}
+
+			/* ---------- SIDEBAR ---------- */
+			#sidebar {
+				width: 340px;
+				flex-shrink: 0;
+				background: #18181b;
+				color: #f4f4f5;
+				padding: 24px 20px;
+				overflow-y: auto;
+				height: 100vh;
+				position: sticky;
+				top: 0;
+			}
+			.sb-title {
+				font-size: 20px;
+				font-weight: 700;
+				margin-bottom: 4px;
+			}
+			.sb-sub {
+				font-size: 12px;
+				opacity: 0.55;
+				margin-bottom: 24px;
+				font-family: 'JetBrains Mono', monospace;
+			}
+			.section-label {
+				font-size: 11px;
+				letter-spacing: 1.5px;
+				text-transform: uppercase;
+				opacity: 0.5;
+				font-family: 'JetBrains Mono', monospace;
+				margin-bottom: 10px;
+			}
+			.export-btn {
+				width: 100%;
+				padding: 12px 0;
+				background: #ffffff;
+				color: #111111;
+				border: none;
+				border-radius: 8px;
+				font-weight: 700;
+				font-size: 14px;
+				margin-bottom: 24px;
+			}
+			.export-btn:disabled {
+				opacity: 0.6;
+			}
+			.row-edit {
+				display: flex;
+				gap: 6px;
+				align-items: center;
+				margin-bottom: 6px;
+			}
+			.row-edit input[type='text'] {
+				flex: 1;
+				padding: 6px 8px;
+				border-radius: 6px;
+				border: 1px solid #3f3f46;
+				background: #27272a;
+				color: #fff;
+				font-size: 13px;
+			}
+			.mono-input {
+				font-family: 'JetBrains Mono', monospace;
+			}
+			.mini-btn {
+				width: 26px;
+				height: 26px;
+				border-radius: 6px;
+				border: 1px solid #3f3f46;
+				background: #27272a;
+				color: #f87171;
+				font-size: 12px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+			}
+			.add-btn {
+				width: 100%;
+				padding: 8px 0;
+				border-radius: 6px;
+				border: 1px dashed #52525b;
+				background: transparent;
+				color: #d4d4d8;
+				font-size: 13px;
+				margin-top: 4px;
+			}
+			.swatch-wrap {
+				position: relative;
+				display: inline-block;
+			}
+			.swatch-wrap input[type='color'] {
+				width: 34px;
+				height: 34px;
+				border: 2px solid #3f3f46;
+				border-radius: 8px;
+				background: none;
+				padding: 0;
+			}
+			.swatch-del {
+				position: absolute;
+				top: -6px;
+				right: -6px;
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
+				background: #ef4444;
+				color: #fff;
+				border: none;
+				font-size: 10px;
+				line-height: 16px;
+				padding: 0;
+			}
+			.palette-grid {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				margin-bottom: 10px;
+			}
+
+			.editor-panel {
+				margin-top: 28px;
+				padding-top: 20px;
+				border-top: 1px solid #3f3f46;
+			}
+			.ed-label {
+				font-size: 11px;
+				opacity: 0.6;
+				margin-bottom: 4px;
+				display: block;
+			}
+			.ed-input {
+				width: 100%;
+				padding: 8px 10px;
+				border-radius: 6px;
+				border: 1px solid #3f3f46;
+				background: #27272a;
+				color: #fff;
+				font-size: 13px;
+				margin-bottom: 10px;
+			}
+			.color-pick-grid {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				margin-bottom: 10px;
+			}
+			.color-pick {
+				width: 28px;
+				height: 28px;
+				border-radius: 6px;
+				cursor: pointer;
+				border: 1px solid rgba(255, 255, 255, 0.2);
+			}
+			.color-pick.active {
+				border: 3px solid #fff;
+				box-shadow: 0 0 0 2px #6366f1;
+			}
+			.checkbox-row {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				font-size: 12px;
+				opacity: 0.85;
+				margin-bottom: 14px;
+			}
+			.ed-btn-row {
+				display: flex;
+				gap: 8px;
+				margin-top: 14px;
+			}
+			.ed-btn-delete {
+				flex: 1;
+				padding: 9px 0;
+				border-radius: 6px;
+				border: none;
+				background: #ef4444;
+				color: #fff;
+				font-size: 13px;
+				font-weight: 600;
+			}
+			.ed-btn-close {
+				flex: 1;
+				padding: 9px 0;
+				border-radius: 6px;
+				border: 1px solid #3f3f46;
+				background: transparent;
+				color: #d4d4d8;
+				font-size: 13px;
+			}
+
+			/* ---------- CANVAS ---------- */
+			#canvas-area {
+				flex: 1;
+				overflow: auto;
+				padding: 40px;
+				display: flex;
+				justify-content: center;
+				align-items: flex-start;
+			}
+			#capture-wrap {
+				padding: 40px;
+				display: inline-block;
+			}
+
+			#grid {
+				display: grid;
+				border: 3px solid #111111;
+				border-radius: 4px;
+				overflow: hidden;
+			}
+			.corner-cell {
+				background: #111111;
+				border-right: 3px solid #111111;
+				border-bottom: 3px solid #111111;
+			}
+			.day-header {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-right: 3px solid #111111;
+				border-bottom: 3px solid #111111;
+				font-weight: 700;
+				font-size: 20px;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+			}
+			.time-cell {
+				background: #111111;
+				color: #fff;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 16px;
+				border-right: 3px solid #111111;
+				border-bottom: 3px solid #111111;
+			}
+			.day-cell {
+				border-right: 3px solid #111111;
+				border-bottom: 3px solid #111111;
+				padding: 10px;
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+			}
+			.add-block-btn {
+				border: 2px dashed #cbd5e1;
+				border-radius: 8px;
+				background: transparent;
+				color: #94a3b8;
+				font-size: 12px;
+				padding: 6px 0;
+				cursor: pointer;
+			}
+
+			.class-block {
+				border-radius: 14px;
+				padding: 12px 14px;
+				cursor: pointer;
+				position: relative;
+				overflow: hidden;
+				border: 3px solid #111111;
+			}
+			.class-block.selected {
+				border: 3px solid #6366f1;
+			}
+			.cb-stripe {
+				position: absolute;
+				inset: 0;
+				z-index: 1;
+				background-image: repeating-linear-gradient(
+					135deg,
+					rgba(255, 255, 255, 0) 0px,
+					rgba(255, 255, 255, 0) 8px,
+					rgba(255, 255, 255, 0.45) 8px,
+					rgba(255, 255, 255, 0.45) 11px
+				);
+			}
+			.cb-content {
+				position: relative;
+				z-index: 2;
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+			}
+			.cb-title {
+				font-weight: 700;
+				font-size: 15px;
+				line-height: 1.25;
+			}
+			.cb-tags {
+				display: flex;
+				gap: 6px;
+				flex-wrap: wrap;
+			}
+			.cb-pill {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 11px;
+				font-weight: 700;
+				background: #ffffff;
+				color: #111111;
+				border: 2px solid #111111;
+				border-radius: 30px;
+				padding: 2px 9px;
+			}
+			.cb-rect-white {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 11px;
+				font-weight: 700;
+				background: #ffffff;
+				color: #111111;
+				border: 2px solid #111111;
+				border-radius: 4px;
+				padding: 2px 9px;
+			}
+			.cb-rect-black {
+				font-family: 'JetBrains Mono', monospace;
+				font-size: 11px;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+				background: #111111;
+				color: #ffffff;
+				border-radius: 4px;
+				padding: 2px 9px;
+			}
+
+			.editing-mode .add-block-btn {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div id="sidebar"></div>
+			<div id="canvas-area">
+				<div id="capture-wrap"><div id="grid"></div></div>
+			</div>
+		</div>
+
+		<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+		<script>
+			/* ============================================================
+   DATA MODEL & STATE
+============================================================ */
+			const uid = () => Math.random().toString(36).slice(2, 10);
+
+			const DEFAULT_PALETTE = [
+				{ id: 'c1', color: '#3DDC97' },
+				{ id: 'c2', color: '#FF8A3D' },
+				{ id: 'c3', color: '#3DA5FF' },
+				{ id: 'c4', color: '#B85CFF' },
+				{ id: 'c5', color: '#FFD93D' },
+				{ id: 'c6', color: '#FF4D8D' },
+				{ id: 'c7', color: '#26D0CE' }
+			];
+
+			let days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((name) => ({
+				id: uid(),
+				name
+			}));
+			let slots = ['08:00', '10:00', '13:00', '15:00'].map((label) => ({ id: uid(), label }));
+			let palette = DEFAULT_PALETTE.map((c) => ({ ...c }));
+			let bgColor = '#ffffff';
+			let selectedId = null;
+
+			function byDayName(n) {
+				return days.find((d) => d.name === n).id;
+			}
+			function bySlotLabel(l) {
+				return slots.find((s) => s.label === l).id;
+			}
+
+			let blocks = [
+				{
+					id: uid(),
+					dayId: byDayName('Monday'),
+					timeSlotId: bySlotLabel('08:00'),
+					title: 'Fundamentals of Digital Logic and Microcontrollers',
+					time: '08:00–09:50',
+					room: 'S7 A 402',
+					section: '1',
+					type: 'Lecture',
+					colorId: 'c1',
+					pattern: false
+				},
+				{
+					id: uid(),
+					dayId: byDayName('Monday'),
+					timeSlotId: bySlotLabel('10:00'),
+					title: 'Fundamentals of Digital Logic and Microcontrollers',
+					time: '10:00–11:50',
+					room: 'S7 A 202',
+					section: '1',
+					type: 'Lab',
+					colorId: 'c1',
+					pattern: true
+				},
+				{
+					id: uid(),
+					dayId: byDayName('Monday'),
+					timeSlotId: bySlotLabel('13:00'),
+					title: 'Introduction to Data Science',
+					time: '13:00–14:50',
+					room: 'C1 313',
+					section: '1',
+					type: 'Lecture',
+					colorId: 'c6',
+					pattern: false
+				},
+				{
+					id: uid(),
+					dayId: byDayName('Monday'),
+					timeSlotId: bySlotLabel('15:00'),
+					title: 'Introduction to Data Science',
+					time: '15:00–16:50',
+					room: 'S1 305',
+					section: '1',
+					type: 'Lab',
+					colorId: 'c6',
+					pattern: true
+				},
+
+				{
+					id: uid(),
+					dayId: byDayName('Tuesday'),
+					timeSlotId: bySlotLabel('08:00'),
+					title: 'Database Systems',
+					time: '08:00–09:50',
+					room: 'C1 313',
+					section: '1',
+					type: 'Lecture',
+					colorId: 'c2',
+					pattern: false
+				},
+				{
+					id: uid(),
+					dayId: byDayName('Tuesday'),
+					timeSlotId: bySlotLabel('10:00'),
+					title: 'Database Systems',
+					time: '10:00–11:50',
+					room: 'S1 206',
+					section: '1',
+					type: 'Lab',
+					colorId: 'c2',
+					pattern: true
+				},
+				{
+					id: uid(),
+					dayId: byDayName('Tuesday'),
+					timeSlotId: bySlotLabel('15:00'),
+					title: 'Data Communications and Networks',
+					time: '15:00–16:50',
+					room: 'S7 A 402',
+					section: '2',
+					type: 'Lecture',
+					colorId: 'c3',
+					pattern: false
+				},
+
+				{
+					id: uid(),
+					dayId: byDayName('Wednesday'),
+					timeSlotId: bySlotLabel('10:00'),
+					title: 'Data Communications and Networks',
+					time: '10:00–11:50',
+					room: 'S7 A 201',
+					section: '2',
+					type: 'Lab',
+					colorId: 'c3',
+					pattern: true
+				},
+				{
+					id: uid(),
+					dayId: byDayName('Wednesday'),
+					timeSlotId: bySlotLabel('15:00'),
+					title: 'Introduction to Digital Technology and Data Science',
+					time: '15:00–16:50',
+					room: 'S1 101',
+					section: '6',
+					type: 'Lab',
+					colorId: 'c7',
+					pattern: true
+				},
+
+				{
+					id: uid(),
+					dayId: byDayName('Thursday'),
+					timeSlotId: bySlotLabel('08:00'),
+					title: 'Mathematics for Engineering 2',
+					time: '08:00–09:50',
+					room: 'C1 314',
+					section: '1',
+					type: 'Lecture',
+					colorId: 'c4',
+					pattern: false
+				},
+				{
+					id: uid(),
+					dayId: byDayName('Thursday'),
+					timeSlotId: bySlotLabel('10:00'),
+					title: 'Mathematics for Engineering 2',
+					time: '10:00–11:50',
+					room: 'S1 206',
+					section: '1',
+					type: 'Lab',
+					colorId: 'c4',
+					pattern: true
+				},
+
+				{
+					id: uid(),
+					dayId: byDayName('Friday'),
+					timeSlotId: bySlotLabel('10:00'),
+					title: 'Engineering Programming',
+					time: '10:00–11:50',
+					room: 'C1 314',
+					section: '2',
+					type: 'Lecture',
+					colorId: 'c5',
+					pattern: false
+				},
+				{
+					id: uid(),
+					dayId: byDayName('Friday'),
+					timeSlotId: bySlotLabel('13:00'),
+					title: 'Engineering Programming',
+					time: '13:00–14:50',
+					room: 'S1 206',
+					section: '2',
+					type: 'Lab',
+					colorId: 'c5',
+					pattern: true
+				}
+			];
+
+			/* ============================================================
+   COLOR HELPERS
+============================================================ */
+			function hexToRgb(hex) {
+				const h = hex.replace('#', '');
+				const full =
+					h.length === 3
+						? h
+								.split('')
+								.map((c) => c + c)
+								.join('')
+						: h;
+				const bigint = parseInt(full, 16);
+				return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+			}
+			function luminance(hex) {
+				const { r, g, b } = hexToRgb(hex);
+				const a = [r, g, b].map((v) => {
+					v /= 255;
+					return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+				});
+				return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+			}
+			function textColorFor(hex) {
+				return luminance(hex) > 0.55 ? '#111111' : '#ffffff';
+			}
+
+			/* ============================================================
+   RENDER: SIDEBAR
+============================================================ */
+			function renderSidebar() {
+				const sb = document.getElementById('sidebar');
+				sb.innerHTML = '';
+
+				const title = el('div', 'sb-title', 'Schedule Editor');
+				const sub = el('div', 'sb-sub', 'แก้ไขได้ทุกอย่าง — คลิกกล่องวิชาเพื่อแก้ไข');
+				sb.appendChild(title);
+				sb.appendChild(sub);
+
+				// Export button
+				const exportBtn = document.createElement('button');
+				exportBtn.className = 'export-btn';
+				exportBtn.textContent = '⬇ Export as PNG';
+				exportBtn.onclick = exportPng;
+				sb.appendChild(exportBtn);
+
+				// Background color
+				sb.appendChild(el('div', 'section-label', 'พื้นหลังตาราง (Background)'));
+				const bgRow = document.createElement('div');
+				bgRow.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:24px;';
+				const bgInput = document.createElement('input');
+				bgInput.type = 'color';
+				bgInput.value = bgColor;
+				bgInput.style.cssText =
+					'width:40px;height:32px;border:none;border-radius:6px;background:none;';
+				bgInput.oninput = (e) => {
+					bgColor = e.target.value;
+					applyBg();
+				};
+				const bgLabel = el('span', '', bgColor);
+				bgLabel.style.cssText =
+					"font-family:'JetBrains Mono', monospace;font-size:12px;opacity:0.7;";
+				bgInput.addEventListener('input', () => (bgLabel.textContent = bgColor));
+				bgRow.appendChild(bgInput);
+				bgRow.appendChild(bgLabel);
+				sb.appendChild(bgRow);
+
+				// Days
+				sb.appendChild(el('div', 'section-label', 'คอลัมน์ / วัน (Days)'));
+				days.forEach((d) => {
+					const row = document.createElement('div');
+					row.className = 'row-edit';
+					const input = document.createElement('input');
+					input.type = 'text';
+					input.value = d.name;
+					input.oninput = (e) => {
+						d.name = e.target.value;
+						renderGrid();
+					};
+					const delBtn = document.createElement('button');
+					delBtn.className = 'mini-btn';
+					delBtn.textContent = '✕';
+					delBtn.onclick = () => {
+						days = days.filter((x) => x.id !== d.id);
+						blocks = blocks.filter((x) => x.dayId !== d.id);
+						renderAll();
+					};
+					row.appendChild(input);
+					row.appendChild(delBtn);
+					sb.appendChild(row);
+				});
+				const addDayBtn = document.createElement('button');
+				addDayBtn.className = 'add-btn';
+				addDayBtn.textContent = '+ เพิ่มวัน';
+				addDayBtn.onclick = () => {
+					days.push({ id: uid(), name: 'New Day' });
+					renderAll();
+				};
+				sb.appendChild(addDayBtn);
+
+				// Time slots
+				const slotLabel = el('div', 'section-label', 'แถว / เวลา (Rows)');
+				slotLabel.style.marginTop = '24px';
+				sb.appendChild(slotLabel);
+				slots.forEach((s) => {
+					const row = document.createElement('div');
+					row.className = 'row-edit';
+					const input = document.createElement('input');
+					input.type = 'text';
+					input.className = 'mono-input';
+					input.value = s.label;
+					input.oninput = (e) => {
+						s.label = e.target.value;
+						renderGrid();
+					};
+					const delBtn = document.createElement('button');
+					delBtn.className = 'mini-btn';
+					delBtn.textContent = '✕';
+					delBtn.onclick = () => {
+						slots = slots.filter((x) => x.id !== s.id);
+						blocks = blocks.filter((x) => x.timeSlotId !== s.id);
+						renderAll();
+					};
+					row.appendChild(input);
+					row.appendChild(delBtn);
+					sb.appendChild(row);
+				});
+				const addSlotBtn = document.createElement('button');
+				addSlotBtn.className = 'add-btn';
+				addSlotBtn.textContent = '+ เพิ่มแถว';
+				addSlotBtn.onclick = () => {
+					slots.push({ id: uid(), label: '17:00' });
+					renderAll();
+				};
+				sb.appendChild(addSlotBtn);
+
+				// Palette
+				const palLabel = el('div', 'section-label', 'สีวิชา (Subject Colors)');
+				palLabel.style.marginTop = '24px';
+				sb.appendChild(palLabel);
+				const palGrid = document.createElement('div');
+				palGrid.className = 'palette-grid';
+				palette.forEach((c) => {
+					const wrap = document.createElement('div');
+					wrap.className = 'swatch-wrap';
+					const input = document.createElement('input');
+					input.type = 'color';
+					input.value = c.color;
+					input.oninput = (e) => {
+						c.color = e.target.value;
+						renderGrid();
+						renderSidebar();
+					};
+					const del = document.createElement('button');
+					del.className = 'swatch-del';
+					del.textContent = '✕';
+					del.onclick = () => {
+						palette = palette.filter((x) => x.id !== c.id);
+						blocks.forEach((b) => {
+							if (b.colorId === c.id) b.colorId = null;
+						});
+						renderAll();
+					};
+					wrap.appendChild(input);
+					wrap.appendChild(del);
+					palGrid.appendChild(wrap);
+				});
+				sb.appendChild(palGrid);
+				const addColorBtn = document.createElement('button');
+				addColorBtn.className = 'add-btn';
+				addColorBtn.textContent = '+ เพิ่มสี';
+				addColorBtn.onclick = () => {
+					palette.push({ id: uid(), color: '#999999' });
+					renderAll();
+				};
+				sb.appendChild(addColorBtn);
+
+				// Selected block editor
+				if (selectedId) {
+					const block = blocks.find((b) => b.id === selectedId);
+					if (block) {
+						const panel = document.createElement('div');
+						panel.className = 'editor-panel';
+						panel.appendChild(el('div', 'section-label', 'แก้ไขวิชาที่เลือก'));
+
+						panel.appendChild(makeFieldLabel('ชื่อวิชา (Title)'));
+						panel.appendChild(
+							makeFieldInput(block.title, (v) => {
+								block.title = v;
+								renderGrid();
+							})
+						);
+
+						panel.appendChild(makeFieldLabel('เวลา (Time)'));
+						panel.appendChild(
+							makeFieldInput(
+								block.time,
+								(v) => {
+									block.time = v;
+									renderGrid();
+								},
+								'08:00–09:50'
+							)
+						);
+
+						panel.appendChild(makeFieldLabel('ห้อง (Room)'));
+						panel.appendChild(
+							makeFieldInput(
+								block.room,
+								(v) => {
+									block.room = v;
+									renderGrid();
+								},
+								'S1 206'
+							)
+						);
+
+						panel.appendChild(makeFieldLabel('Section'));
+						panel.appendChild(
+							makeFieldInput(
+								block.section,
+								(v) => {
+									block.section = v;
+									renderGrid();
+								},
+								'1'
+							)
+						);
+
+						panel.appendChild(makeFieldLabel('ประเภท (Type badge)'));
+						panel.appendChild(
+							makeFieldInput(
+								block.type,
+								(v) => {
+									block.type = v;
+									renderGrid();
+								},
+								'Lecture / Lab'
+							)
+						);
+
+						panel.appendChild(makeFieldLabel('สี (Color)'));
+						const colorGrid = document.createElement('div');
+						colorGrid.className = 'color-pick-grid';
+						palette.forEach((c) => {
+							const sw = document.createElement('div');
+							sw.className = 'color-pick' + (block.colorId === c.id ? ' active' : '');
+							sw.style.background = c.color;
+							sw.onclick = () => {
+								block.colorId = c.id;
+								renderGrid();
+								renderSidebar();
+							};
+							colorGrid.appendChild(sw);
+						});
+						panel.appendChild(colorGrid);
+
+						const checkRow = document.createElement('label');
+						checkRow.className = 'checkbox-row';
+						const check = document.createElement('input');
+						check.type = 'checkbox';
+						check.checked = !!block.pattern;
+						check.onchange = (e) => {
+							block.pattern = e.target.checked;
+							renderGrid();
+						};
+						checkRow.appendChild(check);
+						checkRow.appendChild(document.createTextNode('มีลาย (Diagonal stripe pattern)'));
+						panel.appendChild(checkRow);
+
+						const btnRow = document.createElement('div');
+						btnRow.className = 'ed-btn-row';
+						const delBtn = document.createElement('button');
+						delBtn.className = 'ed-btn-delete';
+						delBtn.textContent = 'ลบวิชานี้';
+						delBtn.onclick = () => {
+							blocks = blocks.filter((b) => b.id !== selectedId);
+							selectedId = null;
+							renderAll();
+						};
+						const closeBtn = document.createElement('button');
+						closeBtn.className = 'ed-btn-close';
+						closeBtn.textContent = 'ปิด';
+						closeBtn.onclick = () => {
+							selectedId = null;
+							renderAll();
+						};
+						btnRow.appendChild(delBtn);
+						btnRow.appendChild(closeBtn);
+						panel.appendChild(btnRow);
+
+						sb.appendChild(panel);
+					}
+				}
+			}
+
+			function makeFieldLabel(text) {
+				const l = document.createElement('label');
+				l.className = 'ed-label';
+				l.textContent = text;
+				return l;
+			}
+			function makeFieldInput(value, onInput, placeholder) {
+				const input = document.createElement('input');
+				input.className = 'ed-input';
+				input.type = 'text';
+				input.value = value || '';
+				if (placeholder) input.placeholder = placeholder;
+				input.oninput = (e) => onInput(e.target.value);
+				return input;
+			}
+			function el(tag, className, text) {
+				const e = document.createElement(tag);
+				if (className) e.className = className;
+				if (text !== undefined) e.textContent = text;
+				return e;
+			}
+
+			/* ============================================================
+   RENDER: GRID
+============================================================ */
+			function renderGrid() {
+				const grid = document.getElementById('grid');
+				grid.innerHTML = '';
+
+				const timeColWidth = 110,
+					dayColWidth = 230,
+					headerHeight = 70;
+				grid.style.gridTemplateColumns = `${timeColWidth}px repeat(${days.length}, ${dayColWidth}px)`;
+				grid.style.gridTemplateRows = `${headerHeight}px repeat(${slots.length}, minmax(150px, auto))`;
+
+				// corner
+				grid.appendChild(el('div', 'corner-cell'));
+
+				// day headers
+				days.forEach((d) => {
+					grid.appendChild(el('div', 'day-header', d.name));
+				});
+
+				// rows
+				slots.forEach((s) => {
+					grid.appendChild(el('div', 'time-cell', s.label));
+					days.forEach((d) => {
+						const cell = document.createElement('div');
+						cell.className = 'day-cell';
+						const cellBlocks = blocks.filter((b) => b.dayId === d.id && b.timeSlotId === s.id);
+						cellBlocks.forEach((b) => cell.appendChild(renderClassBlock(b)));
+
+						const addBtn = document.createElement('button');
+						addBtn.className = 'add-block-btn';
+						addBtn.textContent = '+ เพิ่มวิชา';
+						addBtn.onclick = () => {
+							const nb = {
+								id: uid(),
+								dayId: d.id,
+								timeSlotId: s.id,
+								title: 'New Subject',
+								time: '',
+								room: '',
+								section: '1',
+								type: 'Lecture',
+								colorId: palette[0] ? palette[0].id : null,
+								pattern: false
+							};
+							blocks.push(nb);
+							selectedId = nb.id;
+							renderAll();
+						};
+						cell.appendChild(addBtn);
+
+						grid.appendChild(cell);
+					});
+				});
+			}
+
+			function renderClassBlock(b) {
+				const colorObj = palette.find((c) => c.id === b.colorId);
+				const color = colorObj ? colorObj.color : '#dddddd';
+				const textColor = textColorFor(color);
+
+				const wrap = document.createElement('div');
+				wrap.className = 'class-block' + (selectedId === b.id ? ' selected' : '');
+				wrap.style.background = color;
+				wrap.style.color = textColor;
+				wrap.onclick = () => {
+					selectedId = b.id;
+					renderAll();
+				};
+
+				if (b.pattern) {
+					const stripe = document.createElement('div');
+					stripe.className = 'cb-stripe';
+					wrap.appendChild(stripe);
+				}
+
+				const content = document.createElement('div');
+				content.className = 'cb-content';
+
+				const titleEl = el('div', 'cb-title', b.title);
+				content.appendChild(titleEl);
+
+				const tagsRow1 = document.createElement('div');
+				tagsRow1.className = 'cb-tags';
+				if (b.time) tagsRow1.appendChild(el('span', 'cb-pill', b.time));
+				if (b.room) tagsRow1.appendChild(el('span', 'cb-pill', b.room));
+				content.appendChild(tagsRow1);
+
+				const tagsRow2 = document.createElement('div');
+				tagsRow2.className = 'cb-tags';
+				if (b.section) tagsRow2.appendChild(el('span', 'cb-rect-white', 'Sec ' + b.section));
+				if (b.type) tagsRow2.appendChild(el('span', 'cb-rect-black', b.type));
+				content.appendChild(tagsRow2);
+
+				wrap.appendChild(content);
+				return wrap;
+			}
+
+			function applyBg() {
+				document.getElementById('capture-wrap').style.background = bgColor;
+			}
+
+			function renderAll() {
+				renderSidebar();
+				renderGrid();
+				applyBg();
+			}
+
+			/* ============================================================
+   EXPORT
+============================================================ */
+			async function exportPng() {
+				const wrap = document.getElementById('capture-wrap');
+				const prevSelected = selectedId;
+				selectedId = null;
+				document.body.classList.add('editing-mode');
+				renderGrid();
+				await new Promise((r) => setTimeout(r, 50));
+				try {
+					const canvas = await html2canvas(wrap, {
+						backgroundColor: bgColor,
+						scale: 2,
+						useCORS: true
+					});
+					const link = document.createElement('a');
+					link.download = 'schedule.png';
+					link.href = canvas.toDataURL('image/png');
+					link.click();
+				} catch (e) {
+					alert('Export failed: ' + e.message);
+				}
+				document.body.classList.remove('editing-mode');
+				selectedId = prevSelected;
+				renderAll();
+			}
+
+			/* ============================================================
+   INIT
+============================================================ */
+			renderAll();
+		</script>
+	</body>
+</html>
