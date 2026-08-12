@@ -1,5 +1,5 @@
 <script lang="ts">
-	import html2canvas from 'html2canvas';
+	import { toPng } from 'html-to-image';
 
 	interface Day {
 		id: string;
@@ -303,16 +303,16 @@
 		const previousSelected = selectedId;
 		selectedId = null;
 		isExporting = true;
+		await document.fonts.ready;
 		await new Promise((resolve) => setTimeout(resolve, 50));
 		try {
-			const canvas = await html2canvas(captureWrapEl, {
+			const dataUrl = await toPng(captureWrapEl, {
 				backgroundColor: bgColor,
-				scale: 2,
-				useCORS: true
+				pixelRatio: 2
 			});
 			const downloadLink = document.createElement('a');
 			downloadLink.download = 'schedule.png';
-			downloadLink.href = canvas.toDataURL('image/png');
+			downloadLink.href = dataUrl;
 			downloadLink.click();
 		} catch (error) {
 			alert('Export failed: ' + (error as Error).message);
@@ -805,6 +805,7 @@
 	.captureWrap {
 		padding: 40px;
 		display: inline-block;
+		box-sizing: border-box;
 	}
 
 	.scheduleGrid {
@@ -812,12 +813,14 @@
 		border: 3px solid #111111;
 		border-radius: 4px;
 		overflow: hidden;
+		box-sizing: border-box;
 	}
 
 	.cornerCell {
 		background: #111111;
 		border-right: 3px solid #111111;
 		border-bottom: 3px solid #111111;
+		box-sizing: border-box;
 	}
 
 	.dayHeader {
@@ -831,6 +834,7 @@
 		letter-spacing: 1px;
 		text-transform: uppercase;
 		background: #ffffff;
+		box-sizing: border-box;
 	}
 
 	.timeCell {
@@ -843,6 +847,7 @@
 		font-size: 16px;
 		border-right: 3px solid #111111;
 		border-bottom: 3px solid #111111;
+		box-sizing: border-box;
 	}
 
 	.dayCell {
@@ -854,6 +859,7 @@
 		flex-direction: column;
 		gap: 8px;
 		background: #ffffff;
+		box-sizing: border-box;
 	}
 
 	.addBlockBtn {
@@ -866,6 +872,7 @@
 		cursor: pointer;
 		font-family: inherit;
 		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.classBlock {
@@ -879,10 +886,12 @@
 		font-family: inherit;
 		width: 100%;
 		display: block;
+		box-sizing: border-box;
 	}
 
 	.classBlock.selected {
-		outline: 3px solid #6366f1;
+		border-color: #6366f1;
+		box-shadow: 0 0 0 2px #6366f1;
 	}
 
 	.cbStripe {
@@ -904,18 +913,23 @@
 		display: flex;
 		flex-direction: column;
 		gap: 6px;
+		box-sizing: border-box;
 	}
 
 	.cbTitle {
 		font-weight: 700;
 		font-size: 15px;
 		line-height: 1.25;
+		word-break: break-word;
+		overflow-wrap: break-word;
 	}
 
 	.cbTags {
 		display: flex;
 		gap: 6px;
 		flex-wrap: wrap;
+		align-items: center;
+		box-sizing: border-box;
 	}
 
 	.cbPill {
@@ -927,6 +941,11 @@
 		border: 2px solid #111111;
 		border-radius: 30px;
 		padding: 2px 9px;
+		display: inline-block;
+		vertical-align: middle;
+		line-height: 1.2;
+		white-space: nowrap;
+		box-sizing: border-box;
 	}
 
 	.cbRectWhite {
@@ -938,6 +957,11 @@
 		border: 2px solid #111111;
 		border-radius: 4px;
 		padding: 2px 9px;
+		display: inline-block;
+		vertical-align: middle;
+		line-height: 1.2;
+		white-space: nowrap;
+		box-sizing: border-box;
 	}
 
 	.cbRectBlack {
@@ -950,5 +974,10 @@
 		color: #ffffff;
 		border-radius: 4px;
 		padding: 2px 9px;
+		display: inline-flex;
+		align-items: center;
+		line-height: 1.2;
+		white-space: nowrap;
+		box-sizing: border-box;
 	}
 </style>
