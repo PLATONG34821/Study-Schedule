@@ -86,7 +86,8 @@
 	let captureWrapEl = $state<HTMLDivElement | null>(null);
 
 	let selectedPresetId = $state<string>('ip14Pro');
-	let rotateGrid = $state<boolean>(true);
+	let gridRotationAngle = $state<number>(90);
+	let is90or270 = $derived(gridRotationAngle === 90 || gridRotationAngle === 270);
 	let customTopGapPercent = $state<number>(24);
 	let scaleMode = $state<'fillWidth' | 'fitBoth'>('fitBoth');
 	let gridScaleModifier = $state<number>(1.0);
@@ -108,8 +109,8 @@
 
 	let computedScale = $derived.by(() => {
 		if (!isWallpaperMode) return 1;
-		const targetW = rotateGrid ? gridUnrotatedHeight : gridUnrotatedWidth;
-		const targetH = rotateGrid ? gridUnrotatedWidth : gridUnrotatedHeight;
+		const targetW = is90or270 ? gridUnrotatedHeight : gridUnrotatedWidth;
+		const targetH = is90or270 ? gridUnrotatedWidth : gridUnrotatedHeight;
 		const scaleX = availableWidth / targetW;
 		const scaleY = availableHeight / targetH;
 		return scaleMode === 'fillWidth' ? scaleX : Math.min(scaleX, scaleY);
@@ -403,10 +404,13 @@
 					{currentPreset.width} × {currentPreset.height} px
 				</div>
 
-				<label class="checkboxRow">
-					<input type="checkbox" bind:checked={rotateGrid} />
-					<span>หมุนตาราง 90° (Rotate 90°)</span>
-				</label>
+				<label class="edLabel" for="gridRotationSelect">หมุนตาราง (Rotate Grid)</label>
+				<select id="gridRotationSelect" class="edInput" bind:value={gridRotationAngle}>
+					<option value={90}>หมุน 90° (แนวตั้ง / Rotated 90°)</option>
+					<option value={180}>หมุน 180° (กลับหัว / Upside Down 180°)</option>
+					<option value={270}>หมุน 270° (Rotated 270°)</option>
+					<option value={0}>ไม่หมุน 0° (แนวขนาน / Original 0°)</option>
+				</select>
 
 				<label class="edLabel" for="scaleModeSelect">ขยายขนาดตาราง (Scale Mode)</label>
 				<select id="scaleModeSelect" class="edInput" bind:value={scaleMode}>
@@ -602,11 +606,11 @@
 					<div class="lockscreenCenterSpace">
 						<div
 							class="gridTransformWrap"
-							style="width: {rotateGrid ? gridUnrotatedHeight * finalScale : gridUnrotatedWidth * finalScale}px; height: {rotateGrid ? gridUnrotatedWidth * finalScale : gridUnrotatedHeight * finalScale}px;"
+							style="width: {is90or270 ? gridUnrotatedHeight * finalScale : gridUnrotatedWidth * finalScale}px; height: {is90or270 ? gridUnrotatedWidth * finalScale : gridUnrotatedHeight * finalScale}px;"
 						>
 							<div
 								class="scheduleGridInner"
-								style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({rotateGrid ? -90 : 0}deg) scale({finalScale});"
+								style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({-gridRotationAngle}deg) scale({finalScale});"
 							>
 								<div
 									class="scheduleGrid"
