@@ -328,6 +328,7 @@
 
 <div class="layoutContainer">
 	<LeftSidebar
+		{isExporting}
 		bind:days
 		bind:slots
 		bind:palette

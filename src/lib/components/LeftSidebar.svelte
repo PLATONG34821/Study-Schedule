@@ -5,6 +5,7 @@
 		days: Day[];
 		slots: Slot[];
 		palette: PaletteColor[];
+		isExporting?: boolean;
 		onExport: () => void;
 		onAddDay: () => void;
 		onRemoveDay: (id: string) => void;
@@ -18,6 +19,7 @@
 		days = $bindable(),
 		slots = $bindable(),
 		palette = $bindable(),
+		isExporting = false,
 		onExport,
 		onAddDay,
 		onRemoveDay,
@@ -34,13 +36,21 @@
 		<p>จัดการวัน เวลา และชุดสีตาราง</p>
 	</div>
 
-	<button class="exportBtn" onclick={onExport}>
-		<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-			<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-			<polyline points="7 10 12 15 17 10" />
-			<line x1="12" y1="15" x2="12" y2="3" />
-		</svg>
-		Export as PNG
+	<button class="exportBtn" onclick={onExport} disabled={isExporting}>
+		{#if isExporting}
+			<svg class="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
+				<path d="M12 2a10 10 0 0 1 10 10" />
+			</svg>
+			Exporting...
+		{:else}
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+				<polyline points="7 10 12 15 17 10" />
+				<line x1="12" y1="15" x2="12" y2="3" />
+			</svg>
+			Export as PNG
+		{/if}
 	</button>
 
 	<div class="sectionLabel">คอลัมน์ / วัน (Days)</div>
@@ -123,8 +133,23 @@
 		font-family: inherit;
 	}
 
-	.exportBtn:hover {
+	.exportBtn:hover:not(:disabled) {
 		background: #4f46e5;
+	}
+
+	.exportBtn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	.spinner {
+		animation: spin 0.8s linear infinite;
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.sectionLabel {

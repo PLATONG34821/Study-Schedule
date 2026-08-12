@@ -15,7 +15,15 @@
 			onClose();
 		}
 	};
+
+	const handleKeyDown = (e: KeyboardEvent) => {
+		if (block && e.key === 'Escape') {
+			onClose();
+		}
+	};
 </script>
+
+<svelte:window onkeydown={handleKeyDown} />
 
 {#if block}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
