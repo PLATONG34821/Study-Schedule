@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { toPng } from 'html-to-image';
 
 	interface Day {
@@ -29,6 +30,15 @@
 		pattern: boolean;
 	}
 
+	interface PhonePreset {
+		id: string;
+		name: string;
+		width: number;
+		height: number;
+		topGapRatio: number;
+		bottomGapPx: number;
+	}
+
 	const generateUid = (): string => Math.random().toString(36).slice(2, 10);
 
 	const defaultPalette: PaletteColor[] = [
@@ -39,6 +49,19 @@
 		{ id: 'c5', color: '#FFD93D' },
 		{ id: 'c6', color: '#FF4D8D' },
 		{ id: 'c7', color: '#26D0CE' }
+	];
+
+	const phonePresets: PhonePreset[] = [
+		{ id: 'none', name: 'Original Grid (พอดีตาราง)', width: 0, height: 0, topGapRatio: 0, bottomGapPx: 0 },
+		{ id: 'ip7', name: 'iPhone 7 / 8 / SE (4.7")', width: 750, height: 1334, topGapRatio: 0.28, bottomGapPx: 60 },
+		{ id: 'ip7p', name: 'iPhone 7+ / 8+ (5.5")', width: 1242, height: 2208, topGapRatio: 0.28, bottomGapPx: 60 },
+		{ id: 'ipX', name: 'iPhone X / XS / 11 Pro / 12 mini (5.8"/5.4")', width: 1125, height: 2436, topGapRatio: 0.30, bottomGapPx: 80 },
+		{ id: 'ipXR', name: 'iPhone 11 / XR (6.1")', width: 828, height: 1792, topGapRatio: 0.30, bottomGapPx: 80 },
+		{ id: 'ipXSMax', name: 'iPhone 11 Pro Max / XS Max (6.5")', width: 1242, height: 2688, topGapRatio: 0.30, bottomGapPx: 80 },
+		{ id: 'ip12', name: 'iPhone 12 / 13 / 14 (6.1")', width: 1170, height: 2532, topGapRatio: 0.30, bottomGapPx: 80 },
+		{ id: 'ip12PM', name: 'iPhone 12 Pro Max / 13 Pro Max / 14 Plus (6.7")', width: 1284, height: 2778, topGapRatio: 0.30, bottomGapPx: 80 },
+		{ id: 'ip14Pro', name: 'iPhone 14 Pro / 15 / 16 / 16 Pro (6.1"-6.3")', width: 1179, height: 2556, topGapRatio: 0.32, bottomGapPx: 80 },
+		{ id: 'ip14PM', name: 'iPhone 14 Pro Max / 15 Pro Max / 16 Pro Max (6.7"-6.9")', width: 1290, height: 2796, topGapRatio: 0.32, bottomGapPx: 80 }
 	];
 
 	let days = $state<Day[]>([
@@ -61,6 +84,38 @@
 	let selectedId = $state<string | null>(null);
 	let isExporting = $state(false);
 	let captureWrapEl = $state<HTMLDivElement | null>(null);
+
+	let selectedPresetId = $state<string>('ip14Pro');
+	let rotateGrid = $state<boolean>(true);
+	let customTopGapPercent = $state<number>(24);
+	let scaleMode = $state<'fillWidth' | 'fitBoth'>('fitBoth');
+	let gridScaleModifier = $state<number>(1.0);
+	let slotRowHeight = $state<number>(210);
+	let dayColumnWidth = $state<number>(230);
+
+	let currentPreset = $derived(phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[0]);
+	let isWallpaperMode = $derived(selectedPresetId !== 'none');
+
+	let gridUnrotatedWidth = $derived(110 + days.length * dayColumnWidth);
+	let gridUnrotatedHeight = $derived(70 + slots.length * slotRowHeight);
+
+	let availableWidth = $derived(isWallpaperMode ? currentPreset.width - 32 : gridUnrotatedWidth);
+	let availableHeight = $derived(
+		isWallpaperMode
+			? currentPreset.height * (1 - customTopGapPercent / 100) - 32
+			: gridUnrotatedHeight
+	);
+
+	let computedScale = $derived.by(() => {
+		if (!isWallpaperMode) return 1;
+		const targetW = rotateGrid ? gridUnrotatedHeight : gridUnrotatedWidth;
+		const targetH = rotateGrid ? gridUnrotatedWidth : gridUnrotatedHeight;
+		const scaleX = availableWidth / targetW;
+		const scaleY = availableHeight / targetH;
+		return scaleMode === 'fillWidth' ? scaleX : Math.min(scaleX, scaleY);
+	});
+
+	let finalScale = $derived(isWallpaperMode ? computedScale * gridScaleModifier : 1);
 
 	let blocks = $state<ClassBlock[]>([
 		{
@@ -303,15 +358,18 @@
 		const previousSelected = selectedId;
 		selectedId = null;
 		isExporting = true;
+		await tick();
 		await document.fonts.ready;
-		await new Promise((resolve) => setTimeout(resolve, 50));
+		await new Promise((resolve) => setTimeout(resolve, 150));
 		try {
 			const dataUrl = await toPng(captureWrapEl, {
 				backgroundColor: bgColor,
-				pixelRatio: 2
+				pixelRatio: isWallpaperMode ? 1 : 2
 			});
 			const downloadLink = document.createElement('a');
-			downloadLink.download = 'schedule.png';
+			downloadLink.download = isWallpaperMode
+				? `schedule-wallpaper-${currentPreset.id}.png`
+				: 'schedule.png';
 			downloadLink.href = dataUrl;
 			downloadLink.click();
 		} catch (error) {
@@ -332,7 +390,88 @@
 			⬇ Export as PNG
 		</button>
 
-		<div class="sectionLabel">พื้นหลังตาราง (Background)</div>
+		<div class="sectionLabel">ขนาด / วอลเปเปอร์ (Preset)</div>
+		<select class="edInput" bind:value={selectedPresetId}>
+			{#each phonePresets as preset (preset.id)}
+				<option value={preset.id}>{preset.name}</option>
+			{/each}
+		</select>
+
+		{#if isWallpaperMode}
+			<div class="wallpaperOptions">
+				<div class="presetBadge">
+					{currentPreset.width} × {currentPreset.height} px
+				</div>
+
+				<label class="checkboxRow">
+					<input type="checkbox" bind:checked={rotateGrid} />
+					<span>หมุนตาราง 90° (Rotate 90°)</span>
+				</label>
+
+				<label class="edLabel" for="scaleModeSelect">ขยายขนาดตาราง (Scale Mode)</label>
+				<select id="scaleModeSelect" class="edInput" bind:value={scaleMode}>
+					<option value="fillWidth">ยืดเต็มขอบด้านข้าง (Full Width Edge-to-Edge)</option>
+					<option value="fitBoth">พอดีทั้งกว้างและสูง (Fit Inside Screen)</option>
+				</select>
+
+				<div class="sliderRow">
+					<label class="edLabel" for="clockSpaceRange">
+						เว้นพื้นที่นาฬิกา: {customTopGapPercent}%
+					</label>
+					<input
+						id="clockSpaceRange"
+						type="range"
+						min="15"
+						max="45"
+						bind:value={customTopGapPercent}
+					/>
+				</div>
+
+				<div class="sliderRow">
+					<label class="edLabel" for="gridScaleRange">
+						ปรับขนาดย่อ/ขยายตาราง: {Math.round(gridScaleModifier * 100)}%
+					</label>
+					<input
+						id="gridScaleRange"
+						type="range"
+						min="0.70"
+						max="1.15"
+						step="0.01"
+						bind:value={gridScaleModifier}
+					/>
+				</div>
+
+				<div class="sliderRow">
+					<label class="edLabel" for="slotRowHeightRange">
+						ความสูงแถวตาราง: {slotRowHeight} px
+					</label>
+					<input
+						id="slotRowHeightRange"
+						type="range"
+						min="140"
+						max="300"
+						step="5"
+						bind:value={slotRowHeight}
+					/>
+				</div>
+
+				<div class="sliderRow">
+					<label class="edLabel" for="dayColWidthRange">
+						ปรับความยาวตารางแนวตั้ง (Column Width): {dayColumnWidth} px
+					</label>
+					<input
+						id="dayColWidthRange"
+						type="range"
+						min="150"
+						max="350"
+						step="5"
+						bind:value={dayColumnWidth}
+					/>
+				</div>
+			</div>
+		{/if}
+
+		<div class="sectionLabel slotLabelMargin">พื้นหลังตาราง (Background)</div>
 		<div class="bgRow">
 			<input class="bgInput" type="color" bind:value={bgColor} />
 			<span class="bgLabel">{bgColor}</span>
@@ -441,64 +580,156 @@
 	</div>
 
 	<div class="canvasArea">
-		<div class="captureWrap" bind:this={captureWrapEl} style="background: {bgColor};">
-			<div
-				class="scheduleGrid"
-				style="grid-template-columns: 110px repeat({days.length}, 230px); grid-template-rows: 70px repeat({slots.length}, minmax(150px, auto));"
-			>
-				<div class="cornerCell"></div>
+		{#if isWallpaperMode}
+			<div class="wallpaperOuterWrap">
+				<div
+					class="captureWrap phoneMode"
+					bind:this={captureWrapEl}
+					style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor};"
+				>
+					<div
+						class="lockscreenTopGap"
+						style="height: {currentPreset.height * (customTopGapPercent / 100)}px;"
+					>
+						{#if !isExporting}
+							<div class="clockGuideOverlay">
+								<div class="clockGuideTime">12:08</div>
+								<div class="clockGuideSub">พื้นที่เว้นให้ Lock Screen Clock</div>
+							</div>
+						{/if}
+					</div>
 
-				{#each days as day (day.id)}
-					<div class="dayHeader">{day.name}</div>
-				{/each}
-
-				{#each slots as slot (slot.id)}
-					<div class="timeCell">{slot.label}</div>
-					{#each days as day (day.id)}
-						{@const cellBlocks = blocks.filter(
-							(b) => b.dayId === day.id && b.timeSlotId === slot.id
-						)}
-						<div class="dayCell">
-							{#each cellBlocks as block (block.id)}
-								{@const colorObj = palette.find((c) => c.id === block.colorId)}
-								{@const colorVal = colorObj ? colorObj.color : '#dddddd'}
-								{@const textVal = textColorFor(colorVal)}
-								<button
-									type="button"
-									class="classBlock {selectedId === block.id ? 'selected' : ''}"
-									style="background: {colorVal}; color: {textVal};"
-									onclick={() => (selectedId = block.id)}
+					<div class="lockscreenCenterSpace">
+						<div
+							class="gridTransformWrap"
+							style="width: {rotateGrid ? gridUnrotatedHeight * finalScale : gridUnrotatedWidth * finalScale}px; height: {rotateGrid ? gridUnrotatedWidth * finalScale : gridUnrotatedHeight * finalScale}px;"
+						>
+							<div
+								class="scheduleGridInner"
+								style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({rotateGrid ? -90 : 0}deg) scale({finalScale});"
+							>
+								<div
+									class="scheduleGrid"
+									style="grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, 210px);"
 								>
-									{#if block.pattern}
-										<div class="cbStripe"></div>
-									{/if}
-									<div class="cbContent">
-										<div class="cbTitle">{block.title}</div>
-										<div class="cbTags">
-											{#if block.time}<span class="cbPill">{block.time}</span>{/if}
-											{#if block.room}<span class="cbPill">{block.room}</span>{/if}
-										</div>
-										<div class="cbTags">
-											{#if block.section}<span class="cbRectWhite">Sec {block.section}</span
-												>{/if}
-											{#if block.type}<span class="cbRectBlack">{block.type}</span>{/if}
-										</div>
-									</div>
-								</button>
-							{/each}
+									<div class="cornerCell"></div>
 
-							{#if !isExporting}
-								<button
-									type="button"
-									class="addBlockBtn"
-									onclick={() => addBlock(day.id, slot.id)}>+ เพิ่มวิชา</button
-								>
-							{/if}
+									{#each days as day (day.id)}
+										<div class="dayHeader">{day.name}</div>
+									{/each}
+
+									{#each slots as slot (slot.id)}
+										<div class="timeCell">{slot.label}</div>
+										{#each days as day (day.id)}
+											{@const cellBlocks = blocks.filter(
+												(b) => b.dayId === day.id && b.timeSlotId === slot.id
+											)}
+											<div class="dayCell">
+												{#each cellBlocks as block (block.id)}
+													{@const colorObj = palette.find((c) => c.id === block.colorId)}
+													{@const colorVal = colorObj ? colorObj.color : '#dddddd'}
+													{@const textVal = textColorFor(colorVal)}
+													<button
+														type="button"
+														class="classBlock {selectedId === block.id ? 'selected' : ''}"
+														style="background: {colorVal}; color: {textVal};"
+														onclick={() => (selectedId = block.id)}
+													>
+														{#if block.pattern}
+															<div class="cbStripe"></div>
+														{/if}
+														<div class="cbContent">
+															<div class="cbTitle">{block.title}</div>
+															<div class="cbTags">
+																{#if block.time}<span class="cbPill">{block.time}</span>{/if}
+																{#if block.room}<span class="cbPill">{block.room}</span>{/if}
+															</div>
+															<div class="cbTags">
+																{#if block.section}<span class="cbRectWhite"
+																		>Sec {block.section}</span
+																	>{/if}
+																{#if block.type}<span class="cbRectBlack">{block.type}</span>{/if}
+															</div>
+														</div>
+													</button>
+												{/each}
+
+												{#if !isExporting}
+													<button
+														type="button"
+														class="addBlockBtn"
+														onclick={() => addBlock(day.id, slot.id)}>+ เพิ่มวิชา</button
+													>
+												{/if}
+											</div>
+										{/each}
+									{/each}
+								</div>
+							</div>
 						</div>
-					{/each}
-				{/each}
+					</div>
+				</div>
 			</div>
-		</div>
+		{:else}
+			<div class="captureWrap" bind:this={captureWrapEl} style="background: {bgColor};">
+				<div
+					class="scheduleGrid"
+					style="grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, minmax(150px, auto));"
+				>
+					<div class="cornerCell"></div>
+
+					{#each days as day (day.id)}
+						<div class="dayHeader">{day.name}</div>
+					{/each}
+
+					{#each slots as slot (slot.id)}
+						<div class="timeCell">{slot.label}</div>
+						{#each days as day (day.id)}
+							{@const cellBlocks = blocks.filter(
+								(b) => b.dayId === day.id && b.timeSlotId === slot.id
+							)}
+							<div class="dayCell">
+								{#each cellBlocks as block (block.id)}
+									{@const colorObj = palette.find((c) => c.id === block.colorId)}
+									{@const colorVal = colorObj ? colorObj.color : '#dddddd'}
+									{@const textVal = textColorFor(colorVal)}
+									<button
+										type="button"
+										class="classBlock {selectedId === block.id ? 'selected' : ''}"
+										style="background: {colorVal}; color: {textVal};"
+										onclick={() => (selectedId = block.id)}
+									>
+										{#if block.pattern}
+											<div class="cbStripe"></div>
+										{/if}
+										<div class="cbContent">
+											<div class="cbTitle">{block.title}</div>
+											<div class="cbTags">
+												{#if block.time}<span class="cbPill">{block.time}</span>{/if}
+												{#if block.room}<span class="cbPill">{block.room}</span>{/if}
+											</div>
+											<div class="cbTags">
+												{#if block.section}<span class="cbRectWhite">Sec {block.section}</span
+													>{/if}
+												{#if block.type}<span class="cbRectBlack">{block.type}</span>{/if}
+											</div>
+										</div>
+									</button>
+								{/each}
+
+								{#if !isExporting}
+									<button
+										type="button"
+										class="addBlockBtn"
+										onclick={() => addBlock(day.id, slot.id)}>+ เพิ่มวิชา</button
+									>
+								{/if}
+							</div>
+						{/each}
+					{/each}
+				</div>
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -589,6 +820,31 @@
 	.exportBtn:disabled {
 		opacity: 0.6;
 		cursor: not-allowed;
+	}
+
+	.wallpaperOptions {
+		background: #27272a;
+		border: 1px solid #3f3f46;
+		border-radius: 8px;
+		padding: 12px;
+		margin-bottom: 16px;
+	}
+
+	.presetBadge {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 11px;
+		color: #a1a1aa;
+		margin-bottom: 10px;
+	}
+
+	.sliderRow {
+		margin-top: 10px;
+	}
+
+	.sliderRow input[type='range'] {
+		width: 100%;
+		accent-color: #6366f1;
+		cursor: pointer;
 	}
 
 	.bgRow {
@@ -802,11 +1058,85 @@
 		align-items: flex-start;
 	}
 
+	.wallpaperOuterWrap {
+		width: fit-content;
+		height: fit-content;
+		transform-origin: top center;
+		transform: scale(0.35);
+		margin-bottom: -1500px;
+	}
+
 	.captureWrap {
 		padding: 40px;
 		display: inline-block;
 		box-sizing: border-box;
 	}
+
+	.captureWrap.phoneMode {
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		border-radius: 48px;
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+	}
+
+	.lockscreenTopGap {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		position: relative;
+	}
+
+	.clockGuideOverlay {
+		border: 2px dashed rgba(0, 0, 0, 0.15);
+		border-radius: 20px;
+		padding: 16px 40px;
+		text-align: center;
+		color: rgba(0, 0, 0, 0.35);
+		font-family: 'Space Grotesk', sans-serif;
+	}
+
+	.clockGuideTime {
+		font-size: 64px;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.clockGuideSub {
+		font-size: 14px;
+		margin-top: 6px;
+		font-family: 'JetBrains Mono', monospace;
+	}
+
+	.lockscreenCenterSpace {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
+		padding-top: 10px;
+		overflow: hidden;
+	}
+
+	.gridTransformWrap {
+		position: relative;
+		display: block;
+		box-sizing: border-box;
+		flex-shrink: 0;
+	}
+
+	.scheduleGridInner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform-origin: center center;
+		box-sizing: border-box;
+	}
+
+
 
 	.scheduleGrid {
 		display: grid;
@@ -972,10 +1302,11 @@
 		letter-spacing: 1px;
 		background: #111111;
 		color: #ffffff;
+		border: 2px solid #111111;
 		border-radius: 4px;
 		padding: 2px 9px;
-		display: inline-flex;
-		align-items: center;
+		display: inline-block;
+		vertical-align: middle;
 		line-height: 1.2;
 		white-space: nowrap;
 		box-sizing: border-box;
