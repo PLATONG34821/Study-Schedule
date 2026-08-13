@@ -403,8 +403,16 @@
 	const exportPng = async () => {
 		if (!captureWrapEl) return;
 		const previousSelected = selectedId;
+		const previousZoom = previewZoom;
+		const previousPanX = previewPanX;
+		const previousPanY = previewPanY;
+
 		selectedId = null;
 		isExporting = true;
+		previewZoom = 1 / 0.35;
+		previewPanX = 0;
+		previewPanY = 0;
+
 		await tick();
 		await document.fonts.ready;
 		await new Promise((resolve) => setTimeout(resolve, 150));
@@ -416,14 +424,15 @@
 				pixelRatio: 1
 			});
 			const downloadLink = document.createElement('a');
-			downloadLink.download = isWallpaperMode
-				? `schedule-wallpaper-${currentPreset.id}.png`
-				: 'schedule.png';
+			downloadLink.download = `schedule-wallpaper-${currentPreset.id}.png`;
 			downloadLink.href = dataUrl;
 			downloadLink.click();
 		} catch (error) {
 			alert('Export failed: ' + (error as Error).message);
 		} finally {
+			previewZoom = previousZoom;
+			previewPanX = previousPanX;
+			previewPanY = previousPanY;
 			isExporting = false;
 			selectedId = previousSelected;
 		}
