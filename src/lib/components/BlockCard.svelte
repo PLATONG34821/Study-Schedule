@@ -6,10 +6,19 @@
 		block: ClassBlock;
 		palette: PaletteColor[];
 		isSelected: boolean;
+		fontSizeTitle?: number;
+		fontSizeBadge?: number;
 		onSelect: () => void;
 	}
 
-	let { block, palette, isSelected, onSelect }: Props = $props();
+	let {
+		block,
+		palette,
+		isSelected,
+		fontSizeTitle = 20,
+		fontSizeBadge = 11,
+		onSelect
+	}: Props = $props();
 
 	let colorObj = $derived(palette.find((c) => c.id === block.colorId));
 	let colorVal = $derived(colorObj ? colorObj.color : '#dddddd');
@@ -29,25 +38,32 @@
 		></div>
 	{/if}
 	<div class="relative z-[1] flex flex-col justify-between h-full w-full gap-2">
-		<div class="font-bold text-[15px] leading-[1.25] break-words">{block.title}</div>
+		<div
+			class="font-extrabold leading-snug break-words"
+			style="font-size: {fontSizeTitle}px;"
+		>{block.title}</div>
 		<div class="flex flex-col gap-1.5 mt-auto">
 			<div class="flex flex-wrap gap-1 items-center">
 				{#if block.time}<span
-						class="bg-white/90 text-[#111111] font-[JetBrains_Mono,monospace] text-[11px] font-semibold px-2 py-0.5 rounded-xl border-[1.5px] border-[#111111]"
+						class="bg-white/90 text-[#111111] font-[JetBrains_Mono,monospace] font-semibold px-2 py-0.5 rounded-xl border-[1.5px] border-[#111111]"
+						style="font-size: {fontSizeBadge}px;"
 					>{block.time}</span
 				>{/if}
 				{#if block.room}<span
-						class="bg-white/90 text-[#111111] font-[JetBrains_Mono,monospace] text-[11px] font-semibold px-2 py-0.5 rounded-xl border-[1.5px] border-[#111111]"
+						class="bg-white/90 text-[#111111] font-[JetBrains_Mono,monospace] font-semibold px-2 py-0.5 rounded-xl border-[1.5px] border-[#111111]"
+						style="font-size: {fontSizeBadge}px;"
 					>{block.room}</span
 				>{/if}
 			</div>
 			<div class="flex flex-wrap gap-1 items-center">
 				{#if block.section}<span
-						class="bg-white text-[#111111] font-[JetBrains_Mono,monospace] text-[11px] font-bold px-1.5 py-0.5 rounded border-[1.5px] border-[#111111]"
+						class="bg-white text-[#111111] font-[JetBrains_Mono,monospace] font-bold px-1.5 py-0.5 rounded border-[1.5px] border-[#111111]"
+						style="font-size: {fontSizeBadge}px;"
 					>Sec {block.section}</span
 				>{/if}
 				{#if block.type}<span
-						class="bg-[#111111] text-white font-[JetBrains_Mono,monospace] text-[11px] font-bold px-1.5 py-0.5 rounded border-[1.5px] border-[#111111] uppercase"
+						class="bg-[#111111] text-white font-[JetBrains_Mono,monospace] font-bold px-1.5 py-0.5 rounded border-[1.5px] border-[#111111] uppercase"
+						style="font-size: {fontSizeBadge}px;"
 					>{block.type}</span
 				>{/if}
 			</div>

@@ -17,6 +17,10 @@
 		timeBgColor: string;
 		dayHeaderBgColor: string;
 		cellBgColor: string;
+		fontSizeDay: number;
+		fontSizeTime: number;
+		fontSizeTitle: number;
+		fontSizeBadge: number;
 		currentPreset: PhonePreset;
 		isWallpaperMode: boolean;
 	}
@@ -35,6 +39,10 @@
 		timeBgColor = $bindable(),
 		dayHeaderBgColor = $bindable(),
 		cellBgColor = $bindable(),
+		fontSizeDay = $bindable(),
+		fontSizeTime = $bindable(),
+		fontSizeTitle = $bindable(),
+		fontSizeBadge = $bindable(),
 		currentPreset,
 		isWallpaperMode
 	}: Props = $props();
@@ -174,6 +182,72 @@
 			</div>
 		</div>
 	{/if}
+
+	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
+		{m.font_sizes()}
+	</div>
+
+	<div class="bg-[#27272a] p-3 rounded-lg border border-[#3f3f46] flex flex-col gap-2.5">
+		<div>
+			<label class="text-xs text-[#a1a1aa] block" for="fontSizeTitleRange">
+				{m.font_size_title({ size: fontSizeTitle })}
+			</label>
+			<input
+				id="fontSizeTitleRange"
+				type="range"
+				min="12"
+				max="36"
+				step="1"
+				bind:value={fontSizeTitle}
+				class="w-full accent-[#6366f1] cursor-pointer"
+			/>
+		</div>
+
+		<div>
+			<label class="text-xs text-[#a1a1aa] block" for="fontSizeDayRange">
+				{m.font_size_day({ size: fontSizeDay })}
+			</label>
+			<input
+				id="fontSizeDayRange"
+				type="range"
+				min="12"
+				max="36"
+				step="1"
+				bind:value={fontSizeDay}
+				class="w-full accent-[#6366f1] cursor-pointer"
+			/>
+		</div>
+
+		<div>
+			<label class="text-xs text-[#a1a1aa] block" for="fontSizeTimeRange">
+				{m.font_size_time({ size: fontSizeTime })}
+			</label>
+			<input
+				id="fontSizeTimeRange"
+				type="range"
+				min="10"
+				max="28"
+				step="1"
+				bind:value={fontSizeTime}
+				class="w-full accent-[#6366f1] cursor-pointer"
+			/>
+		</div>
+
+		<div>
+			<label class="text-xs text-[#a1a1aa] block" for="fontSizeBadgeRange">
+				{m.font_size_badge({ size: fontSizeBadge })}
+			</label>
+			<input
+				id="fontSizeBadgeRange"
+				type="range"
+				min="8"
+				max="20"
+				step="1"
+				bind:value={fontSizeBadge}
+				class="w-full accent-[#6366f1] cursor-pointer"
+			/>
+		</div>
+	</div>
 
 	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
 		{m.grid_colors()}

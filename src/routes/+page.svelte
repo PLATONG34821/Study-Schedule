@@ -53,6 +53,10 @@
 	let timeBgColor = $state<string>('#111111');
 	let dayHeaderBgColor = $state<string>('#ffffff');
 	let cellBgColor = $state<string>('#ffffff');
+	let fontSizeDay = $state<number>(20);
+	let fontSizeTime = $state<number>(16);
+	let fontSizeTitle = $state<number>(20);
+	let fontSizeBadge = $state<number>(11);
 	let isExporting = $state(false);
 	let captureWrapEl = $state<HTMLDivElement | null>(null);
 
@@ -280,6 +284,9 @@
 	};
 
 	const addBlock = (dayId: string, timeSlotId: string) => {
+		const existingBlock = blocks.find((b) => b.dayId === dayId && b.timeSlotId === timeSlotId);
+		if (existingBlock) return;
+
 		const newBlock: ClassBlock = {
 			id: generateUid(),
 			dayId,
@@ -391,6 +398,10 @@
 									{timeBgColor}
 									{dayHeaderBgColor}
 									{cellBgColor}
+									{fontSizeDay}
+									{fontSizeTime}
+									{fontSizeTitle}
+									{fontSizeBadge}
 									onSelectBlock={(id) => (selectedId = id)}
 									onAddBlock={addBlock}
 								/>
@@ -415,6 +426,10 @@
 					{timeBgColor}
 					{dayHeaderBgColor}
 					{cellBgColor}
+					{fontSizeDay}
+					{fontSizeTime}
+					{fontSizeTitle}
+					{fontSizeBadge}
 					onSelectBlock={(id) => (selectedId = id)}
 					onAddBlock={addBlock}
 				/>
@@ -436,6 +451,10 @@
 		bind:timeBgColor
 		bind:dayHeaderBgColor
 		bind:cellBgColor
+		bind:fontSizeDay
+		bind:fontSizeTime
+		bind:fontSizeTitle
+		bind:fontSizeBadge
 		{currentPreset}
 		{isWallpaperMode}
 	/>
