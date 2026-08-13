@@ -75,13 +75,13 @@
 				gridRotationAngle = 0;
 				customTopGapPercent = 0;
 			} else if (selectedPresetId === 'iphone') {
-				gridRotationAngle = 90;
+				gridRotationAngle = 270;
 				customTopGapPercent = 24;
 			}
 		}
 	});
 	let slotRowHeight = $state<number>(210);
-	let dayColumnWidth = $state<number>(230);
+	let dayColumnWidth = $state<number>(270);
 	let leftSidebarWidth = $state<number>(320);
 	let rightDrawerWidth = $state<number>(320);
 
