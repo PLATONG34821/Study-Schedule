@@ -177,7 +177,7 @@
 			</select>
 
 			<div class="mt-2.5">
-				<label class="block text-xs text-[#a1a1aa]" for="clockSpaceRange">
+				<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="clockSpaceRange">
 					{m.clock_space({ percent: customTopGapPercent })}
 				</label>
 				<input
@@ -186,12 +186,12 @@
 					min="0"
 					max="60"
 					bind:value={customTopGapPercent}
-					class="w-full cursor-pointer accent-[#6366f1]"
+					class="w-full cursor-pointer"
 				/>
 			</div>
 
 			<div class="mt-2.5">
-				<label class="block text-xs text-[#a1a1aa]" for="gridScaleRange">
+				<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="gridScaleRange">
 					{m.grid_scale({ percent: Math.round(gridScaleModifier * 100) })}
 				</label>
 				<input
@@ -201,12 +201,12 @@
 					max="1.15"
 					step="0.01"
 					bind:value={gridScaleModifier}
-					class="w-full cursor-pointer accent-[#6366f1]"
+					class="w-full cursor-pointer"
 				/>
 			</div>
 
 			<div class="mt-2.5">
-				<label class="block text-xs text-[#a1a1aa]" for="slotRowHeightRange">
+				<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="slotRowHeightRange">
 					{m.row_height({ height: slotRowHeight })}
 				</label>
 				<input
@@ -216,12 +216,12 @@
 					max="1000"
 					step="5"
 					bind:value={slotRowHeight}
-					class="w-full cursor-pointer accent-[#6366f1]"
+					class="w-full cursor-pointer"
 				/>
 			</div>
 
 			<div class="mt-2.5">
-				<label class="block text-xs text-[#a1a1aa]" for="dayColWidthRange">
+				<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="dayColWidthRange">
 					{m.column_width({ width: dayColumnWidth })}
 				</label>
 				<input
@@ -231,7 +231,7 @@
 					max="1000"
 					step="5"
 					bind:value={dayColumnWidth}
-					class="w-full cursor-pointer accent-[#6366f1]"
+					class="w-full cursor-pointer"
 				/>
 			</div>
 		</div>
@@ -241,9 +241,9 @@
 		{m.font_sizes()}
 	</div>
 
-	<div class="flex flex-col gap-2.5 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
+	<div class="flex flex-col gap-3 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
 		<div>
-			<label class="block text-xs text-[#a1a1aa]" for="fontSizeTitleRange">
+			<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="fontSizeTitleRange">
 				{m.font_size_title({ size: fontSizeTitle })}
 			</label>
 			<input
@@ -253,12 +253,12 @@
 				max="36"
 				step="1"
 				bind:value={fontSizeTitle}
-				class="w-full cursor-pointer accent-[#6366f1]"
+				class="w-full cursor-pointer"
 			/>
 		</div>
 
 		<div>
-			<label class="block text-xs text-[#a1a1aa]" for="fontSizeDayRange">
+			<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="fontSizeDayRange">
 				{m.font_size_day({ size: fontSizeDay })}
 			</label>
 			<input
@@ -268,12 +268,12 @@
 				max="36"
 				step="1"
 				bind:value={fontSizeDay}
-				class="w-full cursor-pointer accent-[#6366f1]"
+				class="w-full cursor-pointer"
 			/>
 		</div>
 
 		<div>
-			<label class="block text-xs text-[#a1a1aa]" for="fontSizeTimeRange">
+			<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="fontSizeTimeRange">
 				{m.font_size_time({ size: fontSizeTime })}
 			</label>
 			<input
@@ -283,12 +283,12 @@
 				max="28"
 				step="1"
 				bind:value={fontSizeTime}
-				class="w-full cursor-pointer accent-[#6366f1]"
+				class="w-full cursor-pointer"
 			/>
 		</div>
 
 		<div>
-			<label class="block text-xs text-[#a1a1aa]" for="fontSizeBadgeRange">
+			<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="fontSizeBadgeRange">
 				{m.font_size_badge({ size: fontSizeBadge })}
 			</label>
 			<input
@@ -298,7 +298,7 @@
 				max="20"
 				step="1"
 				bind:value={fontSizeBadge}
-				class="w-full cursor-pointer accent-[#6366f1]"
+				class="w-full cursor-pointer"
 			/>
 		</div>
 	</div>
