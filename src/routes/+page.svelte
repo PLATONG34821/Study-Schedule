@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { tick, onMount } from 'svelte';
 	import { toPng } from 'html-to-image';
 	import type { Day, Slot, PaletteColor, ClassBlock, PhonePreset } from '$lib/types';
-	import { generateUid } from '$lib/utils';
+	import { generateUid, compressConfigCode, decompressConfigCode } from '$lib/utils';
 	import * as m from '$lib/paraglide/messages';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightDrawer from '$lib/components/RightDrawer.svelte';
 	import ScheduleGrid from '$lib/components/ScheduleGrid.svelte';
 	import BlockEditorModal from '$lib/components/BlockEditorModal.svelte';
+	import ConfigCodeModal from '$lib/components/ConfigCodeModal.svelte';
 
 	const phonePresets: PhonePreset[] = [
 		{ id: 'none', name: 'Original Grid', width: 0, height: 0, topGapRatio: 0, bottomGapPx: 0 },
@@ -334,15 +335,125 @@
 			selectedId = previousSelected;
 		}
 	};
+
+	let linkCopied = $state(false);
+	let isCodeModalOpen = $state(false);
+	let codeModalMode = $state<'export' | 'import'>('export');
+	let exportedCodeString = $state('');
+
+	const getFullConfigObj = () => ({
+		days,
+		slots,
+		palette,
+		blocks,
+		settings: {
+			selectedPresetId,
+			gridRotationAngle,
+			customTopGapPercent,
+			scaleMode,
+			gridScaleModifier,
+			slotRowHeight,
+			dayColumnWidth,
+			bgColor,
+			gridLineColor,
+			timeBgColor,
+			dayHeaderBgColor,
+			cellBgColor,
+			fontSizeDay,
+			fontSizeTime,
+			fontSizeTitle,
+			fontSizeBadge
+		}
+	});
+
+	const openExportCode = async () => {
+		exportedCodeString = await compressConfigCode(getFullConfigObj());
+		codeModalMode = 'export';
+		isCodeModalOpen = true;
+	};
+
+	const openImportCode = () => {
+		codeModalMode = 'import';
+		isCodeModalOpen = true;
+	};
+
+	const handleImportCode = async (codeString: string): Promise<boolean> => {
+		try {
+			const data = (await decompressConfigCode(codeString)) as any;
+			if (!data) return false;
+
+			if (Array.isArray(data.days)) days = data.days;
+			if (Array.isArray(data.slots)) slots = data.slots;
+			if (Array.isArray(data.palette)) palette = data.palette;
+			if (Array.isArray(data.blocks)) blocks = data.blocks;
+
+			const st = data.settings;
+			if (st) {
+				if (st.selectedPresetId) selectedPresetId = st.selectedPresetId;
+				if (typeof st.gridRotationAngle === 'number') gridRotationAngle = st.gridRotationAngle;
+				if (typeof st.customTopGapPercent === 'number') customTopGapPercent = st.customTopGapPercent;
+				if (st.scaleMode) scaleMode = st.scaleMode;
+				if (typeof st.gridScaleModifier === 'number') gridScaleModifier = st.gridScaleModifier;
+				if (typeof st.slotRowHeight === 'number') slotRowHeight = st.slotRowHeight;
+				if (typeof st.dayColumnWidth === 'number') dayColumnWidth = st.dayColumnWidth;
+				if (st.bgColor) bgColor = st.bgColor;
+				if (st.gridLineColor) gridLineColor = st.gridLineColor;
+				if (st.timeBgColor) timeBgColor = st.timeBgColor;
+				if (st.dayHeaderBgColor) dayHeaderBgColor = st.dayHeaderBgColor;
+				if (st.cellBgColor) cellBgColor = st.cellBgColor;
+				if (typeof st.fontSizeDay === 'number') fontSizeDay = st.fontSizeDay;
+				if (typeof st.fontSizeTime === 'number') fontSizeTime = st.fontSizeTime;
+				if (typeof st.fontSizeTitle === 'number') fontSizeTitle = st.fontSizeTitle;
+				if (typeof st.fontSizeBadge === 'number') fontSizeBadge = st.fontSizeBadge;
+			}
+
+			selectedId = null;
+			return true;
+		} catch {
+			return false;
+		}
+	};
+
+	const shareLink = async () => {
+		const code = await compressConfigCode(getFullConfigObj());
+		const shareUrl = `${window.location.origin}${window.location.pathname}#s=${code}`;
+
+		try {
+			await navigator.clipboard.writeText(shareUrl);
+			linkCopied = true;
+			setTimeout(() => {
+				linkCopied = false;
+			}, 2500);
+		} catch {
+			prompt('Copy schedule link:', shareUrl);
+		}
+	};
+
+	onMount(() => {
+		const loadFromHash = async () => {
+			const hash = window.location.hash;
+			if (hash && hash.includes('s=')) {
+				const code = hash.split('s=')[1];
+				if (code) {
+					await handleImportCode(code);
+				}
+			}
+		};
+		loadFromHash();
+	});
 </script>
 
 <div class="flex h-screen w-screen overflow-hidden">
 	<LeftSidebar
 		{isExporting}
+		{linkCopied}
 		bind:days
 		bind:slots
 		bind:palette
 		onExport={exportPng}
+		onOpenExportCode={openExportCode}
+		onOpenImportCode={openImportCode}
+		onShareLink={shareLink}
 		onAddDay={addDay}
 		onRemoveDay={removeDay}
 		onAddSlot={addSlot}
@@ -464,5 +575,13 @@
 		{palette}
 		onClose={() => (selectedId = null)}
 		onDelete={removeBlock}
+	/>
+
+	<ConfigCodeModal
+		isOpen={isCodeModalOpen}
+		mode={codeModalMode}
+		code={exportedCodeString}
+		onClose={() => (isCodeModalOpen = false)}
+		onImport={handleImportCode}
 	/>
 </div>

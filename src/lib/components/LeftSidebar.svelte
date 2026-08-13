@@ -8,7 +8,11 @@
 		slots: Slot[];
 		palette: PaletteColor[];
 		isExporting?: boolean;
+		linkCopied?: boolean;
 		onExport: () => void;
+		onOpenExportCode: () => void;
+		onOpenImportCode: () => void;
+		onShareLink: () => void;
 		onAddDay: () => void;
 		onRemoveDay: (id: string) => void;
 		onAddSlot: () => void;
@@ -22,7 +26,11 @@
 		slots = $bindable(),
 		palette = $bindable(),
 		isExporting = false,
+		linkCopied = false,
 		onExport,
+		onOpenExportCode,
+		onOpenImportCode,
+		onShareLink,
 		onAddDay,
 		onRemoveDay,
 		onAddSlot,
@@ -63,7 +71,7 @@
 	</div>
 
 	<button
-		class="bg-[#6366f1] text-white border-none px-4 py-3 rounded-lg font-semibold text-sm cursor-pointer flex items-center justify-center gap-2 transition-colors duration-150 ease-in-out mt-2 mb-2 font-[inherit] hover:not-disabled:bg-[#4f46e5] disabled:opacity-60 disabled:cursor-not-allowed"
+		class="bg-[#6366f1] text-white border-none px-4 py-3 rounded-lg font-semibold text-sm cursor-pointer flex items-center justify-center gap-2 transition-colors duration-150 ease-in-out mt-2 font-[inherit] hover:not-disabled:bg-[#4f46e5] disabled:opacity-60 disabled:cursor-not-allowed"
 		onclick={onExport}
 		disabled={isExporting}
 	>
@@ -95,6 +103,55 @@
 				<line x1="12" y1="15" x2="12" y2="3" />
 			</svg>
 			{m.export_png()}
+		{/if}
+	</button>
+
+	<div class="flex gap-2 mb-0.5">
+		<button
+			type="button"
+			class="flex-1 bg-[#27272a] text-white border border-[#3f3f46] py-2 px-2 rounded-lg text-xs font-semibold cursor-pointer flex items-center justify-center gap-1.5 hover:bg-[#3f3f46] transition-colors"
+			onclick={onOpenExportCode}
+		>
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="16 18 22 12 16 6" />
+				<polyline points="8 6 2 12 8 18" />
+			</svg>
+			{m.export_code()}
+		</button>
+		<button
+			type="button"
+			class="flex-1 bg-[#27272a] text-white border border-[#3f3f46] py-2 px-2 rounded-lg text-xs font-semibold cursor-pointer flex items-center justify-center gap-1.5 hover:bg-[#3f3f46] transition-colors"
+			onclick={onOpenImportCode}
+		>
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M4 17l6-6-6-6" />
+				<path d="M12 19h8" />
+			</svg>
+			{m.import_code()}
+		</button>
+	</div>
+
+	<button
+		type="button"
+		class="bg-[#27272a] text-white border border-[#3f3f46] px-4 py-2 rounded-lg font-semibold text-xs cursor-pointer flex items-center justify-center gap-2 transition-colors duration-150 ease-in-out font-[inherit] hover:bg-[#3f3f46] mb-1"
+		onclick={onShareLink}
+	>
+		{#if linkCopied}
+			<span class="text-[#22c55e] flex items-center gap-1.5 font-bold">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<polyline points="20 6 9 17 4 12" />
+				</svg>
+				{m.link_copied()}
+			</span>
+		{:else}
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<circle cx="18" cy="5" r="3" />
+				<circle cx="6" cy="12" r="3" />
+				<circle cx="18" cy="19" r="3" />
+				<line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+				<line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+			</svg>
+			{m.share_link()}
 		{/if}
 	</button>
 
