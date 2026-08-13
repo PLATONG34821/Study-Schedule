@@ -5,6 +5,8 @@
 	interface Props {
 		phonePresets: PhonePreset[];
 		selectedPresetId: string;
+		customPresetWidth?: number;
+		customPresetHeight?: number;
 		gridRotationAngle: number;
 		customTopGapPercent: number;
 		scaleMode: 'fillWidth' | 'fitBoth';
@@ -28,6 +30,8 @@
 	let {
 		phonePresets,
 		selectedPresetId = $bindable(),
+		customPresetWidth = $bindable(1000),
+		customPresetHeight = $bindable(1000),
 		gridRotationAngle = $bindable(),
 		customTopGapPercent = $bindable(),
 		scaleMode = $bindable(),
@@ -97,9 +101,52 @@
 		bind:value={selectedPresetId}
 	>
 		{#each phonePresets as preset (preset.id)}
-			<option value={preset.id}>{preset.id === 'none' ? m.preset_original() : preset.name}</option>
+			<option value={preset.id}>{preset.name}</option>
 		{/each}
 	</select>
+
+	<div class="grid grid-cols-2 gap-2 bg-[#27272a] p-3 rounded-lg border border-[#3f3f46]">
+		<div>
+			<label class="text-xs text-[#a1a1aa] block mb-1" for="customWidthInput">Width (px)</label>
+			<input
+				id="customWidthInput"
+				type="number"
+				min="100"
+				max="5000"
+				step="10"
+				value={selectedPresetId === 'custom' ? customPresetWidth : (currentPreset.width || 1206)}
+				oninput={(e) => {
+					const val = parseInt((e.target as HTMLInputElement).value) || 100;
+					customPresetWidth = val;
+					if (selectedPresetId !== 'custom') {
+						customPresetHeight = currentPreset.height || 2622;
+						selectedPresetId = 'custom';
+					}
+				}}
+				class="w-full px-2.5 py-1.5 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] font-[JetBrains_Mono,monospace]"
+			/>
+		</div>
+		<div>
+			<label class="text-xs text-[#a1a1aa] block mb-1" for="customHeightInput">Height (px)</label>
+			<input
+				id="customHeightInput"
+				type="number"
+				min="100"
+				max="5000"
+				step="10"
+				value={selectedPresetId === 'custom' ? customPresetHeight : (currentPreset.height || 2622)}
+				oninput={(e) => {
+					const val = parseInt((e.target as HTMLInputElement).value) || 100;
+					customPresetHeight = val;
+					if (selectedPresetId !== 'custom') {
+						customPresetWidth = currentPreset.width || 1206;
+						selectedPresetId = 'custom';
+					}
+				}}
+				class="w-full px-2.5 py-1.5 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] font-[JetBrains_Mono,monospace]"
+			/>
+		</div>
+	</div>
 
 	{#if isWallpaperMode}
 		<div class="bg-[#27272a] p-3 rounded-lg border border-[#3f3f46] flex flex-col gap-2.5">
@@ -140,8 +187,8 @@
 				<input
 					id="clockSpaceRange"
 					type="range"
-					min="15"
-					max="45"
+					min="0"
+					max="60"
 					bind:value={customTopGapPercent}
 					class="w-full accent-[#6366f1] cursor-pointer"
 				/>
@@ -169,8 +216,8 @@
 				<input
 					id="slotRowHeightRange"
 					type="range"
-					min="140"
-					max="300"
+					min="50"
+					max="1000"
 					step="5"
 					bind:value={slotRowHeight}
 					class="w-full accent-[#6366f1] cursor-pointer"
@@ -184,8 +231,8 @@
 				<input
 					id="dayColWidthRange"
 					type="range"
-					min="150"
-					max="350"
+					min="50"
+					max="1000"
 					step="5"
 					bind:value={dayColumnWidth}
 					class="w-full accent-[#6366f1] cursor-pointer"

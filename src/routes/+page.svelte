@@ -11,16 +11,9 @@
 	import ConfigCodeModal from '$lib/components/ConfigCodeModal.svelte';
 
 	const phonePresets: PhonePreset[] = [
-		{ id: 'none', name: 'Original Grid', width: 0, height: 0, topGapRatio: 0, bottomGapPx: 0 },
-		{ id: 'ip7', name: 'iPhone 7 / 8 / SE (4.7")', width: 750, height: 1334, topGapRatio: 0.28, bottomGapPx: 60 },
-		{ id: 'ip7p', name: 'iPhone 7+ / 8+ (5.5")', width: 1242, height: 2208, topGapRatio: 0.28, bottomGapPx: 60 },
-		{ id: 'ipX', name: 'iPhone X / XS / 11 Pro / 12 mini (5.8"/5.4")', width: 1125, height: 2436, topGapRatio: 0.30, bottomGapPx: 80 },
-		{ id: 'ipXR', name: 'iPhone 11 / XR (6.1")', width: 828, height: 1792, topGapRatio: 0.30, bottomGapPx: 80 },
-		{ id: 'ipXSMax', name: 'iPhone 11 Pro Max / XS Max (6.5")', width: 1242, height: 2688, topGapRatio: 0.30, bottomGapPx: 80 },
-		{ id: 'ip12', name: 'iPhone 12 / 13 / 14 (6.1")', width: 1170, height: 2532, topGapRatio: 0.30, bottomGapPx: 80 },
-		{ id: 'ip12PM', name: 'iPhone 12 Pro Max / 13 Pro Max / 14 Plus (6.7")', width: 1284, height: 2778, topGapRatio: 0.30, bottomGapPx: 80 },
-		{ id: 'ip14Pro', name: 'iPhone 14 Pro / 15 / 16 / 16 Pro (6.1"-6.3")', width: 1179, height: 2556, topGapRatio: 0.32, bottomGapPx: 80 },
-		{ id: 'ip14PM', name: 'iPhone 14 Pro Max / 15 Pro Max / 16 Pro Max (6.7"-6.9")', width: 1290, height: 2796, topGapRatio: 0.32, bottomGapPx: 80 }
+		{ id: 'desktop', name: 'Desktop (1,920 × 1,080)', width: 1920, height: 1080, topGapRatio: 0, bottomGapPx: 0 },
+		{ id: 'iphone', name: 'iPhone (1,206 × 2,622)', width: 1206, height: 2622, topGapRatio: 0.32, bottomGapPx: 80 },
+		{ id: 'custom', name: 'Custom Size', width: 1920, height: 1080, topGapRatio: 0, bottomGapPx: 0 }
 	];
 
 	let days = $state<Day[]>([
@@ -61,18 +54,114 @@
 	let isExporting = $state(false);
 	let captureWrapEl = $state<HTMLDivElement | null>(null);
 
-	let selectedPresetId = $state<string>('ip14Pro');
-	let gridRotationAngle = $state<number>(90);
+	let selectedPresetId = $state<string>('desktop');
+	let customPresetWidth = $state<number>(1920);
+	let customPresetHeight = $state<number>(1080);
+	let gridRotationAngle = $state<number>(0);
 	let is90or270 = $derived(gridRotationAngle === 90 || gridRotationAngle === 270);
-	let customTopGapPercent = $state<number>(24);
+	let customTopGapPercent = $state<number>(0);
 	let scaleMode = $state<'fillWidth' | 'fitBoth'>('fitBoth');
 	let gridScaleModifier = $state<number>(1.0);
+
+	let lastPresetId = $state<string>('');
+	$effect(() => {
+		if (!lastPresetId) {
+			lastPresetId = selectedPresetId;
+			return;
+		}
+		if (selectedPresetId !== lastPresetId) {
+			lastPresetId = selectedPresetId;
+			if (selectedPresetId === 'desktop') {
+				gridRotationAngle = 0;
+				customTopGapPercent = 0;
+			} else if (selectedPresetId === 'iphone') {
+				gridRotationAngle = 90;
+				customTopGapPercent = 24;
+			}
+		}
+	});
 	let slotRowHeight = $state<number>(210);
 	let dayColumnWidth = $state<number>(230);
 	let leftSidebarWidth = $state<number>(320);
 	let rightDrawerWidth = $state<number>(320);
 
-	let currentPreset = $derived(phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[0]);
+	let previewZoom = $state<number>(1);
+	let previewPanX = $state<number>(0);
+	let previewPanY = $state<number>(0);
+	let isCanvasPanning = $state<boolean>(false);
+
+	const zoomIn = () => {
+		previewZoom = Math.min(Math.round((previewZoom + 0.15) * 100) / 100, 3);
+	};
+
+	const zoomOut = () => {
+		previewZoom = Math.max(Math.round((previewZoom - 0.15) * 100) / 100, 0.2);
+	};
+
+	const resetPreviewView = () => {
+		previewZoom = 1;
+		previewPanX = 0;
+		previewPanY = 0;
+	};
+
+	const centerPreviewPosition = () => {
+		previewPanX = 0;
+		previewPanY = 0;
+	};
+
+	const handleCanvasWheel = (e: WheelEvent) => {
+		if (e.ctrlKey || e.metaKey) {
+			e.preventDefault();
+			const zoomDelta = e.deltaY < 0 ? 0.1 : -0.1;
+			previewZoom = Math.min(Math.max(Math.round((previewZoom + zoomDelta) * 100) / 100, 0.2), 3);
+		}
+	};
+
+	const handleCanvasPointerDown = (e: PointerEvent) => {
+		const target = e.target as HTMLElement;
+		if (
+			target.closest('button') ||
+			target.closest('input') ||
+			target.closest('select') ||
+			target.closest('a') ||
+			target.closest('textarea')
+		) {
+			return;
+		}
+
+		isCanvasPanning = true;
+		const container = e.currentTarget as HTMLElement;
+		container.setPointerCapture(e.pointerId);
+		const startX = e.clientX - previewPanX;
+		const startY = e.clientY - previewPanY;
+
+		const handlePointerMove = (moveEvent: PointerEvent) => {
+			if (!isCanvasPanning) return;
+			previewPanX = moveEvent.clientX - startX;
+			previewPanY = moveEvent.clientY - startY;
+		};
+
+		const handlePointerUp = () => {
+			isCanvasPanning = false;
+			container.removeEventListener('pointermove', handlePointerMove as EventListener);
+			container.removeEventListener('pointerup', handlePointerUp as EventListener);
+		};
+
+		container.addEventListener('pointermove', handlePointerMove as EventListener);
+		container.addEventListener('pointerup', handlePointerUp as EventListener);
+	};
+
+	let currentPreset = $derived.by(() => {
+		const preset = phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[1];
+		if (selectedPresetId === 'custom') {
+			return {
+				...preset,
+				width: Math.max(customPresetWidth || 100, 100),
+				height: Math.max(customPresetHeight || 100, 100)
+			};
+		}
+		return preset;
+	});
 	let isWallpaperMode = $derived(selectedPresetId !== 'none');
 
 	let gridUnrotatedWidth = $derived(110 + days.length * dayColumnWidth + 6);
@@ -350,6 +439,8 @@
 		blocks,
 		settings: {
 			selectedPresetId,
+			customPresetWidth,
+			customPresetHeight,
 			gridRotationAngle,
 			customTopGapPercent,
 			scaleMode,
@@ -391,7 +482,11 @@
 
 			const st = data.settings;
 			if (st) {
-				if (st.selectedPresetId) selectedPresetId = st.selectedPresetId;
+				if (st.selectedPresetId) {
+					selectedPresetId = st.selectedPresetId.startsWith('ip') ? 'iphone' : st.selectedPresetId;
+				}
+				if (typeof st.customPresetWidth === 'number') customPresetWidth = st.customPresetWidth;
+				if (typeof st.customPresetHeight === 'number') customPresetHeight = st.customPresetHeight;
 				if (typeof st.gridRotationAngle === 'number') gridRotationAngle = st.gridRotationAngle;
 				if (typeof st.customTopGapPercent === 'number') customTopGapPercent = st.customTopGapPercent;
 				if (st.scaleMode) scaleMode = st.scaleMode;
@@ -465,96 +560,167 @@
 		onRemoveColor={removeColor}
 	/>
 
-	<div class="flex-1 overflow-auto p-10 flex justify-center items-start">
-		{#if isWallpaperMode}
-			<div class="w-fit h-fit origin-top scale-[0.35] -mb-[1500px]">
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="flex-1 relative overflow-hidden flex flex-col bg-[#121214] select-none"
+		onwheel={handleCanvasWheel}
+		onpointerdown={handleCanvasPointerDown}
+	>
+		<div
+			class="w-full h-full flex items-center justify-center p-10 box-border"
+			style="cursor: {isCanvasPanning ? 'grabbing' : 'grab'}; transform: translate({previewPanX}px, {previewPanY}px);"
+		>
+			{#if isWallpaperMode}
 				<div
-					class="p-0 flex flex-col overflow-hidden rounded-[48px] shadow-none"
-					bind:this={captureWrapEl}
-					style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor};"
+					class="shrink-0 relative transition-transform duration-75 ease-out"
+					style="width: {currentPreset.width * 0.35 * previewZoom}px; height: {currentPreset.height * 0.35 * previewZoom}px;"
 				>
 					<div
-						class="flex items-center justify-center box-border relative"
-						style="height: {currentPreset.height * (customTopGapPercent / 100)}px;"
+						class="p-0 flex flex-col overflow-hidden rounded-[48px] shadow-none origin-top-left transition-transform duration-75 ease-out"
+						bind:this={captureWrapEl}
+						style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor}; transform: scale({0.35 * previewZoom});"
 					>
-						{#if !isExporting}
-							<div
-								class="border-2 border-dashed border-black/15 rounded-[20px] px-10 py-4 text-center text-black/35 font-[Space_Grotesk,sans-serif]"
-							>
-								<div class="text-[64px] font-bold leading-none">12:08</div>
-								<div class="text-sm mt-1.5 font-[JetBrains_Mono,monospace]">
-									{m.clock_space_guide()}
-								</div>
-							</div>
-						{/if}
-					</div>
-
-					<div class="flex-1 flex flex-col items-center justify-start pt-2.5 overflow-hidden">
 						<div
-							class="relative"
-							style="width: {is90or270 ? gridUnrotatedHeight * finalScale : gridUnrotatedWidth * finalScale}px; height: {is90or270 ? gridUnrotatedWidth * finalScale : gridUnrotatedHeight * finalScale}px;"
+							class="flex items-center justify-center box-border relative"
+							style="height: {currentPreset.height * (customTopGapPercent / 100)}px;"
 						>
+							{#if !isExporting && customTopGapPercent > 0}
+								<div
+									class="border-2 border-dashed border-black/15 rounded-[20px] px-10 py-4 text-center text-black/35 font-[Space_Grotesk,sans-serif]"
+								>
+									<div class="text-[64px] font-bold leading-none">12:08</div>
+									<div class="text-sm mt-1.5 font-[JetBrains_Mono,monospace]">
+										{m.clock_space_guide()}
+									</div>
+								</div>
+							{/if}
+						</div>
+
+						<div class="flex-1 flex flex-col items-center justify-start pt-2.5 overflow-hidden">
 							<div
-								class="absolute top-1/2 left-1/2 origin-center box-border"
-								style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({-gridRotationAngle}deg) scale({finalScale});"
+								class="relative"
+								style="width: {is90or270 ? gridUnrotatedHeight * finalScale : gridUnrotatedWidth * finalScale}px; height: {is90or270 ? gridUnrotatedWidth * finalScale : gridUnrotatedHeight * finalScale}px;"
 							>
-								<ScheduleGrid
-									{days}
-									{slots}
-									{blocks}
-									{palette}
-									{selectedId}
-									{isExporting}
-									{dayColumnWidth}
-									{slotRowHeight}
-									{isWallpaperMode}
-									{gridLineColor}
-									{timeBgColor}
-									{dayHeaderBgColor}
-									{cellBgColor}
-									{fontSizeDay}
-									{fontSizeTime}
-									{fontSizeTitle}
-									{fontSizeBadge}
-									onSelectBlock={(id) => (selectedId = id)}
-									onAddBlock={addBlock}
-								/>
+								<div
+									class="absolute top-1/2 left-1/2 origin-center box-border"
+									style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({-gridRotationAngle}deg) scale({finalScale});"
+								>
+									<ScheduleGrid
+										{days}
+										{slots}
+										{blocks}
+										{palette}
+										{selectedId}
+										{isExporting}
+										{dayColumnWidth}
+										{slotRowHeight}
+										{isWallpaperMode}
+										{gridLineColor}
+										{timeBgColor}
+										{dayHeaderBgColor}
+										{cellBgColor}
+										{fontSizeDay}
+										{fontSizeTime}
+										{fontSizeTitle}
+										{fontSizeBadge}
+										onSelectBlock={(id) => (selectedId = id)}
+										onAddBlock={addBlock}
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		{:else}
-			<div class="p-10 inline-block box-border" bind:this={captureWrapEl} style="background: {bgColor};">
-				<ScheduleGrid
-					{days}
-					{slots}
-					{blocks}
-					{palette}
-					{selectedId}
-					{isExporting}
-					{dayColumnWidth}
-					{slotRowHeight}
-					{isWallpaperMode}
-					{gridLineColor}
-					{timeBgColor}
-					{dayHeaderBgColor}
-					{cellBgColor}
-					{fontSizeDay}
-					{fontSizeTime}
-					{fontSizeTitle}
-					{fontSizeBadge}
-					onSelectBlock={(id) => (selectedId = id)}
-					onAddBlock={addBlock}
-				/>
-			</div>
-		{/if}
+			{:else}
+				<div
+					class="p-10 inline-block box-border origin-center transition-transform duration-75 ease-out"
+					bind:this={captureWrapEl}
+					style="background: {bgColor}; transform: scale({previewZoom});"
+				>
+					<ScheduleGrid
+						{days}
+						{slots}
+						{blocks}
+						{palette}
+						{selectedId}
+						{isExporting}
+						{dayColumnWidth}
+						{slotRowHeight}
+						{isWallpaperMode}
+						{gridLineColor}
+						{timeBgColor}
+						{dayHeaderBgColor}
+						{cellBgColor}
+						{fontSizeDay}
+						{fontSizeTime}
+						{fontSizeTitle}
+						{fontSizeBadge}
+						onSelectBlock={(id) => (selectedId = id)}
+						onAddBlock={addBlock}
+					/>
+				</div>
+			{/if}
+		</div>
+
+		<!-- Floating View & Zoom Toolbar -->
+		<div
+			class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-[#18181b]/90 backdrop-blur-md border border-[#3f3f46] text-[#e4e4e7] px-3.5 py-2 rounded-full shadow-2xl flex items-center gap-2 z-30"
+		>
+			<button
+				type="button"
+				class="bg-[#27272a] hover:bg-[#3f3f46] text-white rounded-full w-7 h-7 flex items-center justify-center border border-[#3f3f46] cursor-pointer text-sm font-bold transition-colors"
+				onclick={zoomOut}
+				title="Zoom Out"
+			>
+				–
+			</button>
+
+			<button
+				type="button"
+				class="bg-transparent hover:bg-[#27272a] text-white px-2 py-1 rounded text-xs font-mono font-semibold cursor-pointer border-none transition-colors"
+				onclick={resetPreviewView}
+				title="Reset Zoom & Position"
+			>
+				{Math.round(previewZoom * 100)}%
+			</button>
+
+			<button
+				type="button"
+				class="bg-[#27272a] hover:bg-[#3f3f46] text-white rounded-full w-7 h-7 flex items-center justify-center border border-[#3f3f46] cursor-pointer text-sm font-bold transition-colors"
+				onclick={zoomIn}
+				title="Zoom In"
+			>
+				+
+			</button>
+
+			<div class="w-px h-4 bg-[#3f3f46] mx-1"></div>
+
+			<button
+				type="button"
+				class="bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white px-3 py-1 rounded-full text-xs font-semibold cursor-pointer border border-[#3f3f46] transition-colors"
+				onclick={centerPreviewPosition}
+				title="Center Canvas Position"
+			>
+				Center
+			</button>
+
+			<button
+				type="button"
+				class="bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white px-3 py-1 rounded-full text-xs font-semibold cursor-pointer border border-[#3f3f46] transition-colors"
+				onclick={resetPreviewView}
+				title="Reset Pan & Zoom"
+			>
+				Reset
+			</button>
+		</div>
 	</div>
 
 	<RightDrawer
 		{phonePresets}
 		bind:width={rightDrawerWidth}
 		bind:selectedPresetId
+		bind:customPresetWidth
+		bind:customPresetHeight
 		bind:gridRotationAngle
 		bind:customTopGapPercent
 		bind:scaleMode
