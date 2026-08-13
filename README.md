@@ -1,42 +1,50 @@
-# sv
+# Study Schedule
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+An interactive study schedule editor and phone/desktop wallpaper generator built with Svelte 5, SvelteKit, Tailwind CSS v4, and Cloudflare Pages.
 
-## Creating a project
+![Svelte 5](https://img.shields.io/badge/Svelte-5-orange) ![SvelteKit](https://img.shields.io/badge/SvelteKit-2-red) ![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-blue) ![Cloudflare Pages](https://img.shields.io/badge/Deploy-Cloudflare_Pages-f38020)
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
 
-```sh
-# create a new project
-npx sv create my-app
-```
+- **Interactive Schedule Editor**: Custom days (columns), time slots (rows), subjects, colors, and diagonal stripe patterns.
+- **Wallpaper Generator**: Export schedule wallpapers for Desktop (1920×1080) and iPhone (1206×2622) with grid rotation (90°, 180°, 270°), custom clock space padding, and scale modes.
+- **PNG Export**: High-resolution image export powered by `html-to-image`.
+- **Import & Export Configuration**: Share schedules instantly via URL share links or compressed configuration codes.
+- **Multilingual Support**: Toggle between English (`EN`) and Thai (`TH`) seamlessly via `@inlang/paraglide-js`.
+- **Cloudflare Pages Deployment**: Built-in support using `@sveltejs/adapter-cloudflare` and `wrangler.json` (`nodejs_compat`).
 
-To recreate this project with the same configuration:
+## Tech Stack
 
-```sh
-# recreate this project
-bun x sv@0.17.0 create --template minimal --types ts --add prettier eslint tailwindcss="plugins:none" paraglide="languageTags:en, th+demo:yes" --install bun ./
-```
+- **Framework**: Svelte 5 (Runes mode) & SvelteKit 2
+- **Styling**: Tailwind CSS v4
+- **Internationalization**: Paraglide.js (`@inlang/paraglide-js`)
+- **Exporting**: `html-to-image`
+- **Adapter**: `@sveltejs/adapter-cloudflare`
+- **Runtime / Package Manager**: Bun / Node.js
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
+## Project Setup
 
 ```sh
-npm run build
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
+
+# Type check
+bun run check
+
+# Lint & Format
+bun run lint
+bun run format
 ```
 
-You can preview the production build with `npm run preview`.
+## Deployment
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Build for Cloudflare Pages:
+
+```sh
+bun run build
+```
+
+This project includes a `wrangler.json` configuration file with the `nodejs_compat` compatibility flag for seamless deployment to Cloudflare Pages Functions.
