@@ -411,7 +411,9 @@
 		try {
 			const dataUrl = await toPng(captureWrapEl, {
 				backgroundColor: bgColor,
-				pixelRatio: isWallpaperMode ? 1 : 2
+				width: currentPreset.width,
+				height: currentPreset.height,
+				pixelRatio: 1
 			});
 			const downloadLink = document.createElement('a');
 			downloadLink.download = isWallpaperMode
@@ -572,13 +574,15 @@
 		>
 			{#if isWallpaperMode}
 				<div
-					class="shrink-0 relative transition-transform duration-75 ease-out"
-					style="width: {currentPreset.width * 0.35 * previewZoom}px; height: {currentPreset.height * 0.35 * previewZoom}px;"
+					class="shrink-0 relative origin-center transition-transform duration-75 ease-out"
+					style="transform: scale({0.35 * previewZoom});"
 				>
 					<div
-						class="p-0 flex flex-col overflow-hidden rounded-[48px] shadow-none origin-top-left transition-transform duration-75 ease-out"
+						class="p-0 flex flex-col overflow-hidden {selectedPresetId === 'iphone'
+							? 'rounded-[48px]'
+							: 'rounded-2xl'} shadow-none"
 						bind:this={captureWrapEl}
-						style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor}; transform: scale({0.35 * previewZoom});"
+						style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor};"
 					>
 						<div
 							class="flex items-center justify-center box-border relative"
