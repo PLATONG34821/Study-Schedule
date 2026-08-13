@@ -30,8 +30,8 @@
 	let {
 		phonePresets,
 		selectedPresetId = $bindable(),
-		customPresetWidth = $bindable(1000),
-		customPresetHeight = $bindable(1000),
+		customPresetWidth = $bindable(1920),
+		customPresetHeight = $bindable(1080),
 		gridRotationAngle = $bindable(),
 		customTopGapPercent = $bindable(),
 		scaleMode = $bindable(),
@@ -79,25 +79,25 @@
 </script>
 
 <aside
-	class="relative bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-l border-[#27272a] shadow-none z-10 shrink-0"
+	class="relative z-10 box-border flex shrink-0 flex-col gap-3 overflow-y-auto border-l border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-none"
 	style="width: {width}px;"
 >
 	<div
-		class="absolute top-0 left-0 w-2 h-full cursor-col-resize hover:bg-[#6366f1]/50 active:bg-[#6366f1] transition-colors z-20"
+		class="absolute top-0 left-0 z-20 h-full w-2 cursor-col-resize transition-colors hover:bg-[#6366f1]/50 active:bg-[#6366f1]"
 		onpointerdown={handlePointerDown}
 		role="separator"
 		aria-label="Resize right drawer"
 	></div>
 	<div>
-		<h2 class="text-xl font-bold m-0 -tracking-[0.5px] text-white">{m.display_settings()}</h2>
-		<p class="text-xs text-[#a1a1aa] mt-1">{m.display_subtitle()}</p>
+		<h2 class="m-0 text-xl font-bold -tracking-[0.5px] text-white">{m.display_settings()}</h2>
+		<p class="mt-1 text-xs text-[#a1a1aa]">{m.display_subtitle()}</p>
 	</div>
 
-	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-2">
+	<div class="mt-2 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.preset_label()}
 	</div>
 	<select
-		class="w-full px-3 py-2.5 rounded-lg border border-[#3f3f46] bg-[#27272a] text-white text-[13px] font-[inherit] cursor-pointer"
+		class="w-full cursor-pointer rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 font-[inherit] text-[13px] text-white"
 		bind:value={selectedPresetId}
 	>
 		{#each phonePresets as preset (preset.id)}
@@ -105,16 +105,16 @@
 		{/each}
 	</select>
 
-	<div class="grid grid-cols-2 gap-2 bg-[#27272a] p-3 rounded-lg border border-[#3f3f46]">
+	<div class="grid grid-cols-2 gap-2 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
 		<div>
-			<label class="text-xs text-[#a1a1aa] block mb-1" for="customWidthInput">Width (px)</label>
+			<label class="mb-1 block text-xs text-[#a1a1aa]" for="customWidthInput">Width (px)</label>
 			<input
 				id="customWidthInput"
 				type="number"
 				min="100"
 				max="5000"
 				step="10"
-				value={selectedPresetId === 'custom' ? customPresetWidth : (currentPreset.width || 1206)}
+				value={selectedPresetId === 'custom' ? customPresetWidth : currentPreset.width || 1206}
 				oninput={(e) => {
 					const val = parseInt((e.target as HTMLInputElement).value) || 100;
 					customPresetWidth = val;
@@ -123,18 +123,18 @@
 						selectedPresetId = 'custom';
 					}
 				}}
-				class="w-full px-2.5 py-1.5 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] font-[JetBrains_Mono,monospace]"
+				class="w-full rounded-md border border-[#3f3f46] bg-[#18181b] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
 			/>
 		</div>
 		<div>
-			<label class="text-xs text-[#a1a1aa] block mb-1" for="customHeightInput">Height (px)</label>
+			<label class="mb-1 block text-xs text-[#a1a1aa]" for="customHeightInput">Height (px)</label>
 			<input
 				id="customHeightInput"
 				type="number"
 				min="100"
 				max="5000"
 				step="10"
-				value={selectedPresetId === 'custom' ? customPresetHeight : (currentPreset.height || 2622)}
+				value={selectedPresetId === 'custom' ? customPresetHeight : currentPreset.height || 2622}
 				oninput={(e) => {
 					const val = parseInt((e.target as HTMLInputElement).value) || 100;
 					customPresetHeight = val;
@@ -143,23 +143,21 @@
 						selectedPresetId = 'custom';
 					}
 				}}
-				class="w-full px-2.5 py-1.5 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] font-[JetBrains_Mono,monospace]"
+				class="w-full rounded-md border border-[#3f3f46] bg-[#18181b] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
 			/>
 		</div>
 	</div>
 
 	{#if isWallpaperMode}
-		<div class="bg-[#27272a] p-3 rounded-lg border border-[#3f3f46] flex flex-col gap-2.5">
-			<div class="font-[JetBrains_Mono,monospace] text-[11px] text-[#a1a1aa] mb-2.5">
+		<div class="flex flex-col gap-2.5 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
+			<div class="mb-2.5 font-[JetBrains_Mono,monospace] text-[11px] text-[#a1a1aa]">
 				{currentPreset.width} × {currentPreset.height} px
 			</div>
 
-			<label class="text-xs text-[#a1a1aa] block" for="gridRotationSelect"
-				>{m.rotate_grid()}</label
-			>
+			<label class="block text-xs text-[#a1a1aa]" for="gridRotationSelect">{m.rotate_grid()}</label>
 			<select
 				id="gridRotationSelect"
-				class="w-full px-2.5 py-2 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] box-border font-[inherit]"
+				class="box-border w-full rounded-md border border-[#3f3f46] bg-[#18181b] px-2.5 py-2 font-[inherit] text-[13px] text-white"
 				bind:value={gridRotationAngle}
 			>
 				<option value={90}>{m.rotate_90()}</option>
@@ -168,12 +166,10 @@
 				<option value={0}>{m.rotate_0()}</option>
 			</select>
 
-			<label class="text-xs text-[#a1a1aa] block" for="scaleModeSelect"
-				>{m.scale_mode()}</label
-			>
+			<label class="block text-xs text-[#a1a1aa]" for="scaleModeSelect">{m.scale_mode()}</label>
 			<select
 				id="scaleModeSelect"
-				class="w-full px-2.5 py-2 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] box-border font-[inherit]"
+				class="box-border w-full rounded-md border border-[#3f3f46] bg-[#18181b] px-2.5 py-2 font-[inherit] text-[13px] text-white"
 				bind:value={scaleMode}
 			>
 				<option value="fillWidth">{m.scale_fill_width()}</option>
@@ -181,7 +177,7 @@
 			</select>
 
 			<div class="mt-2.5">
-				<label class="text-xs text-[#a1a1aa] block" for="clockSpaceRange">
+				<label class="block text-xs text-[#a1a1aa]" for="clockSpaceRange">
 					{m.clock_space({ percent: customTopGapPercent })}
 				</label>
 				<input
@@ -190,12 +186,12 @@
 					min="0"
 					max="60"
 					bind:value={customTopGapPercent}
-					class="w-full accent-[#6366f1] cursor-pointer"
+					class="w-full cursor-pointer accent-[#6366f1]"
 				/>
 			</div>
 
 			<div class="mt-2.5">
-				<label class="text-xs text-[#a1a1aa] block" for="gridScaleRange">
+				<label class="block text-xs text-[#a1a1aa]" for="gridScaleRange">
 					{m.grid_scale({ percent: Math.round(gridScaleModifier * 100) })}
 				</label>
 				<input
@@ -205,12 +201,12 @@
 					max="1.15"
 					step="0.01"
 					bind:value={gridScaleModifier}
-					class="w-full accent-[#6366f1] cursor-pointer"
+					class="w-full cursor-pointer accent-[#6366f1]"
 				/>
 			</div>
 
 			<div class="mt-2.5">
-				<label class="text-xs text-[#a1a1aa] block" for="slotRowHeightRange">
+				<label class="block text-xs text-[#a1a1aa]" for="slotRowHeightRange">
 					{m.row_height({ height: slotRowHeight })}
 				</label>
 				<input
@@ -220,12 +216,12 @@
 					max="1000"
 					step="5"
 					bind:value={slotRowHeight}
-					class="w-full accent-[#6366f1] cursor-pointer"
+					class="w-full cursor-pointer accent-[#6366f1]"
 				/>
 			</div>
 
 			<div class="mt-2.5">
-				<label class="text-xs text-[#a1a1aa] block" for="dayColWidthRange">
+				<label class="block text-xs text-[#a1a1aa]" for="dayColWidthRange">
 					{m.column_width({ width: dayColumnWidth })}
 				</label>
 				<input
@@ -235,19 +231,19 @@
 					max="1000"
 					step="5"
 					bind:value={dayColumnWidth}
-					class="w-full accent-[#6366f1] cursor-pointer"
+					class="w-full cursor-pointer accent-[#6366f1]"
 				/>
 			</div>
 		</div>
 	{/if}
 
-	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
+	<div class="mt-3.5 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.font_sizes()}
 	</div>
 
-	<div class="bg-[#27272a] p-3 rounded-lg border border-[#3f3f46] flex flex-col gap-2.5">
+	<div class="flex flex-col gap-2.5 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
 		<div>
-			<label class="text-xs text-[#a1a1aa] block" for="fontSizeTitleRange">
+			<label class="block text-xs text-[#a1a1aa]" for="fontSizeTitleRange">
 				{m.font_size_title({ size: fontSizeTitle })}
 			</label>
 			<input
@@ -257,12 +253,12 @@
 				max="36"
 				step="1"
 				bind:value={fontSizeTitle}
-				class="w-full accent-[#6366f1] cursor-pointer"
+				class="w-full cursor-pointer accent-[#6366f1]"
 			/>
 		</div>
 
 		<div>
-			<label class="text-xs text-[#a1a1aa] block" for="fontSizeDayRange">
+			<label class="block text-xs text-[#a1a1aa]" for="fontSizeDayRange">
 				{m.font_size_day({ size: fontSizeDay })}
 			</label>
 			<input
@@ -272,12 +268,12 @@
 				max="36"
 				step="1"
 				bind:value={fontSizeDay}
-				class="w-full accent-[#6366f1] cursor-pointer"
+				class="w-full cursor-pointer accent-[#6366f1]"
 			/>
 		</div>
 
 		<div>
-			<label class="text-xs text-[#a1a1aa] block" for="fontSizeTimeRange">
+			<label class="block text-xs text-[#a1a1aa]" for="fontSizeTimeRange">
 				{m.font_size_time({ size: fontSizeTime })}
 			</label>
 			<input
@@ -287,12 +283,12 @@
 				max="28"
 				step="1"
 				bind:value={fontSizeTime}
-				class="w-full accent-[#6366f1] cursor-pointer"
+				class="w-full cursor-pointer accent-[#6366f1]"
 			/>
 		</div>
 
 		<div>
-			<label class="text-xs text-[#a1a1aa] block" for="fontSizeBadgeRange">
+			<label class="block text-xs text-[#a1a1aa]" for="fontSizeBadgeRange">
 				{m.font_size_badge({ size: fontSizeBadge })}
 			</label>
 			<input
@@ -302,23 +298,21 @@
 				max="20"
 				step="1"
 				bind:value={fontSizeBadge}
-				class="w-full accent-[#6366f1] cursor-pointer"
+				class="w-full cursor-pointer accent-[#6366f1]"
 			/>
 		</div>
 	</div>
 
-	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
+	<div class="mt-3.5 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.grid_colors()}
 	</div>
 
 	<div class="flex flex-col gap-1">
-		<label class="text-xs text-[#a1a1aa] block" for="gridLineColorInput"
-			>{m.line_color()}</label
-		>
+		<label class="block text-xs text-[#a1a1aa]" for="gridLineColorInput">{m.line_color()}</label>
 		<div class="flex items-center gap-2.5">
 			<input
 				id="gridLineColorInput"
-				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
 				type="color"
 				bind:value={gridLineColor}
 			/>
@@ -327,13 +321,13 @@
 	</div>
 
 	<div class="flex flex-col gap-1">
-		<label class="text-xs text-[#a1a1aa] block" for="dayHeaderBgColorInput"
+		<label class="block text-xs text-[#a1a1aa]" for="dayHeaderBgColorInput"
 			>{m.day_header_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
 			<input
 				id="dayHeaderBgColorInput"
-				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
 				type="color"
 				bind:value={dayHeaderBgColor}
 			/>
@@ -342,13 +336,11 @@
 	</div>
 
 	<div class="flex flex-col gap-1">
-		<label class="text-xs text-[#a1a1aa] block" for="timeBgColorInput"
-			>{m.time_slot_color()}</label
-		>
+		<label class="block text-xs text-[#a1a1aa]" for="timeBgColorInput">{m.time_slot_color()}</label>
 		<div class="flex items-center gap-2.5">
 			<input
 				id="timeBgColorInput"
-				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
 				type="color"
 				bind:value={timeBgColor}
 			/>
@@ -357,13 +349,13 @@
 	</div>
 
 	<div class="flex flex-col gap-1">
-		<label class="text-xs text-[#a1a1aa] block" for="cellBgColorInput"
+		<label class="block text-xs text-[#a1a1aa]" for="cellBgColorInput"
 			>{m.subject_cell_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
 			<input
 				id="cellBgColorInput"
-				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
 				type="color"
 				bind:value={cellBgColor}
 			/>
@@ -372,13 +364,11 @@
 	</div>
 
 	<div class="flex flex-col gap-1">
-		<label class="text-xs text-[#a1a1aa] block" for="bgColorInput"
-			>{m.wallpaper_bg_color()}</label
-		>
+		<label class="block text-xs text-[#a1a1aa]" for="bgColorInput">{m.wallpaper_bg_color()}</label>
 		<div class="flex items-center gap-2.5">
 			<input
 				id="bgColorInput"
-				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
 				type="color"
 				bind:value={bgColor}
 			/>

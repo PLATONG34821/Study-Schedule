@@ -1,20 +1,15 @@
 <script lang="ts">
 	import { tick, onMount } from 'svelte';
 	import { toPng } from 'html-to-image';
-	import type { Day, Slot, PaletteColor, ClassBlock, PhonePreset } from '$lib/types';
+	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
 	import { generateUid, compressConfigCode, decompressConfigCode } from '$lib/utils';
+	import { phonePresets, defaultBlocks } from '$lib/constants';
 	import * as m from '$lib/paraglide/messages';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightDrawer from '$lib/components/RightDrawer.svelte';
 	import ScheduleGrid from '$lib/components/ScheduleGrid.svelte';
 	import BlockEditorModal from '$lib/components/BlockEditorModal.svelte';
 	import ConfigCodeModal from '$lib/components/ConfigCodeModal.svelte';
-
-	const phonePresets: PhonePreset[] = [
-		{ id: 'desktop', name: 'Desktop (1,920 × 1,080)', width: 1920, height: 1080, topGapRatio: 0, bottomGapPx: 0 },
-		{ id: 'iphone', name: 'iPhone (1,206 × 2,622)', width: 1206, height: 2622, topGapRatio: 0.32, bottomGapPx: 80 },
-		{ id: 'custom', name: 'Custom Size', width: 1920, height: 1080, topGapRatio: 0, bottomGapPx: 0 }
-	];
 
 	let days = $state<Day[]>([
 		{ id: 'day1', name: 'Monday' },
@@ -152,7 +147,7 @@
 	};
 
 	let currentPreset = $derived.by(() => {
-		const preset = phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[1];
+		const preset = phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[0];
 		if (selectedPresetId === 'custom') {
 			return {
 				...preset,
@@ -185,164 +180,7 @@
 
 	let finalScale = $derived(isWallpaperMode ? computedScale * gridScaleModifier : 1);
 
-	let blocks = $state<ClassBlock[]>([
-		{
-			id: generateUid(),
-			dayId: 'day1',
-			timeSlotId: 'slot1',
-			title: 'Fundamentals of Digital Logic and Microcontrollers',
-			time: '08:00–09:50',
-			room: 'S7 A 402',
-			section: '1',
-			type: 'Lecture',
-			colorId: 'c1',
-			pattern: false
-		},
-		{
-			id: generateUid(),
-			dayId: 'day1',
-			timeSlotId: 'slot2',
-			title: 'Fundamentals of Digital Logic and Microcontrollers',
-			time: '10:00–11:50',
-			room: 'S7 A 202',
-			section: '1',
-			type: 'Lab',
-			colorId: 'c1',
-			pattern: true
-		},
-		{
-			id: generateUid(),
-			dayId: 'day1',
-			timeSlotId: 'slot3',
-			title: 'Introduction to Data Science',
-			time: '13:00–14:50',
-			room: 'C1 313',
-			section: '1',
-			type: 'Lecture',
-			colorId: 'c6',
-			pattern: false
-		},
-		{
-			id: generateUid(),
-			dayId: 'day1',
-			timeSlotId: 'slot4',
-			title: 'Introduction to Data Science',
-			time: '15:00–16:50',
-			room: 'S1 305',
-			section: '1',
-			type: 'Lab',
-			colorId: 'c6',
-			pattern: true
-		},
-		{
-			id: generateUid(),
-			dayId: 'day2',
-			timeSlotId: 'slot1',
-			title: 'Database Systems',
-			time: '08:00–09:50',
-			room: 'C1 313',
-			section: '1',
-			type: 'Lecture',
-			colorId: 'c2',
-			pattern: false
-		},
-		{
-			id: generateUid(),
-			dayId: 'day2',
-			timeSlotId: 'slot2',
-			title: 'Database Systems',
-			time: '10:00–11:50',
-			room: 'S1 206',
-			section: '1',
-			type: 'Lab',
-			colorId: 'c2',
-			pattern: true
-		},
-		{
-			id: generateUid(),
-			dayId: 'day2',
-			timeSlotId: 'slot4',
-			title: 'Data Communications and Networks',
-			time: '15:00–16:50',
-			room: 'S7 A 402',
-			section: '2',
-			type: 'Lecture',
-			colorId: 'c3',
-			pattern: false
-		},
-		{
-			id: generateUid(),
-			dayId: 'day3',
-			timeSlotId: 'slot2',
-			title: 'Data Communications and Networks',
-			time: '10:00–11:50',
-			room: 'S7 A 201',
-			section: '2',
-			type: 'Lab',
-			colorId: 'c3',
-			pattern: true
-		},
-		{
-			id: generateUid(),
-			dayId: 'day3',
-			timeSlotId: 'slot4',
-			title: 'Introduction to Digital Technology and Data Science',
-			time: '15:00–16:50',
-			room: 'S1 101',
-			section: '6',
-			type: 'Lab',
-			colorId: 'c7',
-			pattern: true
-		},
-		{
-			id: generateUid(),
-			dayId: 'day4',
-			timeSlotId: 'slot1',
-			title: 'Mathematics for Engineering 2',
-			time: '08:00–09:50',
-			room: 'C1 314',
-			section: '1',
-			type: 'Lecture',
-			colorId: 'c4',
-			pattern: false
-		},
-		{
-			id: generateUid(),
-			dayId: 'day4',
-			timeSlotId: 'slot2',
-			title: 'Mathematics for Engineering 2',
-			time: '10:00–11:50',
-			room: 'S1 206',
-			section: '1',
-			type: 'Lab',
-			colorId: 'c4',
-			pattern: true
-		},
-		{
-			id: generateUid(),
-			dayId: 'day5',
-			timeSlotId: 'slot2',
-			title: 'Engineering Programming',
-			time: '10:00–11:50',
-			room: 'C1 314',
-			section: '2',
-			type: 'Lecture',
-			colorId: 'c5',
-			pattern: false
-		},
-		{
-			id: generateUid(),
-			dayId: 'day5',
-			timeSlotId: 'slot3',
-			title: 'Engineering Programming',
-			time: '13:00–14:50',
-			room: 'S1 206',
-			section: '2',
-			type: 'Lab',
-			colorId: 'c5',
-			pattern: true
-		}
-	]);
+	let blocks = $state<ClassBlock[]>(defaultBlocks);
 
 	let selectedBlock = $derived(blocks.find((b) => b.id === selectedId) || null);
 
@@ -483,32 +321,37 @@
 
 	const handleImportCode = async (codeString: string): Promise<boolean> => {
 		try {
-			const data = (await decompressConfigCode(codeString)) as any;
+			const data = (await decompressConfigCode(codeString)) as Record<string, unknown> | null;
 			if (!data) return false;
 
-			if (Array.isArray(data.days)) days = data.days;
-			if (Array.isArray(data.slots)) slots = data.slots;
-			if (Array.isArray(data.palette)) palette = data.palette;
-			if (Array.isArray(data.blocks)) blocks = data.blocks;
+			if (Array.isArray(data.days)) days = data.days as Day[];
+			if (Array.isArray(data.slots)) slots = data.slots as Slot[];
+			if (Array.isArray(data.palette)) palette = data.palette as PaletteColor[];
+			if (Array.isArray(data.blocks)) blocks = data.blocks as ClassBlock[];
 
-			const st = data.settings;
+			const st = data.settings as Record<string, unknown> | undefined;
 			if (st) {
-				if (st.selectedPresetId) {
+				if (typeof st.selectedPresetId === 'string') {
 					selectedPresetId = st.selectedPresetId.startsWith('ip') ? 'iphone' : st.selectedPresetId;
 				}
 				if (typeof st.customPresetWidth === 'number') customPresetWidth = st.customPresetWidth;
 				if (typeof st.customPresetHeight === 'number') customPresetHeight = st.customPresetHeight;
 				if (typeof st.gridRotationAngle === 'number') gridRotationAngle = st.gridRotationAngle;
-				if (typeof st.customTopGapPercent === 'number') customTopGapPercent = st.customTopGapPercent;
-				if (st.scaleMode) scaleMode = st.scaleMode;
+				if (typeof st.customTopGapPercent === 'number')
+					customTopGapPercent = st.customTopGapPercent;
+				if (
+					typeof st.scaleMode === 'string' &&
+					(st.scaleMode === 'fillWidth' || st.scaleMode === 'fitBoth')
+				)
+					scaleMode = st.scaleMode;
 				if (typeof st.gridScaleModifier === 'number') gridScaleModifier = st.gridScaleModifier;
 				if (typeof st.slotRowHeight === 'number') slotRowHeight = st.slotRowHeight;
 				if (typeof st.dayColumnWidth === 'number') dayColumnWidth = st.dayColumnWidth;
-				if (st.bgColor) bgColor = st.bgColor;
-				if (st.gridLineColor) gridLineColor = st.gridLineColor;
-				if (st.timeBgColor) timeBgColor = st.timeBgColor;
-				if (st.dayHeaderBgColor) dayHeaderBgColor = st.dayHeaderBgColor;
-				if (st.cellBgColor) cellBgColor = st.cellBgColor;
+				if (typeof st.bgColor === 'string') bgColor = st.bgColor;
+				if (typeof st.gridLineColor === 'string') gridLineColor = st.gridLineColor;
+				if (typeof st.timeBgColor === 'string') timeBgColor = st.timeBgColor;
+				if (typeof st.dayHeaderBgColor === 'string') dayHeaderBgColor = st.dayHeaderBgColor;
+				if (typeof st.cellBgColor === 'string') cellBgColor = st.cellBgColor;
 				if (typeof st.fontSizeDay === 'number') fontSizeDay = st.fontSizeDay;
 				if (typeof st.fontSizeTime === 'number') fontSizeTime = st.fontSizeTime;
 				if (typeof st.fontSizeTitle === 'number') fontSizeTitle = st.fontSizeTitle;
@@ -573,49 +416,55 @@
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="flex-1 relative overflow-hidden flex flex-col bg-[#121214] select-none"
+		class="relative flex flex-1 flex-col overflow-hidden bg-[#121214] select-none"
 		onwheel={handleCanvasWheel}
 		onpointerdown={handleCanvasPointerDown}
 	>
 		<div
-			class="w-full h-full flex items-center justify-center p-10 box-border"
-			style="cursor: {isCanvasPanning ? 'grabbing' : 'grab'}; transform: translate({previewPanX}px, {previewPanY}px);"
+			class="box-border flex h-full w-full items-center justify-center p-10"
+			style="cursor: {isCanvasPanning
+				? 'grabbing'
+				: 'grab'}; transform: translate({previewPanX}px, {previewPanY}px);"
 		>
 			{#if isWallpaperMode}
 				<div
-					class="shrink-0 relative origin-center transition-transform duration-75 ease-out"
+					class="relative shrink-0 origin-center transition-transform duration-75 ease-out"
 					style="transform: scale({0.35 * previewZoom});"
 				>
 					<div
-						class="p-0 flex flex-col overflow-hidden {selectedPresetId === 'iphone'
+						class="flex flex-col overflow-hidden p-0 {selectedPresetId === 'iphone'
 							? 'rounded-[48px]'
 							: 'rounded-2xl'} shadow-none"
 						bind:this={captureWrapEl}
 						style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor};"
 					>
 						<div
-							class="flex items-center justify-center box-border relative"
+							class="relative box-border flex items-center justify-center"
 							style="height: {currentPreset.height * (customTopGapPercent / 100)}px;"
 						>
 							{#if !isExporting && customTopGapPercent > 0}
 								<div
-									class="border-2 border-dashed border-black/15 rounded-[20px] px-10 py-4 text-center text-black/35 font-[Space_Grotesk,sans-serif]"
+									class="rounded-[20px] border-2 border-dashed border-black/15 px-10 py-4 text-center font-[Space_Grotesk,sans-serif] text-black/35"
 								>
-									<div class="text-[64px] font-bold leading-none">12:08</div>
-									<div class="text-sm mt-1.5 font-[JetBrains_Mono,monospace]">
+									<div class="text-[64px] leading-none font-bold">12:08</div>
+									<div class="mt-1.5 font-[JetBrains_Mono,monospace] text-sm">
 										{m.clock_space_guide()}
 									</div>
 								</div>
 							{/if}
 						</div>
 
-						<div class="flex-1 flex flex-col items-center justify-start pt-2.5 overflow-hidden">
+						<div class="flex flex-1 flex-col items-center justify-start overflow-hidden pt-2.5">
 							<div
 								class="relative"
-								style="width: {is90or270 ? gridUnrotatedHeight * finalScale : gridUnrotatedWidth * finalScale}px; height: {is90or270 ? gridUnrotatedWidth * finalScale : gridUnrotatedHeight * finalScale}px;"
+								style="width: {is90or270
+									? gridUnrotatedHeight * finalScale
+									: gridUnrotatedWidth * finalScale}px; height: {is90or270
+									? gridUnrotatedWidth * finalScale
+									: gridUnrotatedHeight * finalScale}px;"
 							>
 								<div
-									class="absolute top-1/2 left-1/2 origin-center box-border"
+									class="absolute top-1/2 left-1/2 box-border origin-center"
 									style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({-gridRotationAngle}deg) scale({finalScale});"
 								>
 									<ScheduleGrid
@@ -636,7 +485,7 @@
 										{fontSizeTime}
 										{fontSizeTitle}
 										{fontSizeBadge}
-										onSelectBlock={(id) => (selectedId = id)}
+										onSelectBlock={(id: string) => (selectedId = id)}
 										onAddBlock={addBlock}
 									/>
 								</div>
@@ -646,7 +495,7 @@
 				</div>
 			{:else}
 				<div
-					class="p-10 inline-block box-border origin-center transition-transform duration-75 ease-out"
+					class="box-border inline-block origin-center p-10 transition-transform duration-75 ease-out"
 					bind:this={captureWrapEl}
 					style="background: {bgColor}; transform: scale({previewZoom});"
 				>
@@ -668,7 +517,7 @@
 						{fontSizeTime}
 						{fontSizeTitle}
 						{fontSizeBadge}
-						onSelectBlock={(id) => (selectedId = id)}
+						onSelectBlock={(id: string) => (selectedId = id)}
 						onAddBlock={addBlock}
 					/>
 				</div>
@@ -677,11 +526,11 @@
 
 		<!-- Floating View & Zoom Toolbar -->
 		<div
-			class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-[#18181b]/90 backdrop-blur-md border border-[#3f3f46] text-[#e4e4e7] px-3.5 py-2 rounded-full shadow-2xl flex items-center gap-2 z-30"
+			class="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-3.5 py-2 text-[#e4e4e7] shadow-2xl backdrop-blur-md"
 		>
 			<button
 				type="button"
-				class="bg-[#27272a] hover:bg-[#3f3f46] text-white rounded-full w-7 h-7 flex items-center justify-center border border-[#3f3f46] cursor-pointer text-sm font-bold transition-colors"
+				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-sm font-bold text-white transition-colors hover:bg-[#3f3f46]"
 				onclick={zoomOut}
 				title="Zoom Out"
 			>
@@ -690,7 +539,7 @@
 
 			<button
 				type="button"
-				class="bg-transparent hover:bg-[#27272a] text-white px-2 py-1 rounded text-xs font-mono font-semibold cursor-pointer border-none transition-colors"
+				class="cursor-pointer rounded border-none bg-transparent px-2 py-1 font-mono text-xs font-semibold text-white transition-colors hover:bg-[#27272a]"
 				onclick={resetPreviewView}
 				title="Reset Zoom & Position"
 			>
@@ -699,18 +548,18 @@
 
 			<button
 				type="button"
-				class="bg-[#27272a] hover:bg-[#3f3f46] text-white rounded-full w-7 h-7 flex items-center justify-center border border-[#3f3f46] cursor-pointer text-sm font-bold transition-colors"
+				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-sm font-bold text-white transition-colors hover:bg-[#3f3f46]"
 				onclick={zoomIn}
 				title="Zoom In"
 			>
 				+
 			</button>
 
-			<div class="w-px h-4 bg-[#3f3f46] mx-1"></div>
+			<div class="mx-1 h-4 w-px bg-[#3f3f46]"></div>
 
 			<button
 				type="button"
-				class="bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white px-3 py-1 rounded-full text-xs font-semibold cursor-pointer border border-[#3f3f46] transition-colors"
+				class="cursor-pointer rounded-full border border-[#3f3f46] bg-[#27272a] px-3 py-1 text-xs font-semibold text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
 				onclick={centerPreviewPosition}
 				title="Center Canvas Position"
 			>
@@ -719,7 +568,7 @@
 
 			<button
 				type="button"
-				class="bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-white px-3 py-1 rounded-full text-xs font-semibold cursor-pointer border border-[#3f3f46] transition-colors"
+				class="cursor-pointer rounded-full border border-[#3f3f46] bg-[#27272a] px-3 py-1 text-xs font-semibold text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
 				onclick={resetPreviewView}
 				title="Reset Pan & Zoom"
 			>

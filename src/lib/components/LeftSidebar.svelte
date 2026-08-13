@@ -68,24 +68,24 @@
 </script>
 
 <aside
-	class="relative bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-r border-[#27272a] shadow-none z-10 shrink-0"
+	class="relative z-10 box-border flex shrink-0 flex-col gap-3 overflow-y-auto border-r border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-none"
 	style="width: {width}px;"
 >
 	<div
-		class="absolute top-0 right-0 w-2 h-full cursor-col-resize hover:bg-[#6366f1]/50 active:bg-[#6366f1] transition-colors z-20"
+		class="absolute top-0 right-0 z-20 h-full w-2 cursor-col-resize transition-colors hover:bg-[#6366f1]/50 active:bg-[#6366f1]"
 		onpointerdown={handlePointerDown}
 		role="separator"
 		aria-label="Resize left sidebar"
 	></div>
 	<div class="flex items-start justify-between">
 		<div>
-			<h1 class="text-[22px] font-bold m-0 -tracking-[0.5px] text-white">{m.app_title()}</h1>
-			<p class="text-xs text-[#a1a1aa] mt-1">{m.app_subtitle()}</p>
+			<h1 class="m-0 text-[22px] font-bold -tracking-[0.5px] text-white">{m.app_title()}</h1>
+			<p class="mt-1 text-xs text-[#a1a1aa]">{m.app_subtitle()}</p>
 		</div>
-		<div class="flex gap-1 bg-[#27272a] p-1 rounded-lg border border-[#3f3f46]">
+		<div class="flex gap-1 rounded-lg border border-[#3f3f46] bg-[#27272a] p-1">
 			<button
 				type="button"
-				class="px-2 py-0.5 text-xs rounded font-semibold transition-colors {getLocale() === 'th'
+				class="rounded px-2 py-0.5 text-xs font-semibold transition-colors {getLocale() === 'th'
 					? 'bg-[#6366f1] text-white'
 					: 'text-[#a1a1aa] hover:text-white'}"
 				onclick={() => setLocale('th')}
@@ -94,7 +94,7 @@
 			</button>
 			<button
 				type="button"
-				class="px-2 py-0.5 text-xs rounded font-semibold transition-colors {getLocale() === 'en'
+				class="rounded px-2 py-0.5 text-xs font-semibold transition-colors {getLocale() === 'en'
 					? 'bg-[#6366f1] text-white'
 					: 'text-[#a1a1aa] hover:text-white'}"
 				onclick={() => setLocale('en')}
@@ -105,7 +105,7 @@
 	</div>
 
 	<button
-		class="bg-[#6366f1] text-white border-none px-4 py-3 rounded-lg font-semibold text-sm cursor-pointer flex items-center justify-center gap-2 transition-colors duration-150 ease-in-out mt-2 font-[inherit] hover:not-disabled:bg-[#4f46e5] disabled:opacity-60 disabled:cursor-not-allowed"
+		class="mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg border-none bg-[#6366f1] px-4 py-3 font-[inherit] text-sm font-semibold text-white transition-colors duration-150 ease-in-out hover:not-disabled:bg-[#4f46e5] disabled:cursor-not-allowed disabled:opacity-60"
 		onclick={onExport}
 		disabled={isExporting}
 	>
@@ -140,13 +140,20 @@
 		{/if}
 	</button>
 
-	<div class="flex gap-2 mb-0.5">
+	<div class="mb-0.5 flex gap-2">
 		<button
 			type="button"
-			class="flex-1 bg-[#27272a] text-white border border-[#3f3f46] py-2 px-2 rounded-lg text-xs font-semibold cursor-pointer flex items-center justify-center gap-1.5 hover:bg-[#3f3f46] transition-colors"
+			class="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
 			onclick={onOpenExportCode}
 		>
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<polyline points="16 18 22 12 16 6" />
 				<polyline points="8 6 2 12 8 18" />
 			</svg>
@@ -154,10 +161,17 @@
 		</button>
 		<button
 			type="button"
-			class="flex-1 bg-[#27272a] text-white border border-[#3f3f46] py-2 px-2 rounded-lg text-xs font-semibold cursor-pointer flex items-center justify-center gap-1.5 hover:bg-[#3f3f46] transition-colors"
+			class="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
 			onclick={onOpenImportCode}
 		>
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<path d="M4 17l6-6-6-6" />
 				<path d="M12 19h8" />
 			</svg>
@@ -167,18 +181,32 @@
 
 	<button
 		type="button"
-		class="bg-[#27272a] text-white border border-[#3f3f46] px-4 py-2 rounded-lg font-semibold text-xs cursor-pointer flex items-center justify-center gap-2 transition-colors duration-150 ease-in-out font-[inherit] hover:bg-[#3f3f46] mb-1"
+		class="mb-1 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#3f3f46] bg-[#27272a] px-4 py-2 font-[inherit] text-xs font-semibold text-white transition-colors duration-150 ease-in-out hover:bg-[#3f3f46]"
 		onclick={onShareLink}
 	>
 		{#if linkCopied}
-			<span class="text-[#22c55e] flex items-center gap-1.5 font-bold">
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+			<span class="flex items-center gap-1.5 font-bold text-[#22c55e]">
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.5"
+				>
 					<polyline points="20 6 9 17 4 12" />
 				</svg>
 				{m.link_copied()}
 			</span>
 		{:else}
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<circle cx="18" cy="5" r="3" />
 				<circle cx="6" cy="12" r="3" />
 				<circle cx="18" cy="19" r="3" />
@@ -189,68 +217,68 @@
 		{/if}
 	</button>
 
-	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-2">
+	<div class="mt-2 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.days_section()}
 	</div>
 	{#each days as day (day.id)}
-		<div class="flex gap-1.5 items-center mb-1.5">
+		<div class="mb-1.5 flex items-center gap-1.5">
 			<input
 				type="text"
 				bind:value={day.name}
-				class="flex-1 px-2 py-1.5 rounded-md border border-[#3f3f46] bg-[#27272a] text-white text-[13px] font-[inherit]"
+				class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2 py-1.5 font-[inherit] text-[13px] text-white"
 			/>
 			<button
-				class="bg-[#3f3f46] text-[#ef4444] border-none rounded-md w-7 h-7 cursor-pointer font-bold hover:bg-[#ef4444] hover:text-white"
+				class="h-7 w-7 cursor-pointer rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] hover:bg-[#ef4444] hover:text-white"
 				onclick={() => onRemoveDay(day.id)}>✕</button
 			>
 		</div>
 	{/each}
 	<button
-		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
+		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#6366f1] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#818cf8] hover:bg-[#6366f1]/10"
 		onclick={onAddDay}>{m.add_day()}</button
 	>
 
-	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
+	<div class="mt-3.5 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.rows_section()}
 	</div>
 	{#each slots as slot (slot.id)}
-		<div class="flex gap-1.5 items-center mb-1.5">
+		<div class="mb-1.5 flex items-center gap-1.5">
 			<input
 				type="text"
 				bind:value={slot.label}
-				class="flex-1 px-2 py-1.5 rounded-md border border-[#3f3f46] bg-[#27272a] text-white text-[13px] font-[JetBrains_Mono,monospace]"
+				class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
 			/>
 			<button
-				class="bg-[#3f3f46] text-[#ef4444] border-none rounded-md w-7 h-7 cursor-pointer font-bold hover:bg-[#ef4444] hover:text-white"
+				class="h-7 w-7 cursor-pointer rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] hover:bg-[#ef4444] hover:text-white"
 				onclick={() => onRemoveSlot(slot.id)}>✕</button
 			>
 		</div>
 	{/each}
 	<button
-		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
+		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#6366f1] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#818cf8] hover:bg-[#6366f1]/10"
 		onclick={onAddSlot}>{m.add_row()}</button
 	>
 
-	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
+	<div class="mt-3.5 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.subject_colors()}
 	</div>
-	<div class="flex flex-wrap gap-2 mb-2">
+	<div class="mb-2 flex flex-wrap gap-2">
 		{#each palette as item (item.id)}
 			<div class="relative flex items-center">
 				<input
 					type="color"
 					bind:value={item.color}
-					class="w-9 h-9 border-2 border-[#3f3f46] rounded-lg bg-none cursor-pointer p-0"
+					class="h-9 w-9 cursor-pointer rounded-lg border-2 border-[#3f3f46] bg-none p-0"
 				/>
 				<button
-					class="absolute -top-1 -right-1 bg-[#ef4444] text-white border-none rounded-full w-4 h-4 text-[9px] cursor-pointer flex items-center justify-center"
+					class="absolute -top-1 -right-1 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border-none bg-[#ef4444] text-[9px] text-white"
 					onclick={() => onRemoveColor(item.id)}>✕</button
 				>
 			</div>
 		{/each}
 	</div>
 	<button
-		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
+		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#6366f1] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#818cf8] hover:bg-[#6366f1]/10"
 		onclick={onAddColor}>{m.add_color()}</button
 	>
 </aside>

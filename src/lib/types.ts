@@ -31,6 +31,4 @@ export interface PhonePreset {
 	name: string;
 	width: number;
 	height: number;
-	topGapRatio: number;
-	bottomGapPx: number;
 }

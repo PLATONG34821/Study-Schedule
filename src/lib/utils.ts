@@ -28,6 +28,15 @@ const luminance = (hex: string) => {
 export const textColorFor = (hex: string): string =>
 	luminance(hex) > 0.55 ? '#111111' : '#ffffff';
 
+const bytesToBase64 = (bytes: Uint8Array): string => {
+	let binary = '';
+	const chunk = 8192;
+	for (let i = 0; i < bytes.length; i += chunk) {
+		binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+	}
+	return btoa(binary);
+};
+
 export const compressConfigCode = async (data: unknown): Promise<string> => {
 	const jsonStr = JSON.stringify(data);
 	const bytes = new TextEncoder().encode(jsonStr);
@@ -38,21 +47,12 @@ export const compressConfigCode = async (data: unknown): Promise<string> => {
 				.stream()
 				.pipeThrough(new CompressionStream('deflate-raw'));
 			const buffer = await new Response(stream).arrayBuffer();
-			const compressedBytes = new Uint8Array(buffer);
-			let binary = '';
-			for (let i = 0; i < compressedBytes.byteLength; i++) {
-				binary += String.fromCharCode(compressedBytes[i]);
-			}
-			return 'schedule:' + btoa(binary);
+			return 'schedule:' + bytesToBase64(new Uint8Array(buffer));
 		} catch {
 			// fallback
 		}
 	}
-	let binary = '';
-	for (let i = 0; i < bytes.byteLength; i++) {
-		binary += String.fromCharCode(bytes[i]);
-	}
-	return 'schedule:' + btoa(binary);
+	return 'schedule:' + bytesToBase64(bytes);
 };
 
 export const decompressConfigCode = async (codeString: string): Promise<unknown> => {

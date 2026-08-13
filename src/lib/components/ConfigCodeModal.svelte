@@ -65,58 +65,56 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="modalBackdrop fixed inset-0 bg-black/60 backdrop-blur-[4px] flex items-center justify-center z-[999] p-4"
+		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-[4px]"
 		onclick={handleBackdropClick}
 	>
 		<div
-			class="bg-[#18181b] text-[#e4e4e7] border border-[#3f3f46] rounded-2xl w-full max-w-[500px] shadow-none flex flex-col overflow-hidden animate-popIn"
+			class="flex w-full max-w-[500px] animate-popIn flex-col overflow-hidden rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-none"
 		>
-			<div class="flex items-center justify-between px-5 py-[18px] border-b border-[#27272a]">
+			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-[18px]">
 				<h2 class="m-0 text-lg font-bold text-white">
 					{mode === 'export' ? m.export_code() : m.import_code()}
 				</h2>
 				<button
 					type="button"
-					class="bg-transparent border-none text-[#a1a1aa] text-lg cursor-pointer p-1 hover:text-white"
+					class="cursor-pointer border-none bg-transparent p-1 text-lg text-[#a1a1aa] hover:text-white"
 					onclick={onClose}>✕</button
 				>
 			</div>
 
-			<div class="p-5 flex flex-col gap-3">
+			<div class="flex flex-col gap-3 p-5">
 				{#if mode === 'export'}
-					<p class="text-xs text-[#a1a1aa] m-0">
+					<p class="m-0 text-xs text-[#a1a1aa]">
 						{getLocale() === 'th'
 							? 'คัดลอกโค้ดการตั้งค่าด้านล่างเพื่อนำไปใช้บนเครื่องหรือเบราว์เซอร์อื่น'
 							: 'Copy the configuration code below to transfer your schedule settings.'}
 					</p>
 					<textarea
-						class="w-full h-28 p-3 rounded-lg border border-[#3f3f46] bg-[#27272a] text-white text-xs font-[JetBrains_Mono,monospace] resize-none focus:outline-none focus:border-[#6366f1] box-border break-all"
+						class="box-border h-28 w-full resize-none rounded-lg border border-[#3f3f46] bg-[#27272a] p-3 font-[JetBrains_Mono,monospace] text-xs break-all text-white focus:border-[#6366f1] focus:outline-none"
 						readonly
 						value={code}
-						onclick={(e) => (e.target as HTMLTextAreaElement).select()}
-					></textarea>
+						onclick={(e) => (e.target as HTMLTextAreaElement).select()}></textarea>
 				{:else}
-					<p class="text-xs text-[#a1a1aa] m-0">
+					<p class="m-0 text-xs text-[#a1a1aa]">
 						{getLocale() === 'th'
 							? 'วางโค้ดการตั้งค่าที่ส่งออกไว้ด้านล่างแล้วกดนำเข้า'
 							: 'Paste exported configuration code below and click apply.'}
 					</p>
 					<textarea
-						class="w-full h-28 p-3 rounded-lg border border-[#3f3f46] bg-[#27272a] text-white text-xs font-[JetBrains_Mono,monospace] resize-none focus:outline-none focus:border-[#6366f1] box-border break-all"
+						class="box-border h-28 w-full resize-none rounded-lg border border-[#3f3f46] bg-[#27272a] p-3 font-[JetBrains_Mono,monospace] text-xs break-all text-white focus:border-[#6366f1] focus:outline-none"
 						placeholder={m.paste_code_here()}
-						bind:value={inputCode}
-					></textarea>
+						bind:value={inputCode}></textarea>
 					{#if errorMsg}
-						<p class="text-xs text-[#ef4444] font-semibold m-0">{errorMsg}</p>
+						<p class="m-0 text-xs font-semibold text-[#ef4444]">{errorMsg}</p>
 					{/if}
 				{/if}
 			</div>
 
-			<div class="flex gap-2.5 px-5 py-4 border-t border-[#27272a] bg-[#18181b] justify-end">
+			<div class="flex justify-end gap-2.5 border-t border-[#27272a] bg-[#18181b] px-5 py-4">
 				{#if mode === 'export'}
 					<button
 						type="button"
-						class="py-2.5 px-5 rounded-lg border-none bg-[#6366f1] text-white text-sm font-semibold cursor-pointer font-[inherit] hover:bg-[#4f46e5] flex items-center gap-2"
+						class="flex cursor-pointer items-center gap-2 rounded-lg border-none bg-[#6366f1] px-5 py-2.5 font-[inherit] text-sm font-semibold text-white hover:bg-[#4f46e5]"
 						onclick={handleCopy}
 					>
 						{#if copied}
@@ -139,12 +137,12 @@
 				{:else}
 					<button
 						type="button"
-						class="py-2.5 px-4 rounded-lg border border-[#3f3f46] bg-[#27272a] text-[#a1a1aa] text-sm font-semibold cursor-pointer font-[inherit] hover:text-white"
+						class="cursor-pointer rounded-lg border border-[#3f3f46] bg-[#27272a] px-4 py-2.5 font-[inherit] text-sm font-semibold text-[#a1a1aa] hover:text-white"
 						onclick={onClose}>{m.save_close()}</button
 					>
 					<button
 						type="button"
-						class="py-2.5 px-5 rounded-lg border-none bg-[#6366f1] text-white text-sm font-semibold cursor-pointer font-[inherit] hover:bg-[#4f46e5]"
+						class="cursor-pointer rounded-lg border-none bg-[#6366f1] px-5 py-2.5 font-[inherit] text-sm font-semibold text-white hover:bg-[#4f46e5]"
 						onclick={handleApply}>{m.apply_code()}</button
 					>
 				{/if}
