@@ -89,7 +89,7 @@
 	style="width: {width}px;"
 >
 	<div
-		class="absolute top-0 left-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#6366f1]/50 active:bg-[#6366f1] lg:block"
+		class="absolute top-0 left-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#2563eb]/50 active:bg-[#2563eb] lg:block"
 		onpointerdown={handlePointerDown}
 		role="separator"
 		aria-label="Resize right drawer"

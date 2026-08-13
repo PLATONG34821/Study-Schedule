@@ -1,15 +1,33 @@
 <script lang="ts">
 	import type { ClassBlock, PaletteColor } from '$lib/types';
+	import { textColorFor } from '$lib/utils';
 	import * as m from '$lib/paraglide/messages';
 
 	interface Props {
 		block: ClassBlock | null;
 		palette: PaletteColor[];
 		onClose: () => void;
+		onSave: (updatedBlock: ClassBlock) => void;
 		onDelete: (id: string) => void;
 	}
 
-	let { block = $bindable(), palette, onClose, onDelete }: Props = $props();
+	let { block, palette, onClose, onSave, onDelete }: Props = $props();
+
+	let draft = $state<ClassBlock | null>(null);
+
+	$effect(() => {
+		if (block) {
+			draft = { ...block };
+		} else {
+			draft = null;
+		}
+	});
+
+	const handleSave = () => {
+		if (draft) {
+			onSave(draft);
+		}
+	};
 
 	const handleBackdropClick = (e: MouseEvent) => {
 		if ((e.target as HTMLElement).classList.contains('modalBackdrop')) {
@@ -22,11 +40,15 @@
 			onClose();
 		}
 	};
+
+	let previewColorObj = $derived(palette.find((c) => c.id === draft?.colorId));
+	let previewColorVal = $derived(previewColorObj ? previewColorObj.color : '#dddddd');
+	let previewTextVal = $derived(textColorFor(previewColorVal));
 </script>
 
 <svelte:window onkeydown={handleKeyDown} />
 
-{#if block}
+{#if draft}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
@@ -34,114 +56,196 @@
 		onclick={handleBackdropClick}
 	>
 		<div
-			class="flex max-h-[90vh] w-full max-w-[440px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-none"
+			class="flex max-h-[90vh] w-full max-w-[460px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-2xl"
 		>
-			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-[18px]">
-				<h2 class="m-0 text-lg font-bold text-white">{m.edit_subject()}</h2>
+			<!-- Header -->
+			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-4">
+				<div class="flex items-center gap-2">
+					<div class="h-3 w-3 rounded-full bg-[#2563eb]"></div>
+					<h2 class="m-0 text-base font-bold text-white">{m.edit_subject()}</h2>
+				</div>
 				<button
 					type="button"
-					class="cursor-pointer border-none bg-transparent p-1 text-lg text-[#a1a1aa] hover:text-white"
-					onclick={onClose}>✕</button
+					class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-transparent text-lg text-[#a1a1aa] transition-colors hover:bg-[#27272a] hover:text-white"
+					onclick={onClose}
+					aria-label="Close dialog">✕</button
 				>
 			</div>
 
-			<div class="flex flex-col gap-3.5 p-5">
-				<label class="mb-1 block text-xs text-[#a1a1aa]" for="blockTitleInput"
-					>{m.subject_title()}</label
-				>
-				<input
-					id="blockTitleInput"
-					class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 font-[inherit] text-sm text-white"
-					type="text"
-					bind:value={block.title}
-				/>
+			<div class="flex flex-col gap-4 p-5">
+				<!-- Live Card Preview -->
+				<div class="flex flex-col gap-1.5">
+					<span class="text-[11px] font-semibold tracking-wider text-[#a1a1aa] uppercase"
+						>Preview</span
+					>
+					<div
+						class="relative flex min-h-[90px] w-full flex-col justify-between overflow-hidden rounded-xl border-2 border-[#111111] p-3 text-left transition-colors"
+						style="background: {previewColorVal}; color: {previewTextVal};"
+					>
+						{#if draft.pattern}
+							<div
+								class="pointer-events-none absolute inset-0"
+								style="background: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.4) 10px, rgba(255,255,255,0.4) 20px);"
+							></div>
+						{/if}
+						<div class="relative z-[1] flex flex-col gap-1">
+							<div class="text-sm leading-snug font-extrabold break-words">
+								{draft.title || m.subject_title()}
+							</div>
+							<div class="flex flex-wrap items-center gap-1 text-[10px]">
+								{#if draft.time}
+									<span
+										class="rounded-md border border-[#111111] bg-white/90 px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-semibold text-[#111111]"
+										>{draft.time}</span
+									>
+								{/if}
+								{#if draft.room}
+									<span
+										class="rounded-md border border-[#111111] bg-white/90 px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-semibold text-[#111111]"
+										>{draft.room}</span
+									>
+								{/if}
+								{#if draft.section}
+									<span
+										class="rounded border border-[#111111] bg-white px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold text-[#111111]"
+										>Sec {draft.section}</span
+									>
+								{/if}
+								{#if draft.type}
+									<span
+										class="rounded border border-[#111111] bg-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold text-white uppercase"
+										>{draft.type}</span
+									>
+								{/if}
+							</div>
+						</div>
+					</div>
+				</div>
 
+				<!-- Title -->
+				<div class="flex flex-col gap-1">
+					<label class="text-xs font-medium text-[#a1a1aa]" for="blockTitleInput"
+						>{m.subject_title()}</label
+					>
+					<input
+						id="blockTitleInput"
+						class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2 font-[inherit] text-sm text-white transition-colors focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] focus:outline-none"
+						type="text"
+						bind:value={draft.title}
+					/>
+				</div>
+
+				<!-- Time & Room -->
 				<div class="grid grid-cols-2 gap-3">
-					<div>
-						<label class="mb-1 block text-xs text-[#a1a1aa]" for="blockTimeInput">{m.time()}</label>
+					<div class="flex flex-col gap-1">
+						<label class="text-xs font-medium text-[#a1a1aa]" for="blockTimeInput">{m.time()}</label
+						>
 						<input
 							id="blockTimeInput"
-							class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 font-[inherit] text-sm text-white"
+							class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2 font-[inherit] text-sm text-white transition-colors focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] focus:outline-none"
 							type="text"
-							bind:value={block.time}
+							bind:value={draft.time}
 							placeholder="08:00–09:50"
 						/>
 					</div>
 
-					<div>
-						<label class="mb-1 block text-xs text-[#a1a1aa]" for="blockRoomInput">{m.room()}</label>
+					<div class="flex flex-col gap-1">
+						<label class="text-xs font-medium text-[#a1a1aa]" for="blockRoomInput">{m.room()}</label
+						>
 						<input
 							id="blockRoomInput"
-							class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 font-[inherit] text-sm text-white"
+							class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2 font-[inherit] text-sm text-white transition-colors focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] focus:outline-none"
 							type="text"
-							bind:value={block.room}
+							bind:value={draft.room}
 							placeholder="S1 206"
 						/>
 					</div>
 				</div>
 
+				<!-- Section & Type -->
 				<div class="grid grid-cols-2 gap-3">
-					<div>
-						<label class="mb-1 block text-xs text-[#a1a1aa]" for="blockSectionInput"
+					<div class="flex flex-col gap-1">
+						<label class="text-xs font-medium text-[#a1a1aa]" for="blockSectionInput"
 							>{m.section()}</label
 						>
 						<input
 							id="blockSectionInput"
-							class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 font-[inherit] text-sm text-white"
+							class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2 font-[inherit] text-sm text-white transition-colors focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] focus:outline-none"
 							type="text"
-							bind:value={block.section}
+							bind:value={draft.section}
 							placeholder="1"
 						/>
 					</div>
 
-					<div>
-						<label class="mb-1 block text-xs text-[#a1a1aa]" for="blockTypeInput"
+					<div class="flex flex-col gap-1">
+						<label class="text-xs font-medium text-[#a1a1aa]" for="blockTypeInput"
 							>{m.type_badge()}</label
 						>
 						<input
 							id="blockTypeInput"
-							class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 font-[inherit] text-sm text-white"
+							class="box-border w-full rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2 font-[inherit] text-sm text-white transition-colors focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] focus:outline-none"
 							type="text"
-							bind:value={block.type}
+							bind:value={draft.type}
 							placeholder="Lecture / Lab"
 						/>
 					</div>
 				</div>
 
-				<span class="mb-1 block text-xs text-[#a1a1aa]">{m.color()}</span>
-				<div class="flex flex-wrap gap-2">
-					{#each palette as colorOption (colorOption.id)}
-						<button
-							type="button"
-							class="h-8 w-8 cursor-pointer rounded-lg border-2 {block.colorId === colorOption.id
-								? 'border-white shadow-[0_0_0_2px_#6366f1]'
-								: 'border-transparent'}"
-							style="background: {colorOption.color};"
-							onclick={() => {
-								if (block) block.colorId = colorOption.id;
-							}}
-							aria-label="Color option"
-						></button>
-					{/each}
+				<!-- Color Palette -->
+				<div class="flex flex-col gap-1.5">
+					<span class="text-xs font-medium text-[#a1a1aa]">{m.color()}</span>
+					<div class="flex flex-wrap gap-2">
+						{#each palette as colorOption (colorOption.id)}
+							<button
+								type="button"
+								class="h-8 w-8 cursor-pointer rounded-lg border-2 border-transparent transition-transform hover:scale-105 {draft.colorId ===
+								colorOption.id
+									? 'scale-105 ring-2 ring-[#2563eb] ring-offset-2 ring-offset-[#18181b]'
+									: ''}"
+								style="background: {colorOption.color};"
+								onclick={() => {
+									if (draft) draft.colorId = colorOption.id;
+								}}
+								aria-label="Select color"
+							></button>
+						{/each}
+					</div>
 				</div>
 
-				<label class="mt-1 flex cursor-pointer items-center gap-2 text-[13px] opacity-90">
-					<input type="checkbox" bind:checked={block.pattern} />
-					<span>{m.stripe_pattern()}</span>
+				<!-- Pattern Toggle -->
+				<label
+					class="flex cursor-pointer items-center justify-between rounded-lg border border-[#3f3f46] bg-[#27272a] px-3.5 py-2.5 transition-colors hover:border-[#52525b]"
+				>
+					<span class="text-xs font-medium text-[#e4e4e7]">{m.stripe_pattern()}</span>
+					<input
+						type="checkbox"
+						bind:checked={draft.pattern}
+						class="h-4 w-4 cursor-pointer accent-[#2563eb]"
+					/>
 				</label>
 			</div>
 
-			<div class="flex gap-2.5 border-t border-[#27272a] bg-[#18181b] px-5 py-4">
+			<!-- Footer -->
+			<div
+				class="flex items-center justify-between border-t border-[#27272a] bg-[#18181b] px-5 py-4"
+			>
 				<button
 					type="button"
-					class="flex-1 cursor-pointer rounded-lg border-none bg-[#ef4444] py-2.5 font-[inherit] text-sm font-semibold text-white"
-					onclick={() => onDelete(block.id)}>{m.delete_subject()}</button
+					class="cursor-pointer rounded-lg border border-[#ef4444]/40 bg-[#ef4444]/10 px-3.5 py-2 text-xs font-semibold text-[#ef4444] transition-colors hover:bg-[#ef4444] hover:text-white"
+					onclick={() => draft && onDelete(draft.id)}>{m.delete_subject()}</button
 				>
-				<button
-					type="button"
-					class="flex-1 cursor-pointer rounded-lg border-none bg-[#6366f1] py-2.5 font-[inherit] text-sm font-semibold text-white hover:bg-[#4f46e5]"
-					onclick={onClose}>{m.save_close()}</button
-				>
+				<div class="flex items-center gap-2">
+					<button
+						type="button"
+						class="cursor-pointer rounded-lg border border-[#3f3f46] bg-[#27272a] px-4 py-2 text-xs font-semibold text-[#a1a1aa] transition-colors hover:text-white"
+						onclick={onClose}>Cancel</button
+					>
+					<button
+						type="button"
+						class="cursor-pointer rounded-lg border-none bg-[#2563eb] px-5 py-2 font-[inherit] text-xs font-semibold text-white transition-colors hover:bg-[#1d4ed8]"
+						onclick={handleSave}>{m.save_close()}</button
+					>
+				</div>
 			</div>
 		</div>
 	</div>

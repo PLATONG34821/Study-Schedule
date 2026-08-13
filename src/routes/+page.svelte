@@ -240,6 +240,11 @@
 		if (selectedId === blockId) selectedId = null;
 	};
 
+	const updateBlock = (updatedBlock: ClassBlock) => {
+		blocks = blocks.map((b) => (b.id === updatedBlock.id ? updatedBlock : b));
+		selectedId = null;
+	};
+
 	const exportPng = async () => {
 		if (!captureWrapEl) return;
 		const previousSelected = selectedId;
@@ -680,6 +685,7 @@
 		block={selectedBlock}
 		{palette}
 		onClose={() => (selectedId = null)}
+		onSave={updateBlock}
 		onDelete={removeBlock}
 	/>
 

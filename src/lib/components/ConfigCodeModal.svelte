@@ -90,7 +90,7 @@
 							: 'Copy the configuration code below to transfer your schedule settings.'}
 					</p>
 					<textarea
-						class="box-border h-28 w-full resize-none rounded-lg border border-[#3f3f46] bg-[#27272a] p-3 font-[JetBrains_Mono,monospace] text-xs break-all text-white focus:border-[#6366f1] focus:outline-none"
+						class="box-border h-28 w-full resize-none rounded-lg border border-[#3f3f46] bg-[#27272a] p-3 font-[JetBrains_Mono,monospace] text-xs break-all text-white focus:border-[#2563eb] focus:outline-none"
 						readonly
 						value={code}
 						onclick={(e) => (e.target as HTMLTextAreaElement).select()}></textarea>
@@ -101,7 +101,7 @@
 							: 'Paste exported configuration code below and click apply.'}
 					</p>
 					<textarea
-						class="box-border h-28 w-full resize-none rounded-lg border border-[#3f3f46] bg-[#27272a] p-3 font-[JetBrains_Mono,monospace] text-xs break-all text-white focus:border-[#6366f1] focus:outline-none"
+						class="box-border h-28 w-full resize-none rounded-lg border border-[#3f3f46] bg-[#27272a] p-3 font-[JetBrains_Mono,monospace] text-xs break-all text-white focus:border-[#2563eb] focus:outline-none"
 						placeholder={m.paste_code_here()}
 						bind:value={inputCode}></textarea>
 					{#if errorMsg}
@@ -114,7 +114,7 @@
 				{#if mode === 'export'}
 					<button
 						type="button"
-						class="flex cursor-pointer items-center gap-2 rounded-lg border-none bg-[#6366f1] px-5 py-2.5 font-[inherit] text-sm font-semibold text-white hover:bg-[#4f46e5]"
+						class="flex cursor-pointer items-center gap-2 rounded-lg border-none bg-[#2563eb] px-5 py-2.5 font-[inherit] text-sm font-semibold text-white hover:bg-[#1d4ed8]"
 						onclick={handleCopy}
 					>
 						{#if copied}
@@ -142,7 +142,7 @@
 					>
 					<button
 						type="button"
-						class="cursor-pointer rounded-lg border-none bg-[#6366f1] px-5 py-2.5 font-[inherit] text-sm font-semibold text-white hover:bg-[#4f46e5]"
+						class="cursor-pointer rounded-lg border-none bg-[#2563eb] px-5 py-2.5 font-[inherit] text-sm font-semibold text-white hover:bg-[#1d4ed8]"
 						onclick={handleApply}>{m.apply_code()}</button
 					>
 				{/if}

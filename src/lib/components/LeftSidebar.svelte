@@ -78,7 +78,7 @@
 	style="width: {width}px;"
 >
 	<div
-		class="absolute top-0 right-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#6366f1]/50 active:bg-[#6366f1] lg:block"
+		class="absolute top-0 right-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#2563eb]/50 active:bg-[#2563eb] lg:block"
 		onpointerdown={handlePointerDown}
 		role="separator"
 		aria-label="Resize left sidebar"
@@ -93,7 +93,7 @@
 				<button
 					type="button"
 					class="rounded px-2 py-0.5 text-xs font-semibold transition-colors {getLocale() === 'th'
-						? 'bg-[#6366f1] text-white'
+						? 'bg-[#2563eb] text-white'
 						: 'text-[#a1a1aa] hover:text-white'}"
 					onclick={() => setLocale('th')}
 				>
@@ -102,7 +102,7 @@
 				<button
 					type="button"
 					class="rounded px-2 py-0.5 text-xs font-semibold transition-colors {getLocale() === 'en'
-						? 'bg-[#6366f1] text-white'
+						? 'bg-[#2563eb] text-white'
 						: 'text-[#a1a1aa] hover:text-white'}"
 					onclick={() => setLocale('en')}
 				>
@@ -123,7 +123,7 @@
 	</div>
 
 	<button
-		class="mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg border-none bg-[#6366f1] px-4 py-3 font-[inherit] text-sm font-semibold text-white transition-colors duration-150 ease-in-out hover:not-disabled:bg-[#4f46e5] disabled:cursor-not-allowed disabled:opacity-60"
+		class="mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg border-none bg-[#2563eb] px-4 py-3 font-[inherit] text-sm font-semibold text-white transition-colors duration-150 ease-in-out hover:not-disabled:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-60"
 		onclick={onExport}
 		disabled={isExporting}
 	>
@@ -252,7 +252,7 @@
 		</div>
 	{/each}
 	<button
-		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#6366f1] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#818cf8] hover:bg-[#6366f1]/10"
+		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#2563eb] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#60a5fa] hover:bg-[#2563eb]/10"
 		onclick={onAddDay}>{m.add_day()}</button
 	>
 
@@ -273,7 +273,7 @@
 		</div>
 	{/each}
 	<button
-		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#6366f1] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#818cf8] hover:bg-[#6366f1]/10"
+		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#2563eb] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#60a5fa] hover:bg-[#2563eb]/10"
 		onclick={onAddSlot}>{m.add_row()}</button
 	>
 
@@ -296,7 +296,7 @@
 		{/each}
 	</div>
 	<button
-		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#6366f1] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#818cf8] hover:bg-[#6366f1]/10"
+		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#2563eb] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#60a5fa] hover:bg-[#2563eb]/10"
 		onclick={onAddColor}>{m.add_color()}</button
 	>
 </aside>
