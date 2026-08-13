@@ -50,6 +50,8 @@
 	let bgColor = $state<string>('#ffffff');
 	let gridLineColor = $state<string>('#111111');
 	let timeBgColor = $state<string>('#111111');
+	let dayHeaderBgColor = $state<string>('#ffffff');
+	let cellBgColor = $state<string>('#ffffff');
 	let isExporting = $state(false);
 	let captureWrapEl = $state<HTMLDivElement | null>(null);
 
@@ -386,6 +388,8 @@
 									{isWallpaperMode}
 									{gridLineColor}
 									{timeBgColor}
+									{dayHeaderBgColor}
+									{cellBgColor}
 									onSelectBlock={(id) => (selectedId = id)}
 									onAddBlock={addBlock}
 								/>
@@ -408,6 +412,8 @@
 					{isWallpaperMode}
 					{gridLineColor}
 					{timeBgColor}
+					{dayHeaderBgColor}
+					{cellBgColor}
 					onSelectBlock={(id) => (selectedId = id)}
 					onAddBlock={addBlock}
 				/>
@@ -427,6 +433,8 @@
 		bind:bgColor
 		bind:gridLineColor
 		bind:timeBgColor
+		bind:dayHeaderBgColor
+		bind:cellBgColor
 		{currentPreset}
 		{isWallpaperMode}
 	/>

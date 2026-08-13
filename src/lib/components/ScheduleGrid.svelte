@@ -15,6 +15,8 @@
 		isWallpaperMode: boolean;
 		gridLineColor?: string;
 		timeBgColor?: string;
+		dayHeaderBgColor?: string;
+		cellBgColor?: string;
 		onSelectBlock: (id: string) => void;
 		onAddBlock: (dayId: string, timeSlotId: string) => void;
 	}
@@ -31,11 +33,14 @@
 		isWallpaperMode,
 		gridLineColor = '#111111',
 		timeBgColor = '#111111',
+		dayHeaderBgColor = '#ffffff',
+		cellBgColor = '#ffffff',
 		onSelectBlock,
 		onAddBlock
 	}: Props = $props();
 
 	let timeTextColor = $derived(textColorFor(timeBgColor));
+	let dayTextColor = $derived(textColorFor(dayHeaderBgColor));
 </script>
 
 <div
@@ -48,8 +53,8 @@
 
 	{#each days as day, colIdx (day.id)}
 		<div
-			class="flex items-center justify-center font-bold text-xl tracking-[1px] uppercase bg-white border-r-[3px] border-b-[3px] border-solid box-border"
-			style="border-color: {gridLineColor}; border-right-style: {colIdx === days.length - 1 ? 'none' : 'solid'};"
+			class="flex items-center justify-center font-bold text-xl tracking-[1px] uppercase border-r-[3px] border-b-[3px] border-solid box-border"
+			style="background: {dayHeaderBgColor}; color: {dayTextColor}; border-color: {gridLineColor}; border-right-style: {colIdx === days.length - 1 ? 'none' : 'solid'};"
 		>
 			{day.name}
 		</div>
@@ -65,8 +70,8 @@
 		{#each days as day, colIdx (day.id)}
 			{@const cellBlocks = blocks.filter((b) => b.dayId === day.id && b.timeSlotId === slot.id)}
 			<div
-				class="p-2.5 relative flex flex-col gap-2 bg-white border-r-[3px] border-b-[3px] border-solid box-border"
-				style="border-color: {gridLineColor}; border-right-style: {colIdx === days.length - 1 ? 'none' : 'solid'}; border-bottom-style: {rowIdx === slots.length - 1 ? 'none' : 'solid'};"
+				class="p-2.5 relative flex flex-col gap-2 border-r-[3px] border-b-[3px] border-solid box-border"
+				style="background: {cellBgColor}; border-color: {gridLineColor}; border-right-style: {colIdx === days.length - 1 ? 'none' : 'solid'}; border-bottom-style: {rowIdx === slots.length - 1 ? 'none' : 'solid'};"
 			>
 				{#each cellBlocks as block (block.id)}
 					<BlockCard

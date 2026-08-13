@@ -13,6 +13,8 @@
 		bgColor: string;
 		gridLineColor: string;
 		timeBgColor: string;
+		dayHeaderBgColor: string;
+		cellBgColor: string;
 		currentPreset: PhonePreset;
 		isWallpaperMode: boolean;
 	}
@@ -29,6 +31,8 @@
 		bgColor = $bindable(),
 		gridLineColor = $bindable(),
 		timeBgColor = $bindable(),
+		dayHeaderBgColor = $bindable(),
+		cellBgColor = $bindable(),
 		currentPreset,
 		isWallpaperMode
 	}: Props = $props();
@@ -167,6 +171,21 @@
 	</div>
 
 	<div class="flex flex-col gap-1">
+		<label class="text-xs text-[#a1a1aa] block" for="dayHeaderBgColorInput"
+			>สีพื้นหลังวัน (Days Header Color)</label
+		>
+		<div class="flex items-center gap-2.5">
+			<input
+				id="dayHeaderBgColorInput"
+				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				type="color"
+				bind:value={dayHeaderBgColor}
+			/>
+			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{dayHeaderBgColor}</span>
+		</div>
+	</div>
+
+	<div class="flex flex-col gap-1">
 		<label class="text-xs text-[#a1a1aa] block" for="timeBgColorInput"
 			>สีพื้นหลังเวลา (Time Slots Color)</label
 		>
@@ -178,6 +197,21 @@
 				bind:value={timeBgColor}
 			/>
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{timeBgColor}</span>
+		</div>
+	</div>
+
+	<div class="flex flex-col gap-1">
+		<label class="text-xs text-[#a1a1aa] block" for="cellBgColorInput"
+			>สีพื้นหลังวิชา / ช่องตาราง (Subject Cells Color)</label
+		>
+		<div class="flex items-center gap-2.5">
+			<input
+				id="cellBgColorInput"
+				class="w-10 h-8 border-none rounded-md bg-none cursor-pointer p-0"
+				type="color"
+				bind:value={cellBgColor}
+			/>
+			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{cellBgColor}</span>
 		</div>
 	</div>
 
