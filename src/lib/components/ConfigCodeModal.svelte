@@ -98,7 +98,7 @@
 				{:else}
 					<p class="text-xs text-[#a1a1aa] m-0">
 						{getLocale() === 'th'
-							? 'วางโค้ดการตั้งค่า (S3 / S2 / JSON) ที่ส่งออกไว้ด้านล่างแล้วกดนำเข้า'
+							? 'วางโค้ดการตั้งค่าที่ส่งออกไว้ด้านล่างแล้วกดนำเข้า'
 							: 'Paste exported configuration code below and click apply.'}
 					</p>
 					<textarea
