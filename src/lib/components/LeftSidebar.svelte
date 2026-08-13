@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Day, Slot, PaletteColor } from '$lib/types';
+	import * as m from '$lib/paraglide/messages';
+	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 
 	interface Props {
 		days: Day[];
@@ -33,9 +35,31 @@
 <aside
 	class="w-80 bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-r border-[#27272a] shadow-none z-10 shrink-0"
 >
-	<div>
-		<h1 class="text-[22px] font-bold m-0 -tracking-[0.5px] text-white">Schedule Editor</h1>
-		<p class="text-xs text-[#a1a1aa] mt-1">จัดการวัน เวลา และชุดสีตาราง</p>
+	<div class="flex items-start justify-between">
+		<div>
+			<h1 class="text-[22px] font-bold m-0 -tracking-[0.5px] text-white">{m.app_title()}</h1>
+			<p class="text-xs text-[#a1a1aa] mt-1">{m.app_subtitle()}</p>
+		</div>
+		<div class="flex gap-1 bg-[#27272a] p-1 rounded-lg border border-[#3f3f46]">
+			<button
+				type="button"
+				class="px-2 py-0.5 text-xs rounded font-semibold transition-colors {getLocale() === 'th'
+					? 'bg-[#6366f1] text-white'
+					: 'text-[#a1a1aa] hover:text-white'}"
+				onclick={() => setLocale('th')}
+			>
+				TH
+			</button>
+			<button
+				type="button"
+				class="px-2 py-0.5 text-xs rounded font-semibold transition-colors {getLocale() === 'en'
+					? 'bg-[#6366f1] text-white'
+					: 'text-[#a1a1aa] hover:text-white'}"
+				onclick={() => setLocale('en')}
+			>
+				EN
+			</button>
+		</div>
 	</div>
 
 	<button
@@ -56,7 +80,7 @@
 				<circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
 				<path d="M12 2a10 10 0 0 1 10 10" />
 			</svg>
-			Exporting...
+			{m.exporting()}
 		{:else}
 			<svg
 				width="18"
@@ -70,12 +94,12 @@
 				<polyline points="7 10 12 15 17 10" />
 				<line x1="12" y1="15" x2="12" y2="3" />
 			</svg>
-			Export as PNG
+			{m.export_png()}
 		{/if}
 	</button>
 
 	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-2">
-		คอลัมน์ / วัน (Days)
+		{m.days_section()}
 	</div>
 	{#each days as day (day.id)}
 		<div class="flex gap-1.5 items-center mb-1.5">
@@ -92,11 +116,11 @@
 	{/each}
 	<button
 		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
-		onclick={onAddDay}>+ เพิ่มวัน</button
+		onclick={onAddDay}>{m.add_day()}</button
 	>
 
 	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
-		แถว / เวลา (Rows)
+		{m.rows_section()}
 	</div>
 	{#each slots as slot (slot.id)}
 		<div class="flex gap-1.5 items-center mb-1.5">
@@ -113,11 +137,11 @@
 	{/each}
 	<button
 		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
-		onclick={onAddSlot}>+ เพิ่มแถว</button
+		onclick={onAddSlot}>{m.add_row()}</button
 	>
 
 	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
-		สีวิชา (Subject Colors)
+		{m.subject_colors()}
 	</div>
 	<div class="flex flex-wrap gap-2 mb-2">
 		{#each palette as item (item.id)}
@@ -136,6 +160,6 @@
 	</div>
 	<button
 		class="bg-transparent text-[#818cf8] border border-dashed border-[#6366f1] rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer mb-3 font-[inherit] hover:bg-[#6366f1]/10"
-		onclick={onAddColor}>+ เพิ่มสี</button
+		onclick={onAddColor}>{m.add_color()}</button
 	>
 </aside>

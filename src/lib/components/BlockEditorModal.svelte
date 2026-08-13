@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ClassBlock, PaletteColor } from '$lib/types';
+	import * as m from '$lib/paraglide/messages';
 
 	interface Props {
 		block: ClassBlock | null;
@@ -36,7 +37,7 @@
 			class="bg-[#18181b] text-[#e4e4e7] border border-[#3f3f46] rounded-2xl w-full max-w-[440px] shadow-none flex flex-col overflow-hidden animate-popIn"
 		>
 			<div class="flex items-center justify-between px-5 py-[18px] border-b border-[#27272a]">
-				<h2 class="m-0 text-lg font-bold text-white">แก้ไขวิชา (Edit Subject)</h2>
+				<h2 class="m-0 text-lg font-bold text-white">{m.edit_subject()}</h2>
 				<button
 					type="button"
 					class="bg-transparent border-none text-[#a1a1aa] text-lg cursor-pointer p-1 hover:text-white"
@@ -46,7 +47,7 @@
 
 			<div class="p-5 flex flex-col gap-3.5">
 				<label class="text-xs text-[#a1a1aa] mb-1 block" for="blockTitleInput"
-					>ชื่อวิชา (Title)</label
+					>{m.subject_title()}</label
 				>
 				<input
 					id="blockTitleInput"
@@ -58,7 +59,7 @@
 				<div class="grid grid-cols-2 gap-3">
 					<div>
 						<label class="text-xs text-[#a1a1aa] mb-1 block" for="blockTimeInput"
-							>เวลา (Time)</label
+							>{m.time()}</label
 						>
 						<input
 							id="blockTimeInput"
@@ -71,7 +72,7 @@
 
 					<div>
 						<label class="text-xs text-[#a1a1aa] mb-1 block" for="blockRoomInput"
-							>ห้อง (Room)</label
+							>{m.room()}</label
 						>
 						<input
 							id="blockRoomInput"
@@ -86,7 +87,7 @@
 				<div class="grid grid-cols-2 gap-3">
 					<div>
 						<label class="text-xs text-[#a1a1aa] mb-1 block" for="blockSectionInput"
-							>Section</label
+							>{m.section()}</label
 						>
 						<input
 							id="blockSectionInput"
@@ -99,7 +100,7 @@
 
 					<div>
 						<label class="text-xs text-[#a1a1aa] mb-1 block" for="blockTypeInput"
-							>ประเภท (Badge)</label
+							>{m.type_badge()}</label
 						>
 						<input
 							id="blockTypeInput"
@@ -111,7 +112,7 @@
 					</div>
 				</div>
 
-				<span class="text-xs text-[#a1a1aa] mb-1 block">สี (Color)</span>
+				<span class="text-xs text-[#a1a1aa] mb-1 block">{m.color()}</span>
 				<div class="flex gap-2 flex-wrap">
 					{#each palette as colorOption (colorOption.id)}
 						<button
@@ -128,7 +129,7 @@
 
 				<label class="flex items-center gap-2 text-[13px] opacity-90 cursor-pointer mt-1">
 					<input type="checkbox" bind:checked={block.pattern} />
-					<span>มีลาย (Diagonal stripe pattern)</span>
+					<span>{m.stripe_pattern()}</span>
 				</label>
 			</div>
 
@@ -136,12 +137,12 @@
 				<button
 					type="button"
 					class="flex-1 py-2.5 rounded-lg border-none bg-[#ef4444] text-white text-sm font-semibold cursor-pointer font-[inherit]"
-					onclick={() => onDelete(block.id)}>ลบวิชานี้</button
+					onclick={() => onDelete(block.id)}>{m.delete_subject()}</button
 				>
 				<button
 					type="button"
 					class="flex-1 py-2.5 rounded-lg border-none bg-[#6366f1] text-white text-sm font-semibold cursor-pointer font-[inherit] hover:bg-[#4f46e5]"
-					onclick={onClose}>ตกลง / ปิด</button
+					onclick={onClose}>{m.save_close()}</button
 				>
 			</div>
 		</div>

@@ -3,13 +3,14 @@
 	import { toPng } from 'html-to-image';
 	import type { Day, Slot, PaletteColor, ClassBlock, PhonePreset } from '$lib/types';
 	import { generateUid } from '$lib/utils';
+	import * as m from '$lib/paraglide/messages';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightDrawer from '$lib/components/RightDrawer.svelte';
 	import ScheduleGrid from '$lib/components/ScheduleGrid.svelte';
 	import BlockEditorModal from '$lib/components/BlockEditorModal.svelte';
 
 	const phonePresets: PhonePreset[] = [
-		{ id: 'none', name: 'Original Grid (พอดีตาราง)', width: 0, height: 0, topGapRatio: 0, bottomGapPx: 0 },
+		{ id: 'none', name: 'Original Grid', width: 0, height: 0, topGapRatio: 0, bottomGapPx: 0 },
 		{ id: 'ip7', name: 'iPhone 7 / 8 / SE (4.7")', width: 750, height: 1334, topGapRatio: 0.28, bottomGapPx: 60 },
 		{ id: 'ip7p', name: 'iPhone 7+ / 8+ (5.5")', width: 1242, height: 2208, topGapRatio: 0.28, bottomGapPx: 60 },
 		{ id: 'ipX', name: 'iPhone X / XS / 11 Pro / 12 mini (5.8"/5.4")', width: 1125, height: 2436, topGapRatio: 0.30, bottomGapPx: 80 },
@@ -250,7 +251,7 @@
 	let selectedBlock = $derived(blocks.find((b) => b.id === selectedId) || null);
 
 	const addDay = () => {
-		days.push({ id: generateUid(), name: 'New Day' });
+		days.push({ id: generateUid(), name: m.new_day() });
 	};
 
 	const removeDay = (dayId: string) => {
@@ -283,7 +284,7 @@
 			id: generateUid(),
 			dayId,
 			timeSlotId,
-			title: 'New Subject',
+			title: m.new_subject(),
 			time: '',
 			room: '',
 			section: '1',
@@ -361,7 +362,7 @@
 							>
 								<div class="text-[64px] font-bold leading-none">12:08</div>
 								<div class="text-sm mt-1.5 font-[JetBrains_Mono,monospace]">
-									พื้นที่เว้นให้ Lock Screen Clock
+									{m.clock_space_guide()}
 								</div>
 							</div>
 						{/if}

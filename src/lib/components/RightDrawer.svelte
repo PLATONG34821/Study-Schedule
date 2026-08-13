@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { PhonePreset } from '$lib/types';
+	import * as m from '$lib/paraglide/messages';
+	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 
 	interface Props {
 		phonePresets: PhonePreset[];
@@ -41,20 +43,42 @@
 <aside
 	class="w-80 bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-l border-[#27272a] shadow-none z-10 shrink-0"
 >
-	<div>
-		<h2 class="text-xl font-bold m-0 -tracking-[0.5px] text-white">ตั้งค่าการแสดงผล</h2>
-		<p class="text-xs text-[#a1a1aa] mt-1">วอลเปเปอร์ มุมหมุน และสีตาราง</p>
+	<div class="flex items-start justify-between">
+		<div>
+			<h2 class="text-xl font-bold m-0 -tracking-[0.5px] text-white">{m.display_settings()}</h2>
+			<p class="text-xs text-[#a1a1aa] mt-1">{m.display_subtitle()}</p>
+		</div>
+		<div class="flex gap-1 bg-[#27272a] p-1 rounded-lg border border-[#3f3f46]">
+			<button
+				type="button"
+				class="px-2 py-0.5 text-xs rounded font-semibold transition-colors {getLocale() === 'th'
+					? 'bg-[#6366f1] text-white'
+					: 'text-[#a1a1aa] hover:text-white'}"
+				onclick={() => setLocale('th')}
+			>
+				TH
+			</button>
+			<button
+				type="button"
+				class="px-2 py-0.5 text-xs rounded font-semibold transition-colors {getLocale() === 'en'
+					? 'bg-[#6366f1] text-white'
+					: 'text-[#a1a1aa] hover:text-white'}"
+				onclick={() => setLocale('en')}
+			>
+				EN
+			</button>
+		</div>
 	</div>
 
 	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-2">
-		ขนาด / วอลเปเปอร์ (Preset)
+		{m.preset_label()}
 	</div>
 	<select
 		class="w-full px-3 py-2.5 rounded-lg border border-[#3f3f46] bg-[#27272a] text-white text-[13px] font-[inherit] cursor-pointer"
 		bind:value={selectedPresetId}
 	>
 		{#each phonePresets as preset (preset.id)}
-			<option value={preset.id}>{preset.name}</option>
+			<option value={preset.id}>{preset.id === 'none' ? m.preset_original() : preset.name}</option>
 		{/each}
 	</select>
 
@@ -65,34 +89,34 @@
 			</div>
 
 			<label class="text-xs text-[#a1a1aa] block" for="gridRotationSelect"
-				>หมุนตาราง (Rotate Grid)</label
+				>{m.rotate_grid()}</label
 			>
 			<select
 				id="gridRotationSelect"
 				class="w-full px-2.5 py-2 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] box-border font-[inherit]"
 				bind:value={gridRotationAngle}
 			>
-				<option value={90}>หมุน 90° (แนวตั้ง / Rotated 90°)</option>
-				<option value={180}>หมุน 180° (กลับหัว / Upside Down 180°)</option>
-				<option value={270}>หมุน 270° (Rotated 270°)</option>
-				<option value={0}>ไม่หมุน 0° (แนวขนาน / Original 0°)</option>
+				<option value={90}>{m.rotate_90()}</option>
+				<option value={180}>{m.rotate_180()}</option>
+				<option value={270}>{m.rotate_270()}</option>
+				<option value={0}>{m.rotate_0()}</option>
 			</select>
 
 			<label class="text-xs text-[#a1a1aa] block" for="scaleModeSelect"
-				>ขยายขนาดตาราง (Scale Mode)</label
+				>{m.scale_mode()}</label
 			>
 			<select
 				id="scaleModeSelect"
 				class="w-full px-2.5 py-2 rounded-md border border-[#3f3f46] bg-[#18181b] text-white text-[13px] box-border font-[inherit]"
 				bind:value={scaleMode}
 			>
-				<option value="fillWidth">ยืดเต็มขอบด้านข้าง (Full Width Edge-to-Edge)</option>
-				<option value="fitBoth">พอดีทั้งกว้างและสูง (Fit Inside Screen)</option>
+				<option value="fillWidth">{m.scale_fill_width()}</option>
+				<option value="fitBoth">{m.scale_fit_both()}</option>
 			</select>
 
 			<div class="mt-2.5">
 				<label class="text-xs text-[#a1a1aa] block" for="clockSpaceRange">
-					เว้นพื้นที่นาฬิกา: {customTopGapPercent}%
+					{m.clock_space({ percent: customTopGapPercent })}
 				</label>
 				<input
 					id="clockSpaceRange"
@@ -106,7 +130,7 @@
 
 			<div class="mt-2.5">
 				<label class="text-xs text-[#a1a1aa] block" for="gridScaleRange">
-					ปรับขนาดย่อ/ขยายตาราง: {Math.round(gridScaleModifier * 100)}%
+					{m.grid_scale({ percent: Math.round(gridScaleModifier * 100) })}
 				</label>
 				<input
 					id="gridScaleRange"
@@ -121,7 +145,7 @@
 
 			<div class="mt-2.5">
 				<label class="text-xs text-[#a1a1aa] block" for="slotRowHeightRange">
-					ความสูงแถวตาราง: {slotRowHeight} px
+					{m.row_height({ height: slotRowHeight })}
 				</label>
 				<input
 					id="slotRowHeightRange"
@@ -136,7 +160,7 @@
 
 			<div class="mt-2.5">
 				<label class="text-xs text-[#a1a1aa] block" for="dayColWidthRange">
-					ปรับความยาวตารางแนวตั้ง (Column Width): {dayColumnWidth} px
+					{m.column_width({ width: dayColumnWidth })}
 				</label>
 				<input
 					id="dayColWidthRange"
@@ -152,12 +176,12 @@
 	{/if}
 
 	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-3.5">
-		สีส่วนประกอบตาราง (Grid Colors)
+		{m.grid_colors()}
 	</div>
 
 	<div class="flex flex-col gap-1">
 		<label class="text-xs text-[#a1a1aa] block" for="gridLineColorInput"
-			>สีเส้นตาราง (Line Color)</label
+			>{m.line_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
 			<input
@@ -172,7 +196,7 @@
 
 	<div class="flex flex-col gap-1">
 		<label class="text-xs text-[#a1a1aa] block" for="dayHeaderBgColorInput"
-			>สีพื้นหลังวัน (Days Header Color)</label
+			>{m.day_header_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
 			<input
@@ -187,7 +211,7 @@
 
 	<div class="flex flex-col gap-1">
 		<label class="text-xs text-[#a1a1aa] block" for="timeBgColorInput"
-			>สีพื้นหลังเวลา (Time Slots Color)</label
+			>{m.time_slot_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
 			<input
@@ -202,7 +226,7 @@
 
 	<div class="flex flex-col gap-1">
 		<label class="text-xs text-[#a1a1aa] block" for="cellBgColorInput"
-			>สีพื้นหลังวิชา / ช่องตาราง (Subject Cells Color)</label
+			>{m.subject_cell_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
 			<input
@@ -217,7 +241,7 @@
 
 	<div class="flex flex-col gap-1">
 		<label class="text-xs text-[#a1a1aa] block" for="bgColorInput"
-			>สีพื้นหลังวอลเปเปอร์ (Wallpaper Background)</label
+			>{m.wallpaper_bg_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
 			<input

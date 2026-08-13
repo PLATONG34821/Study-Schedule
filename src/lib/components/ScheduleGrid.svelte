@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Day, Slot, ClassBlock, PaletteColor } from '$lib/types';
 	import { textColorFor } from '$lib/utils';
+	import * as m from '$lib/paraglide/messages';
 	import BlockCard from './BlockCard.svelte';
 
 	interface Props {
@@ -86,7 +87,7 @@
 					<button
 						type="button"
 						class="border-2 border-dashed border-[#cbd5e1] rounded-lg bg-transparent text-[#94a3b8] text-xs py-1.5 px-0 cursor-pointer font-[inherit] w-full box-border"
-						onclick={() => onAddBlock(day.id, slot.id)}>+ เพิ่มวิชา</button
+						onclick={() => onAddBlock(day.id, slot.id)}>{m.add_subject()}</button
 					>
 				{/if}
 			</div>
