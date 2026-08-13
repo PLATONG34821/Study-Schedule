@@ -194,8 +194,8 @@
 				<option value="fitBoth">{m.scale_fit_both()}</option>
 			</select>
 
-			<div class="mt-2.5">
-				<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="clockSpaceRange">
+			<div class="mt-2.5 flex flex-col gap-1">
+				<label class="block text-xs font-medium text-[#a1a1aa]" for="clockSpaceRange">
 					{m.clock_space({ percent: customTopGapPercent })}
 				</label>
 				<input
@@ -208,8 +208,8 @@
 				/>
 			</div>
 
-			<div class="mt-2.5">
-				<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="gridScaleRange">
+			<div class="mt-2.5 flex flex-col gap-1">
+				<label class="block text-xs font-medium text-[#a1a1aa]" for="gridScaleRange">
 					{m.grid_scale({ percent: Math.round(gridScaleModifier * 100) })}
 				</label>
 				<input
@@ -223,8 +223,8 @@
 				/>
 			</div>
 
-			<div class="mt-2.5">
-				<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="slotRowHeightRange">
+			<div class="mt-2.5 flex flex-col gap-1">
+				<label class="block text-xs font-medium text-[#a1a1aa]" for="slotRowHeightRange">
 					{m.row_height({ height: slotRowHeight })}
 				</label>
 				<input
@@ -238,8 +238,8 @@
 				/>
 			</div>
 
-			<div class="mt-2.5">
-				<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="dayColWidthRange">
+			<div class="mt-2.5 flex flex-col gap-1">
+				<label class="block text-xs font-medium text-[#a1a1aa]" for="dayColWidthRange">
 					{m.column_width({ width: dayColumnWidth })}
 				</label>
 				<input
@@ -260,8 +260,8 @@
 	</div>
 
 	<div class="flex flex-col gap-3 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
-		<div>
-			<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="fontSizeTitleRange">
+		<div class="flex flex-col gap-1">
+			<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeTitleRange">
 				{m.font_size_title({ size: fontSizeTitle })}
 			</label>
 			<input
@@ -275,8 +275,8 @@
 			/>
 		</div>
 
-		<div>
-			<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="fontSizeDayRange">
+		<div class="flex flex-col gap-1">
+			<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeDayRange">
 				{m.font_size_day({ size: fontSizeDay })}
 			</label>
 			<input
@@ -290,8 +290,8 @@
 			/>
 		</div>
 
-		<div>
-			<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="fontSizeTimeRange">
+		<div class="flex flex-col gap-1">
+			<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeTimeRange">
 				{m.font_size_time({ size: fontSizeTime })}
 			</label>
 			<input
@@ -305,8 +305,8 @@
 			/>
 		</div>
 
-		<div>
-			<label class="mb-1 block text-xs font-medium text-[#a1a1aa]" for="fontSizeBadgeRange">
+		<div class="flex flex-col gap-1">
+			<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeBadgeRange">
 				{m.font_size_badge({ size: fontSizeBadge })}
 			</label>
 			<input

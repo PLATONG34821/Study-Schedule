@@ -213,16 +213,32 @@
 				</div>
 
 				<!-- Pattern Toggle -->
-				<label
-					class="flex cursor-pointer items-center justify-between rounded-lg border border-[#3f3f46] bg-[#27272a] px-3.5 py-2.5 transition-colors hover:border-[#52525b]"
+				<button
+					type="button"
+					class="flex w-full cursor-pointer items-center justify-between rounded-xl border border-[#3f3f46] bg-[#27272a] px-3.5 py-2.5 transition-all hover:border-[#52525b]"
+					onclick={() => draft && (draft.pattern = !draft.pattern)}
 				>
-					<span class="text-xs font-medium text-[#e4e4e7]">{m.stripe_pattern()}</span>
-					<input
-						type="checkbox"
-						bind:checked={draft.pattern}
-						class="h-4 w-4 cursor-pointer accent-[#2563eb]"
-					/>
-				</label>
+					<div class="flex items-center gap-2.5">
+						<div
+							class="h-5 w-7 shrink-0 rounded border border-white/20 transition-all"
+							style="background: {draft.pattern
+								? 'repeating-linear-gradient(-45deg, #2563eb, #2563eb 4px, #60a5fa 4px, #60a5fa 8px)'
+								: '#3f3f46'};"
+						></div>
+						<span class="text-xs font-medium text-[#e4e4e7]">{m.stripe_pattern()}</span>
+					</div>
+					<div
+						class="relative h-6 w-11 shrink-0 rounded-full p-0.5 transition-colors duration-200 ease-in-out {draft.pattern
+							? 'bg-[#2563eb]'
+							: 'bg-[#3f3f46]'}"
+					>
+						<div
+							class="h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out {draft.pattern
+								? 'translate-x-5'
+								: 'translate-x-0'}"
+						></div>
+					</div>
+				</button>
 			</div>
 
 			<!-- Footer -->
