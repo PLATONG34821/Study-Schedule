@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PhonePreset } from '$lib/types';
 	import * as m from '$lib/paraglide/messages';
-	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 
 	interface Props {
 		phonePresets: PhonePreset[];
@@ -51,31 +50,9 @@
 <aside
 	class="w-80 bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-l border-[#27272a] shadow-none z-10 shrink-0"
 >
-	<div class="flex items-start justify-between">
-		<div>
-			<h2 class="text-xl font-bold m-0 -tracking-[0.5px] text-white">{m.display_settings()}</h2>
-			<p class="text-xs text-[#a1a1aa] mt-1">{m.display_subtitle()}</p>
-		</div>
-		<div class="flex gap-1 bg-[#27272a] p-1 rounded-lg border border-[#3f3f46]">
-			<button
-				type="button"
-				class="px-2 py-0.5 text-xs rounded font-semibold transition-colors {getLocale() === 'th'
-					? 'bg-[#6366f1] text-white'
-					: 'text-[#a1a1aa] hover:text-white'}"
-				onclick={() => setLocale('th')}
-			>
-				TH
-			</button>
-			<button
-				type="button"
-				class="px-2 py-0.5 text-xs rounded font-semibold transition-colors {getLocale() === 'en'
-					? 'bg-[#6366f1] text-white'
-					: 'text-[#a1a1aa] hover:text-white'}"
-				onclick={() => setLocale('en')}
-			>
-				EN
-			</button>
-		</div>
+	<div>
+		<h2 class="text-xl font-bold m-0 -tracking-[0.5px] text-white">{m.display_settings()}</h2>
+		<p class="text-xs text-[#a1a1aa] mt-1">{m.display_subtitle()}</p>
 	</div>
 
 	<div class="text-[11px] font-bold tracking-[0.8px] uppercase text-[#a1a1aa] mt-2">
