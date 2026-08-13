@@ -79,6 +79,8 @@
 	let dayColumnWidth = $state<number>(270);
 	let leftSidebarWidth = $state<number>(320);
 	let rightDrawerWidth = $state<number>(320);
+	let isLeftSidebarOpen = $state<boolean>(false);
+	let isRightDrawerOpen = $state<boolean>(false);
 
 	let previewZoom = $state<number>(1);
 	let previewPanX = $state<number>(0);
@@ -394,10 +396,30 @@
 	});
 </script>
 
-<div class="flex h-screen w-screen overflow-hidden">
+<div class="relative flex h-screen w-screen flex-col overflow-hidden lg:flex-row">
+	{#if isLeftSidebarOpen}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
+			onclick={() => (isLeftSidebarOpen = false)}
+		></div>
+	{/if}
+
+	{#if isRightDrawerOpen}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
+			onclick={() => (isRightDrawerOpen = false)}
+		></div>
+	{/if}
+
 	<LeftSidebar
 		{isExporting}
 		{linkCopied}
+		isOpen={isLeftSidebarOpen}
+		onClose={() => (isLeftSidebarOpen = false)}
 		bind:width={leftSidebarWidth}
 		bind:days
 		bind:slots
@@ -420,6 +442,56 @@
 		onwheel={handleCanvasWheel}
 		onpointerdown={handleCanvasPointerDown}
 	>
+		<!-- Mobile Header Toolbar -->
+		<div
+			class="z-20 flex items-center justify-between border-b border-[#27272a] bg-[#18181b] px-4 py-2.5 text-white lg:hidden"
+		>
+			<button
+				type="button"
+				class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
+				onclick={() => {
+					isLeftSidebarOpen = !isLeftSidebarOpen;
+					if (isLeftSidebarOpen) isRightDrawerOpen = false;
+				}}
+			>
+				<svg
+					width="15"
+					height="15"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line
+						x1="3"
+						y1="18"
+						x2="21"
+						y2="18"
+					/></svg
+				>
+				{m.app_title()}
+			</button>
+			<button
+				type="button"
+				class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
+				onclick={() => {
+					isRightDrawerOpen = !isRightDrawerOpen;
+					if (isRightDrawerOpen) isLeftSidebarOpen = false;
+				}}
+			>
+				<svg
+					width="15"
+					height="15"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					><circle cx="12" cy="12" r="3" /><path
+						d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+					/></svg
+				>
+				{m.display_settings()}
+			</button>
+		</div>
 		<div
 			class="box-border flex h-full w-full items-center justify-center p-10"
 			style="cursor: {isCanvasPanning
@@ -579,6 +651,8 @@
 
 	<RightDrawer
 		{phonePresets}
+		isOpen={isRightDrawerOpen}
+		onClose={() => (isRightDrawerOpen = false)}
 		bind:width={rightDrawerWidth}
 		bind:selectedPresetId
 		bind:customPresetWidth

@@ -25,6 +25,8 @@
 		currentPreset: PhonePreset;
 		isWallpaperMode: boolean;
 		width?: number;
+		isOpen?: boolean;
+		onClose?: () => void;
 	}
 
 	let {
@@ -49,7 +51,9 @@
 		fontSizeBadge = $bindable(),
 		currentPreset,
 		isWallpaperMode,
-		width = $bindable(320)
+		width = $bindable(320),
+		isOpen = true,
+		onClose
 	}: Props = $props();
 
 	let isResizing = $state(false);
@@ -79,18 +83,32 @@
 </script>
 
 <aside
-	class="relative z-10 box-border flex shrink-0 flex-col gap-3 overflow-y-auto border-l border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-none"
+	class="fixed inset-y-0 right-0 z-40 box-border flex h-full shrink-0 flex-col gap-3 overflow-y-auto border-l border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none {isOpen
+		? 'translate-x-0'
+		: 'translate-x-full lg:translate-x-0'}"
 	style="width: {width}px;"
 >
 	<div
-		class="absolute top-0 left-0 z-20 h-full w-2 cursor-col-resize transition-colors hover:bg-[#6366f1]/50 active:bg-[#6366f1]"
+		class="absolute top-0 left-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#6366f1]/50 active:bg-[#6366f1] lg:block"
 		onpointerdown={handlePointerDown}
 		role="separator"
 		aria-label="Resize right drawer"
 	></div>
-	<div>
-		<h2 class="m-0 text-xl font-bold -tracking-[0.5px] text-white">{m.display_settings()}</h2>
-		<p class="mt-1 text-xs text-[#a1a1aa]">{m.display_subtitle()}</p>
+	<div class="flex items-start justify-between">
+		<div>
+			<h2 class="m-0 text-xl font-bold -tracking-[0.5px] text-white">{m.display_settings()}</h2>
+			<p class="mt-1 text-xs text-[#a1a1aa]">{m.display_subtitle()}</p>
+		</div>
+		{#if onClose}
+			<button
+				type="button"
+				class="flex h-7 w-7 items-center justify-center rounded-lg border border-[#3f3f46] bg-[#27272a] text-sm text-[#a1a1aa] hover:text-white lg:hidden"
+				onclick={onClose}
+				aria-label="Close drawer"
+			>
+				✕
+			</button>
+		{/if}
 	</div>
 
 	<div class="mt-2 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">

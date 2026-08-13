@@ -8,8 +8,10 @@
 		slots: Slot[];
 		palette: PaletteColor[];
 		width?: number;
+		isOpen?: boolean;
 		isExporting?: boolean;
 		linkCopied?: boolean;
+		onClose?: () => void;
 		onExport: () => void;
 		onOpenExportCode: () => void;
 		onOpenImportCode: () => void;
@@ -27,8 +29,10 @@
 		slots = $bindable(),
 		palette = $bindable(),
 		width = $bindable(320),
+		isOpen = true,
 		isExporting = false,
 		linkCopied = false,
+		onClose,
 		onExport,
 		onOpenExportCode,
 		onOpenImportCode,
@@ -68,11 +72,13 @@
 </script>
 
 <aside
-	class="relative z-10 box-border flex shrink-0 flex-col gap-3 overflow-y-auto border-r border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-none"
+	class="fixed inset-y-0 left-0 z-40 box-border flex h-full shrink-0 flex-col gap-3 overflow-y-auto border-r border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none {isOpen
+		? 'translate-x-0'
+		: '-translate-x-full lg:translate-x-0'}"
 	style="width: {width}px;"
 >
 	<div
-		class="absolute top-0 right-0 z-20 h-full w-2 cursor-col-resize transition-colors hover:bg-[#6366f1]/50 active:bg-[#6366f1]"
+		class="absolute top-0 right-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#6366f1]/50 active:bg-[#6366f1] lg:block"
 		onpointerdown={handlePointerDown}
 		role="separator"
 		aria-label="Resize left sidebar"
@@ -82,25 +88,37 @@
 			<h1 class="m-0 text-[22px] font-bold -tracking-[0.5px] text-white">{m.app_title()}</h1>
 			<p class="mt-1 text-xs text-[#a1a1aa]">{m.app_subtitle()}</p>
 		</div>
-		<div class="flex gap-1 rounded-lg border border-[#3f3f46] bg-[#27272a] p-1">
-			<button
-				type="button"
-				class="rounded px-2 py-0.5 text-xs font-semibold transition-colors {getLocale() === 'th'
-					? 'bg-[#6366f1] text-white'
-					: 'text-[#a1a1aa] hover:text-white'}"
-				onclick={() => setLocale('th')}
-			>
-				TH
-			</button>
-			<button
-				type="button"
-				class="rounded px-2 py-0.5 text-xs font-semibold transition-colors {getLocale() === 'en'
-					? 'bg-[#6366f1] text-white'
-					: 'text-[#a1a1aa] hover:text-white'}"
-				onclick={() => setLocale('en')}
-			>
-				EN
-			</button>
+		<div class="flex items-center gap-2">
+			<div class="flex gap-1 rounded-lg border border-[#3f3f46] bg-[#27272a] p-1">
+				<button
+					type="button"
+					class="rounded px-2 py-0.5 text-xs font-semibold transition-colors {getLocale() === 'th'
+						? 'bg-[#6366f1] text-white'
+						: 'text-[#a1a1aa] hover:text-white'}"
+					onclick={() => setLocale('th')}
+				>
+					TH
+				</button>
+				<button
+					type="button"
+					class="rounded px-2 py-0.5 text-xs font-semibold transition-colors {getLocale() === 'en'
+						? 'bg-[#6366f1] text-white'
+						: 'text-[#a1a1aa] hover:text-white'}"
+					onclick={() => setLocale('en')}
+				>
+					EN
+				</button>
+			</div>
+			{#if onClose}
+				<button
+					type="button"
+					class="flex h-7 w-7 items-center justify-center rounded-lg border border-[#3f3f46] bg-[#27272a] text-sm text-[#a1a1aa] hover:text-white lg:hidden"
+					onclick={onClose}
+					aria-label="Close sidebar"
+				>
+					✕
+				</button>
+			{/if}
 		</div>
 	</div>
 

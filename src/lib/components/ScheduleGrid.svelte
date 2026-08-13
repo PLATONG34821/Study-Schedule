@@ -52,68 +52,70 @@
 	let dayTextColor = $derived(textColorFor(dayHeaderBgColor));
 </script>
 
-<div
-	class="box-border grid overflow-hidden rounded border-[3px] border-solid"
-	style="border-color: {gridLineColor}; grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, {isWallpaperMode
-		? `${slotRowHeight}px`
-		: 'minmax(150px, auto)'});"
->
+<div class="max-w-full overflow-x-auto">
 	<div
-		class="box-border border-r-[3px] border-b-[3px] border-solid"
-		style="background: {timeBgColor}; border-color: {gridLineColor};"
-	></div>
-
-	{#each days as day, colIdx (day.id)}
+		class="box-border grid shrink-0 overflow-hidden rounded border-[3px] border-solid"
+		style="border-color: {gridLineColor}; grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, {isWallpaperMode
+			? `${slotRowHeight}px`
+			: 'minmax(150px, auto)'});"
+	>
 		<div
-			class="box-border flex items-center justify-center border-r-[3px] border-b-[3px] border-solid font-bold tracking-[1px] uppercase"
-			style="background: {dayHeaderBgColor}; color: {dayTextColor}; border-color: {gridLineColor}; border-right-style: {colIdx ===
-			days.length - 1
-				? 'none'
-				: 'solid'}; font-size: {fontSizeDay}px;"
-		>
-			{day.name}
-		</div>
-	{/each}
+			class="box-border border-r-[3px] border-b-[3px] border-solid"
+			style="background: {timeBgColor}; border-color: {gridLineColor};"
+		></div>
 
-	{#each slots as slot, rowIdx (slot.id)}
-		<div
-			class="box-border flex items-center justify-center border-r-[3px] border-b-[3px] border-solid font-[JetBrains_Mono,monospace] font-bold"
-			style="background: {timeBgColor}; color: {timeTextColor}; border-color: {gridLineColor}; border-bottom-style: {rowIdx ===
-			slots.length - 1
-				? 'none'
-				: 'solid'}; font-size: {fontSizeTime}px;"
-		>
-			{slot.label}
-		</div>
 		{#each days as day, colIdx (day.id)}
-			{@const cellBlocks = blocks.filter((b) => b.dayId === day.id && b.timeSlotId === slot.id)}
-			{@const hasBlock = cellBlocks.length > 0}
 			<div
-				class="relative box-border flex h-full w-full flex-col border-r-[3px] border-b-[3px] border-solid p-2"
-				style="background: {cellBgColor}; border-color: {gridLineColor}; border-right-style: {colIdx ===
+				class="box-border flex items-center justify-center border-r-[3px] border-b-[3px] border-solid font-bold tracking-[1px] uppercase"
+				style="background: {dayHeaderBgColor}; color: {dayTextColor}; border-color: {gridLineColor}; border-right-style: {colIdx ===
 				days.length - 1
 					? 'none'
-					: 'solid'}; border-bottom-style: {rowIdx === slots.length - 1 ? 'none' : 'solid'};"
+					: 'solid'}; font-size: {fontSizeDay}px;"
 			>
-				{#each cellBlocks as block (block.id)}
-					<BlockCard
-						{block}
-						{palette}
-						{fontSizeTitle}
-						{fontSizeBadge}
-						isSelected={selectedId === block.id}
-						onSelect={() => onSelectBlock(block.id)}
-					/>
-				{/each}
-
-				{#if !hasBlock && !isExporting}
-					<button
-						type="button"
-						class="box-border flex h-full min-h-[50px] w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-[#cbd5e1] bg-transparent px-0 py-1.5 font-[inherit] text-xs text-[#94a3b8] transition-colors hover:border-[#6366f1] hover:text-[#6366f1]"
-						onclick={() => onAddBlock(day.id, slot.id)}>{m.add_subject()}</button
-					>
-				{/if}
+				{day.name}
 			</div>
 		{/each}
-	{/each}
+
+		{#each slots as slot, rowIdx (slot.id)}
+			<div
+				class="box-border flex items-center justify-center border-r-[3px] border-b-[3px] border-solid font-[JetBrains_Mono,monospace] font-bold"
+				style="background: {timeBgColor}; color: {timeTextColor}; border-color: {gridLineColor}; border-bottom-style: {rowIdx ===
+				slots.length - 1
+					? 'none'
+					: 'solid'}; font-size: {fontSizeTime}px;"
+			>
+				{slot.label}
+			</div>
+			{#each days as day, colIdx (day.id)}
+				{@const cellBlocks = blocks.filter((b) => b.dayId === day.id && b.timeSlotId === slot.id)}
+				{@const hasBlock = cellBlocks.length > 0}
+				<div
+					class="relative box-border flex h-full w-full flex-col border-r-[3px] border-b-[3px] border-solid p-2"
+					style="background: {cellBgColor}; border-color: {gridLineColor}; border-right-style: {colIdx ===
+					days.length - 1
+						? 'none'
+						: 'solid'}; border-bottom-style: {rowIdx === slots.length - 1 ? 'none' : 'solid'};"
+				>
+					{#each cellBlocks as block (block.id)}
+						<BlockCard
+							{block}
+							{palette}
+							{fontSizeTitle}
+							{fontSizeBadge}
+							isSelected={selectedId === block.id}
+							onSelect={() => onSelectBlock(block.id)}
+						/>
+					{/each}
+
+					{#if !hasBlock && !isExporting}
+						<button
+							type="button"
+							class="box-border flex h-full min-h-[50px] w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-[#cbd5e1] bg-transparent px-0 py-1.5 font-[inherit] text-xs text-[#94a3b8] transition-colors hover:border-[#6366f1] hover:text-[#6366f1]"
+							onclick={() => onAddBlock(day.id, slot.id)}>{m.add_subject()}</button
+						>
+					{/if}
+				</div>
+			{/each}
+		{/each}
+	</div>
 </div>

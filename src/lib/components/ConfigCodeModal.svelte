@@ -69,7 +69,7 @@
 		onclick={handleBackdropClick}
 	>
 		<div
-			class="flex w-full max-w-[500px] animate-popIn flex-col overflow-hidden rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-none"
+			class="flex max-h-[90vh] w-full max-w-[500px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-none"
 		>
 			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-[18px]">
 				<h2 class="m-0 text-lg font-bold text-white">
