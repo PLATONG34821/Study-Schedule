@@ -69,6 +69,8 @@
 	let gridScaleModifier = $state<number>(1.0);
 	let slotRowHeight = $state<number>(210);
 	let dayColumnWidth = $state<number>(230);
+	let leftSidebarWidth = $state<number>(320);
+	let rightDrawerWidth = $state<number>(320);
 
 	let currentPreset = $derived(phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[0]);
 	let isWallpaperMode = $derived(selectedPresetId !== 'none');
@@ -447,6 +449,7 @@
 	<LeftSidebar
 		{isExporting}
 		{linkCopied}
+		bind:width={leftSidebarWidth}
 		bind:days
 		bind:slots
 		bind:palette
@@ -550,6 +553,7 @@
 
 	<RightDrawer
 		{phonePresets}
+		bind:width={rightDrawerWidth}
 		bind:selectedPresetId
 		bind:gridRotationAngle
 		bind:customTopGapPercent

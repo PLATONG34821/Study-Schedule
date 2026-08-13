@@ -7,6 +7,7 @@
 		days: Day[];
 		slots: Slot[];
 		palette: PaletteColor[];
+		width?: number;
 		isExporting?: boolean;
 		linkCopied?: boolean;
 		onExport: () => void;
@@ -25,6 +26,7 @@
 		days = $bindable(),
 		slots = $bindable(),
 		palette = $bindable(),
+		width = $bindable(320),
 		isExporting = false,
 		linkCopied = false,
 		onExport,
@@ -38,11 +40,43 @@
 		onAddColor,
 		onRemoveColor
 	}: Props = $props();
+
+	let isResizing = $state(false);
+
+	const handlePointerDown = (e: PointerEvent) => {
+		isResizing = true;
+		const handle = e.currentTarget as HTMLElement;
+		handle.setPointerCapture(e.pointerId);
+		const startX = e.clientX;
+		const startWidth = width;
+
+		const handlePointerMove = (moveEvent: PointerEvent) => {
+			if (!isResizing) return;
+			const deltaX = moveEvent.clientX - startX;
+			width = Math.min(Math.max(startWidth + deltaX, 220), 550);
+		};
+
+		const handlePointerUp = () => {
+			isResizing = false;
+			handle.removeEventListener('pointermove', handlePointerMove as EventListener);
+			handle.removeEventListener('pointerup', handlePointerUp as EventListener);
+		};
+
+		handle.addEventListener('pointermove', handlePointerMove as EventListener);
+		handle.addEventListener('pointerup', handlePointerUp as EventListener);
+	};
 </script>
 
 <aside
-	class="w-80 bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-r border-[#27272a] shadow-none z-10 shrink-0"
+	class="relative bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-r border-[#27272a] shadow-none z-10 shrink-0"
+	style="width: {width}px;"
 >
+	<div
+		class="absolute top-0 right-0 w-2 h-full cursor-col-resize hover:bg-[#6366f1]/50 active:bg-[#6366f1] transition-colors z-20"
+		onpointerdown={handlePointerDown}
+		role="separator"
+		aria-label="Resize left sidebar"
+	></div>
 	<div class="flex items-start justify-between">
 		<div>
 			<h1 class="text-[22px] font-bold m-0 -tracking-[0.5px] text-white">{m.app_title()}</h1>

@@ -22,6 +22,7 @@
 		fontSizeBadge: number;
 		currentPreset: PhonePreset;
 		isWallpaperMode: boolean;
+		width?: number;
 	}
 
 	let {
@@ -43,13 +44,46 @@
 		fontSizeTitle = $bindable(),
 		fontSizeBadge = $bindable(),
 		currentPreset,
-		isWallpaperMode
+		isWallpaperMode,
+		width = $bindable(320)
 	}: Props = $props();
+
+	let isResizing = $state(false);
+
+	const handlePointerDown = (e: PointerEvent) => {
+		isResizing = true;
+		const handle = e.currentTarget as HTMLElement;
+		handle.setPointerCapture(e.pointerId);
+		const startX = e.clientX;
+		const startWidth = width;
+
+		const handlePointerMove = (moveEvent: PointerEvent) => {
+			if (!isResizing) return;
+			const deltaX = startX - moveEvent.clientX;
+			width = Math.min(Math.max(startWidth + deltaX, 220), 550);
+		};
+
+		const handlePointerUp = () => {
+			isResizing = false;
+			handle.removeEventListener('pointermove', handlePointerMove as EventListener);
+			handle.removeEventListener('pointerup', handlePointerUp as EventListener);
+		};
+
+		handle.addEventListener('pointermove', handlePointerMove as EventListener);
+		handle.addEventListener('pointerup', handlePointerUp as EventListener);
+	};
 </script>
 
 <aside
-	class="w-80 bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-l border-[#27272a] shadow-none z-10 shrink-0"
+	class="relative bg-[#18181b] text-[#e4e4e7] p-6 box-border overflow-y-auto flex flex-col gap-3 border-l border-[#27272a] shadow-none z-10 shrink-0"
+	style="width: {width}px;"
 >
+	<div
+		class="absolute top-0 left-0 w-2 h-full cursor-col-resize hover:bg-[#6366f1]/50 active:bg-[#6366f1] transition-colors z-20"
+		onpointerdown={handlePointerDown}
+		role="separator"
+		aria-label="Resize right drawer"
+	></div>
 	<div>
 		<h2 class="text-xl font-bold m-0 -tracking-[0.5px] text-white">{m.display_settings()}</h2>
 		<p class="text-xs text-[#a1a1aa] mt-1">{m.display_subtitle()}</p>
