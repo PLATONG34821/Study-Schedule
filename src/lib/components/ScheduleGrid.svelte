@@ -57,39 +57,6 @@
 </script>
 
 <div class="relative max-w-full overflow-x-auto">
-	{#if blocks.length === 0 && !isExporting}
-		<div
-			class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center p-4"
-		>
-			<div
-				class="pointer-events-auto flex max-w-lg flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#3f3f46] bg-[#18181b]/95 p-6 text-center shadow-2xl backdrop-blur-md"
-			>
-				<div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2563eb]/20 text-[#60a5fa]">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-						<line x1="16" y1="2" x2="16" y2="6" />
-						<line x1="8" y1="2" x2="8" y2="6" />
-						<line x1="3" y1="10" x2="21" y2="10" />
-					</svg>
-				</div>
-				<div class="flex flex-col gap-1">
-					<h3 class="m-0 text-base font-bold text-white">{m.empty_grid_title()}</h3>
-					<p class="m-0 text-xs text-[#a1a1aa]">{m.empty_grid_subtitle()}</p>
-				</div>
-				<a
-					href="/presets"
-					class="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#2563eb] px-4 py-2 font-[inherit] text-xs font-semibold text-white shadow-lg transition-all hover:bg-[#1d4ed8]"
-				>
-					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-						<line x1="3" y1="6" x2="21" y2="6"/>
-						<path d="M16 10a4 4 0 0 1-8 0"/>
-					</svg>
-					{m.preset_marketplace()}
-				</a>
-			</div>
-		</div>
-	{/if}
 	<div
 		class="box-border grid shrink-0 overflow-hidden border-[3px] border-solid"
 		style="border-color: {gridLineColor}; border-radius: {gridBorderRadius}px; grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, {isWallpaperMode
