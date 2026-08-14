@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createQuery } from '@tanstack/svelte-query';
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
 	import { textColorFor, compressConfigCode } from '$lib/utils';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
@@ -25,7 +26,7 @@
 	let selectedCategory = $state('All');
 	let previewPreset = $state<CustomSchedulePreset | null>(null);
 
-	const presets: CustomSchedulePreset[] = [
+	const presetsList: CustomSchedulePreset[] = [
 		{
 			id: 'mon-fri-standard',
 			title: 'Standard University (Mon–Fri)',
@@ -508,6 +509,13 @@
 			]
 		}
 	];
+
+	const presetsQuery = createQuery(() => ({
+		queryKey: ['schedulePresets'],
+		queryFn: async () => presetsList
+	}));
+
+	let presets = $derived(presetsQuery.data ?? presetsList);
 
 	let categories = $derived([
 		'All',
