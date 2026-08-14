@@ -25,7 +25,6 @@
 		fontSizeBadge?: number;
 		onSelectBlock: (id: string) => void;
 		onAddBlock: (dayId: string, timeSlotId: string) => void;
-		onOpenPresetMarketplace?: () => void;
 	}
 
 	let {
@@ -48,8 +47,7 @@
 		fontSizeTitle = 20,
 		fontSizeBadge = 11,
 		onSelectBlock,
-		onAddBlock,
-		onOpenPresetMarketplace
+		onAddBlock
 	}: Props = $props();
 
 	let timeTextColor = $derived(textColorFor(timeBgColor));

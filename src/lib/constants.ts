@@ -1,5 +1,4 @@
-import type { ClassBlock, PhonePreset } from '$lib/types';
-import { generateUid } from '$lib/utils';
+import type { PhonePreset } from '$lib/types';
 
 export const phonePresets: PhonePreset[] = [
 	{ id: 'desktop', name: 'Desktop (1,920 × 1,080)', width: 1920, height: 1080 },
@@ -7,4 +6,3 @@ export const phonePresets: PhonePreset[] = [
 	{ id: 'custom', name: 'Custom Size', width: 1920, height: 1080 }
 ];
 
-export const defaultBlocks: ClassBlock[] = [];

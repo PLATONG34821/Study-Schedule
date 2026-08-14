@@ -3,7 +3,7 @@
 	import { toPng } from 'html-to-image';
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
 	import { generateUid, compressConfigCode, decompressConfigCode, textColorFor } from '$lib/utils';
-	import { phonePresets, defaultBlocks } from '$lib/constants';
+	import { phonePresets } from '$lib/constants';
 	import * as m from '$lib/paraglide/messages';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightDrawer from '$lib/components/RightDrawer.svelte';
@@ -229,7 +229,7 @@
 	let clockGuideTextColor = $derived(isDarkBg ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.35)');
 	let clockGuideBorderColor = $derived(isDarkBg ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)');
 
-	let blocks = $state<ClassBlock[]>(defaultBlocks);
+	let blocks = $state<ClassBlock[]>([]);
 
 	let selectedBlock = $derived(blocks.find((b) => b.id === selectedId) || null);
 
@@ -447,13 +447,10 @@
 	};
 
 	let linkCopied = $state(false);
-	let isCodeModalOpen = $state(false);
 	let isExportModalOpen = $state(false);
 	let isImportModalOpen = $state(false);
 	let exportModalInitialTab = $state<'image' | 'share' | 'code'>('image');
 	let currentShareUrl = $state('');
-	let isPresetMarketplaceOpen = $state(false);
-	let codeModalMode = $state<'export' | 'import'>('export');
 	let exportedCodeString = $state('');
 	let isInitialLoaded = $state(false);
 
@@ -548,10 +545,6 @@
 		isExportModalOpen = true;
 	};
 
-	const openExportCode = async () => {
-		openExportModal('code');
-	};
-
 	const openImportCode = () => {
 		isImportModalOpen = true;
 	};
@@ -582,25 +575,6 @@
 			}, 2500);
 		} catch {
 			prompt('Copy schedule link:', shareUrl);
-		}
-	};
-
-	const loadSampleTemplate = () => {
-		blocks = JSON.parse(JSON.stringify(defaultBlocks));
-		selectedId = null;
-		pushHistoryState();
-		addToast(m.sample_loaded(), 'success');
-	};
-
-
-
-	const resetToDefault = () => {
-		if (typeof window !== 'undefined' && confirm(m.reset_confirm())) {
-			try {
-				localStorage.removeItem('study_schedule_autosave');
-			} catch {}
-			history.replaceState(null, '', window.location.pathname);
-			window.location.reload();
 		}
 	};
 
@@ -649,33 +623,21 @@
 	{/if}
 
 	<LeftSidebar
-		{isExporting}
-		{linkCopied}
-		bind:exportPixelRatio
 		isOpen={isLeftSidebarOpen}
 		onClose={() => (isLeftSidebarOpen = false)}
 		bind:width={leftSidebarWidth}
 		bind:days
 		bind:slots
 		bind:palette
-		onExport={() => openExportModal('image')}
 		onOpenExportModal={() => openExportModal('image')}
-		onOpenExportCode={() => openExportModal('code')}
 		onOpenImportCode={openImportCode}
-		onShareLink={shareLink}
 		onAddDay={addDay}
 		onRemoveDay={removeDay}
 		onAddSlot={addSlot}
 		onRemoveSlot={removeSlot}
 		onAddColor={addColor}
 		onRemoveColor={removeColor}
-		{canUndo}
-		{canRedo}
-		onUndo={undoState}
-		onRedo={redoState}
 		onFieldChange={pushHistoryState}
-		onResetDefault={resetToDefault}
-		onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
 	/>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -837,7 +799,6 @@
 										fontSizeBadge={effectiveFontSizeBadge}
 										onSelectBlock={(id: string) => (selectedId = id)}
 										onAddBlock={addBlock}
-										onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
 									/>
 								</div>
 							</div>
@@ -871,7 +832,6 @@
 						fontSizeBadge={effectiveFontSizeBadge}
 						onSelectBlock={(id: string) => (selectedId = id)}
 						onAddBlock={addBlock}
-						onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
 					/>
 				</div>
 			{/if}

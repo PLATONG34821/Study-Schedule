@@ -9,8 +9,6 @@
 		title: string;
 		category: string;
 		description: string;
-		author: string;
-		badgeText: string;
 		themeName: string;
 		bgColor: string;
 		gridLineColor: string;
@@ -33,8 +31,6 @@
 			title: 'Standard University (Mon–Fri)',
 			category: 'Light Tone',
 			description: 'Classic 5-day academic timetable with clean light canvas and vibrant subject cards.',
-			author: 'Academic Office',
-			badgeText: '5 Days • 4 Slots',
 			themeName: 'Clean Light',
 			bgColor: '#ffffff',
 			gridLineColor: '#111111',
@@ -143,8 +139,6 @@
 			title: '3-Day Intensive (Mon, Wed, Fri)',
 			category: 'Dark Tone',
 			description: 'Midnight Slate theme with neon accents. Leaves Tue & Thu completely free for self-study or work.',
-			author: 'Engineering Track',
-			badgeText: '3 Days • 5 Slots',
 			themeName: 'Midnight Dark',
 			bgColor: '#0f172a',
 			gridLineColor: '#334155',
@@ -251,8 +245,6 @@
 			title: 'Weekend & Evening Program (Fri–Sun)',
 			category: 'Dark Tone',
 			description: 'Dark Zinc aesthetic with warm gold and amber colors tailored for part-time professionals.',
-			author: 'Continuing Education',
-			badgeText: '3 Days • Evening',
 			themeName: 'Dark Zinc',
 			bgColor: '#18181b',
 			gridLineColor: '#3f3f46',
@@ -332,8 +324,6 @@
 			title: '6-Day High School / Academy (Mon–Sat)',
 			category: 'Pastel Tone',
 			description: 'Nordic Soft Pastel palette on clean snow background with 6 compact slots.',
-			author: 'Academy Dept',
-			badgeText: '6 Days • 6 Slots',
 			themeName: 'Nordic Pastel',
 			bgColor: '#f8fafc',
 			gridLineColor: '#cbd5e1',
@@ -443,8 +433,6 @@
 			title: '4-Day Extended Block (Mon–Thu)',
 			category: 'Vibrant Tone',
 			description: 'Monochrome Dark Slate with neon orange & cobalt accents for studio block timetables.',
-			author: 'School of Design',
-			badgeText: '4 Days • Extended',
 			themeName: 'Dark Gray Accent',
 			bgColor: '#111827',
 			gridLineColor: '#374151',

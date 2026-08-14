@@ -9,29 +9,16 @@
 		palette: PaletteColor[];
 		width?: number;
 		isOpen?: boolean;
-		isExporting?: boolean;
-		linkCopied?: boolean;
-		exportPixelRatio?: 1 | 2 | 4;
 		onClose?: () => void;
-		onExport: () => void;
-		onOpenExportCode: () => void;
+		onOpenExportModal: () => void;
 		onOpenImportCode: () => void;
-		onShareLink: () => void;
 		onAddDay: () => void;
 		onRemoveDay: (id: string) => void;
 		onAddSlot: () => void;
 		onRemoveSlot: (id: string) => void;
 		onAddColor: () => void;
 		onRemoveColor: (id: string) => void;
-		canUndo?: boolean;
-		canRedo?: boolean;
-		onUndo?: () => void;
-		onRedo?: () => void;
 		onFieldChange?: () => void;
-		onResetDefault?: () => void;
-		onOpenPresetMarketplace?: () => void;
-		onClearAllBlocks?: () => void;
-		onOpenExportModal?: () => void;
 	}
 
 	let {
@@ -40,29 +27,16 @@
 		palette = $bindable(),
 		width = $bindable(320),
 		isOpen = true,
-		isExporting = false,
-		linkCopied = false,
-		exportPixelRatio = $bindable(2),
 		onClose,
-		onExport,
-		onOpenExportCode,
+		onOpenExportModal,
 		onOpenImportCode,
-		onShareLink,
 		onAddDay,
 		onRemoveDay,
 		onAddSlot,
 		onRemoveSlot,
 		onAddColor,
 		onRemoveColor,
-		canUndo = false,
-		canRedo = false,
-		onUndo,
-		onRedo,
-		onFieldChange,
-		onResetDefault,
-		onOpenPresetMarketplace,
-		onClearAllBlocks,
-		onOpenExportModal
+		onFieldChange
 	}: Props = $props();
 
 	let isResizing = $state(false);
@@ -157,13 +131,11 @@
 		</div>
 	</div>
 
-
-
 	<div class="mt-2 flex gap-2">
 		<button
 			type="button"
 			class="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl border-none bg-[#2563eb] px-3 py-2.5 font-[inherit] text-xs font-semibold text-white transition-colors duration-150 ease-in-out hover:bg-[#1d4ed8]"
-			onclick={onOpenExportModal || onExport}
+			onclick={onOpenExportModal}
 		>
 			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 				<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
