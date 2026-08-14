@@ -772,6 +772,7 @@
 										{dayColumnWidth}
 										{slotRowHeight}
 										{isWallpaperMode}
+										{gridBorderRadius}
 										{gridLineColor}
 										{timeBgColor}
 										{dayHeaderBgColor}
