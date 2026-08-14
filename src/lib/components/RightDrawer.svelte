@@ -91,10 +91,23 @@
 	style="width: {width}px;"
 >
 	<div
-		class="absolute top-0 left-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#2563eb]/50 active:bg-[#2563eb] lg:block"
+		class="absolute top-0 left-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#2563eb]/50 focus:bg-[#2563eb] focus:outline-none active:bg-[#2563eb] lg:block"
 		onpointerdown={handlePointerDown}
-		role="separator"
+		onkeydown={(e) => {
+			if (e.key === 'ArrowLeft') {
+				e.preventDefault();
+				width = Math.min(width + 10, 550);
+			} else if (e.key === 'ArrowRight') {
+				e.preventDefault();
+				width = Math.max(width - 10, 220);
+			}
+		}}
+		role="slider"
+		tabindex="0"
 		aria-label="Resize right drawer"
+		aria-valuenow={width}
+		aria-valuemin={220}
+		aria-valuemax={550}
 	></div>
 	<div class="flex items-start justify-between">
 		<div>
@@ -144,7 +157,7 @@
 						selectedPresetId = 'custom';
 					}
 				}}
-				class="w-full rounded-md border border-[#3f3f46] bg-[#18181b] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
+				class="w-full rounded-lg border border-[#3f3f46] bg-[#18181b] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
 			/>
 		</div>
 		<div>
@@ -164,7 +177,7 @@
 						selectedPresetId = 'custom';
 					}
 				}}
-				class="w-full rounded-md border border-[#3f3f46] bg-[#18181b] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
+				class="w-full rounded-lg border border-[#3f3f46] bg-[#18181b] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
 			/>
 		</div>
 	</div>

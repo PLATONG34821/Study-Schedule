@@ -860,11 +860,14 @@
 		>
 			<button
 				type="button"
-				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-sm font-bold text-white transition-colors hover:bg-[#3f3f46]"
+				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46]"
 				onclick={zoomOut}
+				aria-label="Zoom Out"
 				title="Zoom Out"
 			>
-				–
+				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<line x1="5" y1="12" x2="19" y2="12" />
+				</svg>
 			</button>
 
 			<button
@@ -878,11 +881,15 @@
 
 			<button
 				type="button"
-				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-sm font-bold text-white transition-colors hover:bg-[#3f3f46]"
+				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46]"
 				onclick={zoomIn}
+				aria-label="Zoom In"
 				title="Zoom In"
 			>
-				+
+				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<line x1="12" y1="5" x2="12" y2="19" />
+					<line x1="5" y1="12" x2="19" y2="12" />
+				</svg>
 			</button>
 
 			<div class="mx-1 h-4 w-px bg-[#3f3f46]"></div>

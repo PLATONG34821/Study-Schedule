@@ -98,10 +98,23 @@
 	style="width: {width}px;"
 >
 	<div
-		class="absolute top-0 right-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#2563eb]/50 active:bg-[#2563eb] lg:block"
+		class="absolute top-0 right-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#2563eb]/50 focus:bg-[#2563eb] focus:outline-none active:bg-[#2563eb] lg:block"
 		onpointerdown={handlePointerDown}
-		role="separator"
+		onkeydown={(e) => {
+			if (e.key === 'ArrowLeft') {
+				e.preventDefault();
+				width = Math.max(width - 10, 220);
+			} else if (e.key === 'ArrowRight') {
+				e.preventDefault();
+				width = Math.min(width + 10, 550);
+			}
+		}}
+		role="slider"
+		tabindex="0"
 		aria-label="Resize left sidebar"
+		aria-valuenow={width}
+		aria-valuemin={220}
+		aria-valuemax={550}
 	></div>
 	<div class="flex items-start justify-between">
 		<div>
