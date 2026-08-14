@@ -242,7 +242,7 @@
 			<div class="mt-2.5 flex flex-col gap-1.5">
 				<div class="flex items-center justify-between">
 					<label class="block text-xs font-medium text-[#a1a1aa]" for="slotRowHeightRange">
-						{m.row_height({ height: slotRowHeight })}
+						{m.row_height()}
 					</label>
 					<div class="flex items-center gap-1">
 						<input
@@ -270,7 +270,7 @@
 			<div class="mt-2.5 flex flex-col gap-1.5">
 				<div class="flex items-center justify-between">
 					<label class="block text-xs font-medium text-[#a1a1aa]" for="dayColWidthRange">
-						{m.column_width({ width: dayColumnWidth })}
+						{m.column_width()}
 					</label>
 					<div class="flex items-center gap-1">
 						<input
@@ -298,7 +298,7 @@
 			<div class="mt-2.5 flex flex-col gap-1.5">
 				<div class="flex items-center justify-between">
 					<label class="block text-xs font-medium text-[#a1a1aa]" for="gridBorderRadiusRange">
-						{m.grid_border_radius({ radius: gridBorderRadius })}
+						{m.grid_border_radius()}
 					</label>
 					<div class="flex items-center gap-1">
 						<input
@@ -333,7 +333,7 @@
 		<div class="flex flex-col gap-1.5">
 			<div class="flex items-center justify-between">
 				<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeTitleRange">
-					{m.font_size_title({ size: fontSizeTitle })}
+					{m.font_size_title()}
 				</label>
 				<div class="flex items-center gap-1">
 					<input
@@ -361,7 +361,7 @@
 		<div class="flex flex-col gap-1.5">
 			<div class="flex items-center justify-between">
 				<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeDayRange">
-					{m.font_size_day({ size: fontSizeDay })}
+					{m.font_size_day()}
 				</label>
 				<div class="flex items-center gap-1">
 					<input
@@ -389,7 +389,7 @@
 		<div class="flex flex-col gap-1.5">
 			<div class="flex items-center justify-between">
 				<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeTimeRange">
-					{m.font_size_time({ size: fontSizeTime })}
+					{m.font_size_time()}
 				</label>
 				<div class="flex items-center gap-1">
 					<input
@@ -417,7 +417,7 @@
 		<div class="flex flex-col gap-1.5">
 			<div class="flex items-center justify-between">
 				<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeBadgeRange">
-					{m.font_size_badge({ size: fontSizeBadge })}
+					{m.font_size_badge()}
 				</label>
 				<div class="flex items-center gap-1">
 					<input

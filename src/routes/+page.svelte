@@ -66,8 +66,13 @@
 			return;
 		}
 		if (selectedPresetId !== lastPresetId) {
+			const prevPreset = phonePresets.find((p) => p.id === lastPresetId);
 			lastPresetId = selectedPresetId;
-			if (selectedPresetId === 'desktop') {
+
+			if (selectedPresetId === 'custom' && prevPreset) {
+				customPresetWidth = prevPreset.width;
+				customPresetHeight = prevPreset.height;
+			} else if (selectedPresetId === 'desktop') {
 				gridRotationAngle = 0;
 				customTopGapPercent = 0;
 			} else if (selectedPresetId === 'iphone') {
