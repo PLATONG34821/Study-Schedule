@@ -63,7 +63,6 @@
 			class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-dashed border-[#2563eb] bg-transparent px-3 py-2 text-xs font-semibold text-[#60a5fa] transition-colors hover:bg-[#2563eb]/10"
 			aria-label={buttonText}
 		>
-			<Plus class="h-4 w-4 shrink-0" />
 			<span>{buttonText}</span>
 		</Popover.Trigger>
 	{:else}
