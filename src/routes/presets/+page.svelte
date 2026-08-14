@@ -602,17 +602,7 @@
 					{m.back_to_editor()}
 				</a>
 				<div class="h-5 w-px bg-[#3f3f46]"></div>
-				<div class="flex items-center gap-2">
-					<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563eb] text-white">
-						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M4 5h16M4 12h16M4 19h16" />
-						</svg>
-					</div>
-					<div>
-						<h1 class="m-0 text-lg font-bold text-white leading-tight">{m.preset_marketplace()}</h1>
-						<p class="m-0 text-xs text-[#a1a1aa]">{m.preset_marketplace_subtitle()}</p>
-					</div>
-				</div>
+				<h1 class="m-0 text-lg font-bold text-white leading-tight">{m.preset_marketplace()}</h1>
 			</div>
 
 			<!-- Language Switcher -->
