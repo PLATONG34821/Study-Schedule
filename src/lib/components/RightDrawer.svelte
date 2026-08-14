@@ -58,57 +58,13 @@
 		onClose
 	}: Props = $props();
 
-	let isResizing = $state(false);
-
-	const handlePointerDown = (e: PointerEvent) => {
-		isResizing = true;
-		const handle = e.currentTarget as HTMLElement;
-		handle.setPointerCapture(e.pointerId);
-		const startX = e.clientX;
-		const startWidth = width;
-
-		const handlePointerMove = (moveEvent: PointerEvent) => {
-			if (!isResizing) return;
-			const deltaX = startX - moveEvent.clientX;
-			width = Math.min(Math.max(startWidth + deltaX, 220), 550);
-		};
-
-		const handlePointerUp = () => {
-			isResizing = false;
-			handle.removeEventListener('pointermove', handlePointerMove as EventListener);
-			handle.removeEventListener('pointerup', handlePointerUp as EventListener);
-		};
-
-		handle.addEventListener('pointermove', handlePointerMove as EventListener);
-		handle.addEventListener('pointerup', handlePointerUp as EventListener);
-	};
 </script>
 
 <aside
-	class="fixed inset-y-0 right-0 z-40 box-border flex h-full shrink-0 flex-col gap-3 overflow-y-auto border-l border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none {isOpen
+	class="fixed inset-y-0 right-0 z-40 box-border flex h-full w-full shrink-0 flex-col gap-3 overflow-y-auto border-l border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none {isOpen
 		? 'translate-x-0'
 		: 'translate-x-full lg:translate-x-0'}"
-	style="width: {width}px;"
 >
-	<div
-		class="absolute top-0 left-0 z-20 hidden h-full w-2 cursor-col-resize transition-colors hover:bg-[#2563eb]/50 focus:bg-[#2563eb] focus:outline-none active:bg-[#2563eb] lg:block"
-		onpointerdown={handlePointerDown}
-		onkeydown={(e) => {
-			if (e.key === 'ArrowLeft') {
-				e.preventDefault();
-				width = Math.min(width + 10, 550);
-			} else if (e.key === 'ArrowRight') {
-				e.preventDefault();
-				width = Math.max(width - 10, 220);
-			}
-		}}
-		role="slider"
-		tabindex="0"
-		aria-label="Resize right drawer"
-		aria-valuenow={width}
-		aria-valuemin={220}
-		aria-valuemax={550}
-	></div>
 	<div class="flex items-start justify-between">
 		<div>
 			<h2 class="m-0 text-xl font-bold -tracking-[0.5px] text-white">{m.display_settings()}</h2>

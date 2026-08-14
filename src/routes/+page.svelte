@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { tick, onMount } from 'svelte';
+import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import { domToPng } from 'modern-screenshot';
 	import { toast } from 'svelte-sonner';
 	import hotkeys from 'hotkeys-js';
@@ -629,29 +630,30 @@
 		></button>
 	{/if}
 
-	<LeftSidebar
-		isOpen={isLeftSidebarOpen}
-		onClose={() => (isLeftSidebarOpen = false)}
-		bind:width={leftSidebarWidth}
-		bind:days
-		bind:slots
-		bind:palette
-		onOpenExportModal={() => openExportModal('image')}
-		onOpenImportCode={openImportCode}
-		onAddDay={addDay}
-		onRemoveDay={removeDay}
-		onAddSlot={addSlot}
-		onRemoveSlot={removeSlot}
-		onAddColor={addColor}
-		onRemoveColor={removeColor}
-		onFieldChange={pushHistoryState}
-	/>
+	<PaneGroup autoSaveId="study-schedule-layout" direction="horizontal" class="relative flex h-screen w-screen overflow-hidden">
+		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full">
+			<LeftSidebar
+				isOpen={isLeftSidebarOpen}
+				onClose={() => (isLeftSidebarOpen = false)}
+				bind:width={leftSidebarWidth}
+				bind:days
+				bind:slots
+				bind:palette
+				onOpenExportModal={() => openExportModal('image')}
+				onOpenImportCode={openImportCode}
+				onAddDay={addDay}
+				onRemoveDay={removeDay}
+				onAddSlot={addSlot}
+				onRemoveSlot={removeSlot}
+				onAddColor={addColor}
+				onRemoveColor={removeColor}
+				onFieldChange={pushHistoryState}
+			/>
+		</Pane>
 
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div
-		class="relative flex flex-1 flex-col overflow-hidden bg-[#121214] select-none"
-		onwheel={handleCanvasWheel}
-	>
+		<PaneResizer class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block" />
+
+		<Pane class="relative flex flex-1 flex-col overflow-hidden bg-[#121214]">
 		<!-- Mobile Header Toolbar -->
 		<div
 			class="z-20 flex items-center justify-between border-b border-[#27272a] bg-[#18181b] px-4 py-2.5 text-white lg:hidden"
@@ -900,35 +902,40 @@
 				Reset
 			</button>
 		</div>
-	</div>
+		</Pane>
 
-	<RightDrawer
-		{phonePresets}
-		isOpen={isRightDrawerOpen}
-		onClose={() => (isRightDrawerOpen = false)}
-		bind:width={rightDrawerWidth}
-		bind:selectedPresetId
-		bind:customPresetWidth
-		bind:customPresetHeight
-		bind:gridRotationAngle
-		bind:customTopGapPercent
-		bind:scaleMode
-		bind:gridScaleModifier
-		bind:slotRowHeight
-		bind:dayColumnWidth
-		bind:gridBorderRadius
-		bind:bgColor
-		bind:gridLineColor
-		bind:timeBgColor
-		bind:dayHeaderBgColor
-		bind:cellBgColor
-		bind:fontSizeDay
-		bind:fontSizeTime
-		bind:fontSizeTitle
-		bind:fontSizeBadge
-		{currentPreset}
-		{isWallpaperMode}
-	/>
+		<PaneResizer class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block" />
+
+		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full">
+			<RightDrawer
+				{phonePresets}
+				isOpen={isRightDrawerOpen}
+				onClose={() => (isRightDrawerOpen = false)}
+				bind:width={rightDrawerWidth}
+				bind:selectedPresetId
+				bind:customPresetWidth
+				bind:customPresetHeight
+				bind:gridRotationAngle
+				bind:customTopGapPercent
+				bind:scaleMode
+				bind:gridScaleModifier
+				bind:slotRowHeight
+				bind:dayColumnWidth
+				bind:gridBorderRadius
+				bind:bgColor
+				bind:gridLineColor
+				bind:timeBgColor
+				bind:dayHeaderBgColor
+				bind:cellBgColor
+				bind:fontSizeDay
+				bind:fontSizeTime
+				bind:fontSizeTitle
+				bind:fontSizeBadge
+				{currentPreset}
+				{isWallpaperMode}
+			/>
+		</Pane>
+	</PaneGroup>
 
 	<BlockEditorModal
 		block={selectedBlock}
