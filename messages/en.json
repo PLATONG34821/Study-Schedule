@@ -61,5 +61,8 @@
 	"preset_original": "Original Grid",
 	"language": "Language",
 	"new_day": "New Day",
-	"new_subject": "New Subject"
+	"new_subject": "New Subject",
+	"removeDay": "Remove day: {name}",
+	"removeSlot": "Remove time slot: {label}",
+	"removeColor": "Remove color"
 }

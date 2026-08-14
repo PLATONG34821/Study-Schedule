@@ -78,7 +78,9 @@
 				<button
 					type="button"
 					class="cursor-pointer border-none bg-transparent p-1 text-lg text-[#a1a1aa] hover:text-white"
-					onclick={onClose}>✕</button
+					onclick={onClose}
+					aria-label="Close dialog"
+					title="Close dialog">✕</button
 				>
 			</div>
 

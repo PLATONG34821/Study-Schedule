@@ -117,6 +117,7 @@
 					class="flex h-7 w-7 items-center justify-center rounded-lg border border-[#3f3f46] bg-[#27272a] text-sm text-[#a1a1aa] hover:text-white lg:hidden"
 					onclick={onClose}
 					aria-label="Close sidebar"
+					title="Close sidebar"
 				>
 					✕
 				</button>
@@ -269,7 +270,9 @@
 			/>
 			<button
 				class="h-7 w-7 cursor-pointer rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] hover:bg-[#ef4444] hover:text-white"
-				onclick={() => onRemoveDay(day.id)}>✕</button
+				onclick={() => onRemoveDay(day.id)}
+				aria-label={m.removeDay({ name: day.name })}
+				title={m.removeDay({ name: day.name })}>✕</button
 			>
 		</div>
 	{/each}
@@ -290,7 +293,9 @@
 			/>
 			<button
 				class="h-7 w-7 cursor-pointer rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] hover:bg-[#ef4444] hover:text-white"
-				onclick={() => onRemoveSlot(slot.id)}>✕</button
+				onclick={() => onRemoveSlot(slot.id)}
+				aria-label={m.removeSlot({ label: slot.label })}
+				title={m.removeSlot({ label: slot.label })}>✕</button
 			>
 		</div>
 	{/each}
@@ -312,7 +317,9 @@
 				/>
 				<button
 					class="absolute -top-1 -right-1 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border-none bg-[#ef4444] text-[9px] text-white"
-					onclick={() => onRemoveColor(item.id)}>✕</button
+					onclick={() => onRemoveColor(item.id)}
+					aria-label={m.removeColor()}
+					title={m.removeColor()}>✕</button
 				>
 			</div>
 		{/each}

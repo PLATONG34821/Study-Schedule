@@ -61,5 +61,8 @@
 	"preset_original": "ตารางปกติ",
 	"language": "ภาษา",
 	"new_day": "วันใหม่",
-	"new_subject": "วิชาใหม่"
+	"new_subject": "วิชาใหม่",
+	"removeDay": "ลบวัน: {name}",
+	"removeSlot": "ลบเวลา: {label}",
+	"removeColor": "ลบสี"
 }

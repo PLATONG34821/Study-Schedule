@@ -49,7 +49,8 @@
 				type="button"
 				class="ml-1 cursor-pointer border-none bg-transparent text-sm text-[#a1a1aa] hover:text-white"
 				onclick={() => onDismiss(toast.id)}
-				aria-label="Dismiss toast">✕</button
+				aria-label="Dismiss toast"
+				title="Dismiss toast">✕</button
 			>
 		</div>
 	{/each}

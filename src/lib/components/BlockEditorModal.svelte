@@ -68,7 +68,8 @@
 					type="button"
 					class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-transparent text-lg text-[#a1a1aa] transition-colors hover:bg-[#27272a] hover:text-white"
 					onclick={onClose}
-					aria-label="Close dialog">✕</button
+					aria-label="Close dialog"
+					title="Close dialog">✕</button
 				>
 			</div>
 

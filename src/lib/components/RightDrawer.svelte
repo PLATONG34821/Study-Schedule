@@ -105,6 +105,7 @@
 				class="flex h-7 w-7 items-center justify-center rounded-lg border border-[#3f3f46] bg-[#27272a] text-sm text-[#a1a1aa] hover:text-white lg:hidden"
 				onclick={onClose}
 				aria-label="Close drawer"
+				title="Close drawer"
 			>
 				✕
 			</button>
