@@ -14,6 +14,7 @@
 		dayColumnWidth: number;
 		slotRowHeight: number;
 		isWallpaperMode: boolean;
+		gridBorderRadius?: number;
 		gridLineColor?: string;
 		timeBgColor?: string;
 		dayHeaderBgColor?: string;
@@ -37,6 +38,7 @@
 		dayColumnWidth,
 		slotRowHeight,
 		isWallpaperMode,
+		gridBorderRadius = 16,
 		gridLineColor = '#111111',
 		timeBgColor = '#111111',
 		dayHeaderBgColor = '#ffffff',
@@ -86,8 +88,8 @@
 
 <div class="max-w-full overflow-x-auto">
 	<div
-		class="box-border grid shrink-0 overflow-hidden rounded border-[3px] border-solid"
-		style="border-color: {gridLineColor}; grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, {isWallpaperMode
+		class="box-border grid shrink-0 overflow-hidden border-[3px] border-solid"
+		style="border-color: {gridLineColor}; border-radius: {gridBorderRadius}px; grid-template-columns: 110px repeat({days.length}, {dayColumnWidth}px); grid-template-rows: 70px repeat({slots.length}, {isWallpaperMode
 			? `${slotRowHeight}px`
 			: 'minmax(150px, auto)'});"
 	>

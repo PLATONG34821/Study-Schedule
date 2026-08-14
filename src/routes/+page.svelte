@@ -78,6 +78,7 @@
 	});
 	let slotRowHeight = $state<number>(210);
 	let dayColumnWidth = $state<number>(270);
+	let gridBorderRadius = $state<number>(16);
 	let leftSidebarWidth = $state<number>(320);
 	let rightDrawerWidth = $state<number>(320);
 	let isLeftSidebarOpen = $state<boolean>(false);
@@ -420,6 +421,7 @@
 			gridScaleModifier,
 			slotRowHeight,
 			dayColumnWidth,
+			gridBorderRadius,
 			bgColor,
 			gridLineColor,
 			timeBgColor,
@@ -456,6 +458,7 @@
 			if (typeof st.gridScaleModifier === 'number') gridScaleModifier = st.gridScaleModifier;
 			if (typeof st.slotRowHeight === 'number') slotRowHeight = st.slotRowHeight;
 			if (typeof st.dayColumnWidth === 'number') dayColumnWidth = st.dayColumnWidth;
+			if (typeof st.gridBorderRadius === 'number') gridBorderRadius = st.gridBorderRadius;
 			if (typeof st.bgColor === 'string') bgColor = st.bgColor;
 			if (typeof st.gridLineColor === 'string') gridLineColor = st.gridLineColor;
 			if (typeof st.timeBgColor === 'string') timeBgColor = st.timeBgColor;
@@ -475,7 +478,7 @@
 		// Watch state for autosave
 		days; slots; palette; blocks; selectedPresetId; customPresetWidth; customPresetHeight;
 		gridRotationAngle; customTopGapPercent; scaleMode; gridScaleModifier; slotRowHeight;
-		dayColumnWidth; bgColor; gridLineColor; timeBgColor; dayHeaderBgColor; cellBgColor;
+		dayColumnWidth; gridBorderRadius; bgColor; gridLineColor; timeBgColor; dayHeaderBgColor; cellBgColor;
 		fontSizeDay; fontSizeTime; fontSizeTitle; fontSizeBadge;
 
 		if (isInitialLoaded && typeof window !== 'undefined') {
@@ -808,6 +811,7 @@
 						{dayColumnWidth}
 						{slotRowHeight}
 						{isWallpaperMode}
+						{gridBorderRadius}
 						{gridLineColor}
 						{timeBgColor}
 						{dayHeaderBgColor}
@@ -891,6 +895,7 @@
 		bind:gridScaleModifier
 		bind:slotRowHeight
 		bind:dayColumnWidth
+		bind:gridBorderRadius
 		bind:bgColor
 		bind:gridLineColor
 		bind:timeBgColor

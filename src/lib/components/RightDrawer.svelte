@@ -13,6 +13,7 @@
 		gridScaleModifier: number;
 		slotRowHeight: number;
 		dayColumnWidth: number;
+		gridBorderRadius: number;
 		bgColor: string;
 		gridLineColor: string;
 		timeBgColor: string;
@@ -40,6 +41,7 @@
 		gridScaleModifier = $bindable(),
 		slotRowHeight = $bindable(),
 		dayColumnWidth = $bindable(),
+		gridBorderRadius = $bindable(16),
 		bgColor = $bindable(),
 		gridLineColor = $bindable(),
 		timeBgColor = $bindable(),
@@ -276,6 +278,34 @@
 					max="1000"
 					step="5"
 					bind:value={dayColumnWidth}
+					class="w-full cursor-pointer accent-[#2563eb]"
+				/>
+			</div>
+
+			<div class="mt-2.5 flex flex-col gap-1.5">
+				<div class="flex items-center justify-between">
+					<label class="block text-xs font-medium text-[#a1a1aa]" for="gridBorderRadiusRange">
+						{m.grid_border_radius({ radius: gridBorderRadius })}
+					</label>
+					<div class="flex items-center gap-1">
+						<input
+							type="number"
+							min="0"
+							max="60"
+							step="1"
+							bind:value={gridBorderRadius}
+							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+						/>
+						<span class="text-xs text-[#71717a]">px</span>
+					</div>
+				</div>
+				<input
+					id="gridBorderRadiusRange"
+					type="range"
+					min="0"
+					max="60"
+					step="1"
+					bind:value={gridBorderRadius}
 					class="w-full cursor-pointer accent-[#2563eb]"
 				/>
 			</div>

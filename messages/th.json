@@ -35,6 +35,7 @@
 	"grid_scale": "ปรับขนาดย่อ/ขยายตาราง: {percent}%",
 	"row_height": "ความสูงแถวตาราง: {height} px",
 	"column_width": "ปรับความยาวตารางแนวตั้ง: {width} px",
+	"grid_border_radius": "ความโค้งมนขอบตาราง: {radius} px",
 	"font_sizes": "ขนาดตัวอักษร",
 	"font_size_day": "ขนาดข้อความวัน: {size} px",
 	"font_size_time": "ขนาดข้อความเวลา: {size} px",
