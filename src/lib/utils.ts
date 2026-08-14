@@ -1,6 +1,27 @@
-import { colord } from 'colord';
+import { colord, extend } from 'colord';
+import harmoniesPlugin from 'colord/plugins/harmonies';
+import a11yPlugin from 'colord/plugins/a11y';
 import lzString from 'lz-string';
 import { nanoid } from 'nanoid';
+
+extend([harmoniesPlugin, a11yPlugin]);
+
+export const generateHarmoniousPalette = (baseHexColor: string): string[] => {
+	return colord(baseHexColor)
+		.harmonies('split-complementary')
+		.map((c) => c.toHex());
+};
+
+export const getContrastRatio = (colorA: string, colorB: string): number => {
+	return colord(colorA).contrast(colorB);
+};
+
+export const generateUid = (): string => nanoid(10);
+
+export const textColorFor = (hexColor: string): string => {
+	const colorObj = colord(hexColor);
+	return colorObj.contrast('#ffffff') >= colorObj.contrast('#111111') ? '#ffffff' : '#111111';
+};
 import { type as structType, array, string, boolean, nullable, optional, any, is, type Infer } from 'superstruct';
 
 export const daySchema = structType({
@@ -66,10 +87,7 @@ export const formatTimeRange = (timeString: string, use24Hour = true): string =>
 	return formattedParts.join(' – ');
 };
 
-export const generateUid = (): string => nanoid(10);
 
-export const textColorFor = (hexColor: string): string =>
-	colord(hexColor).isDark() ? '#ffffff' : '#111111';
 
 const bytesToBase64 = (bytes: Uint8Array): string => {
 	let binary = '';
