@@ -151,11 +151,12 @@
 				value={selectedPresetId === 'custom' ? customPresetWidth : currentPreset.width || 1206}
 				oninput={(e) => {
 					const val = parseInt((e.target as HTMLInputElement).value) || 100;
-					customPresetWidth = val;
 					if (selectedPresetId !== 'custom') {
+						customPresetWidth = currentPreset.width || 1206;
 						customPresetHeight = currentPreset.height || 2622;
 						selectedPresetId = 'custom';
 					}
+					customPresetWidth = val;
 				}}
 				class="w-full rounded-lg border border-[#3f3f46] bg-[#18181b] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
 			/>
@@ -171,11 +172,12 @@
 				value={selectedPresetId === 'custom' ? customPresetHeight : currentPreset.height || 2622}
 				oninput={(e) => {
 					const val = parseInt((e.target as HTMLInputElement).value) || 100;
-					customPresetHeight = val;
 					if (selectedPresetId !== 'custom') {
 						customPresetWidth = currentPreset.width || 1206;
+						customPresetHeight = currentPreset.height || 2622;
 						selectedPresetId = 'custom';
 					}
+					customPresetHeight = val;
 				}}
 				class="w-full rounded-lg border border-[#3f3f46] bg-[#18181b] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
 			/>
