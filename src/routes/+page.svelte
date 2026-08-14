@@ -9,7 +9,8 @@
 	import RightDrawer from '$lib/components/RightDrawer.svelte';
 	import ScheduleGrid from '$lib/components/ScheduleGrid.svelte';
 	import BlockEditorModal from '$lib/components/BlockEditorModal.svelte';
-	import ConfigCodeModal from '$lib/components/ConfigCodeModal.svelte';
+	import ExportModal from '$lib/components/ExportModal.svelte';
+	import ImportModal from '$lib/components/ImportModal.svelte';
 	import ToastContainer, { type ToastItem } from '$lib/components/ToastContainer.svelte';
 
 	let days = $state<Day[]>([
@@ -447,6 +448,10 @@
 
 	let linkCopied = $state(false);
 	let isCodeModalOpen = $state(false);
+	let isExportModalOpen = $state(false);
+	let isImportModalOpen = $state(false);
+	let exportModalInitialTab = $state<'image' | 'share' | 'code'>('image');
+	let currentShareUrl = $state('');
 	let isPresetMarketplaceOpen = $state(false);
 	let codeModalMode = $state<'export' | 'import'>('export');
 	let exportedCodeString = $state('');
@@ -538,15 +543,19 @@
 		}
 	});
 
-	const openExportCode = async () => {
+	const openExportModal = async (tab: 'image' | 'share' | 'code' = 'image') => {
 		exportedCodeString = await compressConfigCode(getFullConfigObj());
-		codeModalMode = 'export';
-		isCodeModalOpen = true;
+		currentShareUrl = `${window.location.origin}${window.location.pathname}#s=${exportedCodeString}`;
+		exportModalInitialTab = tab;
+		isExportModalOpen = true;
+	};
+
+	const openExportCode = async () => {
+		openExportModal('code');
 	};
 
 	const openImportCode = () => {
-		codeModalMode = 'import';
-		isCodeModalOpen = true;
+		isImportModalOpen = true;
 	};
 
 	const handleImportCode = async (codeString: string): Promise<boolean> => {
@@ -657,8 +666,9 @@
 		bind:days
 		bind:slots
 		bind:palette
-		onExport={exportPng}
-		onOpenExportCode={openExportCode}
+		onExport={() => openExportModal('image')}
+		onOpenExportModal={() => openExportModal('image')}
+		onOpenExportCode={() => openExportModal('code')}
 		onOpenImportCode={openImportCode}
 		onShareLink={shareLink}
 		onAddDay={addDay}
@@ -972,11 +982,22 @@
 		onDelete={removeBlock}
 	/>
 
-	<ConfigCodeModal
-		isOpen={isCodeModalOpen}
-		mode={codeModalMode}
+	<ExportModal
+		isOpen={isExportModalOpen}
+		initialTab={exportModalInitialTab}
+		{isExporting}
+		bind:exportPixelRatio
 		code={exportedCodeString}
-		onClose={() => (isCodeModalOpen = false)}
+		shareUrl={currentShareUrl}
+		{linkCopied}
+		onClose={() => (isExportModalOpen = false)}
+		onExportImage={exportPng}
+		onShareLink={shareLink}
+	/>
+
+	<ImportModal
+		isOpen={isImportModalOpen}
+		onClose={() => (isImportModalOpen = false)}
 		onImport={handleImportCode}
 	/>
 
