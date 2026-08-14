@@ -399,6 +399,7 @@
 
 	let linkCopied = $state(false);
 	let isCodeModalOpen = $state(false);
+	let isPresetMarketplaceOpen = $state(false);
 	let codeModalMode = $state<'export' | 'import'>('export');
 	let exportedCodeString = $state('');
 	let isInitialLoaded = $state(false);
@@ -534,6 +535,8 @@
 		addToast(m.sample_loaded(), 'success');
 	};
 
+
+
 	const resetToDefault = () => {
 		if (typeof window !== 'undefined' && confirm(m.reset_confirm())) {
 			localStorage.removeItem('study_schedule_autosave');
@@ -621,7 +624,7 @@
 		onFieldChange={pushHistoryState}
 		{lastSavedTime}
 		onResetDefault={resetToDefault}
-		onLoadSampleTemplate={loadSampleTemplate}
+		onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
 	/>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -782,7 +785,7 @@
 										{fontSizeBadge}
 										onSelectBlock={(id: string) => (selectedId = id)}
 										onAddBlock={addBlock}
-										onLoadSampleTemplate={loadSampleTemplate}
+										onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
 									/>
 								</div>
 							</div>
@@ -815,7 +818,7 @@
 						{fontSizeBadge}
 						onSelectBlock={(id: string) => (selectedId = id)}
 						onAddBlock={addBlock}
-						onLoadSampleTemplate={loadSampleTemplate}
+						onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
 					/>
 				</div>
 			{/if}

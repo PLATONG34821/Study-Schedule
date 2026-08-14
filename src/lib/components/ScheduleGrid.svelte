@@ -24,7 +24,7 @@
 		fontSizeBadge?: number;
 		onSelectBlock: (id: string) => void;
 		onAddBlock: (dayId: string, timeSlotId: string) => void;
-		onLoadSampleTemplate?: () => void;
+		onOpenPresetMarketplace?: () => void;
 	}
 
 	let {
@@ -47,7 +47,7 @@
 		fontSizeBadge = 11,
 		onSelectBlock,
 		onAddBlock,
-		onLoadSampleTemplate
+		onOpenPresetMarketplace
 	}: Props = $props();
 
 	let timeTextColor = $derived(textColorFor(timeBgColor));
@@ -70,18 +70,17 @@
 			<h3 class="m-0 text-base font-bold text-white">{m.empty_grid_title()}</h3>
 			<p class="m-0 text-xs text-[#a1a1aa]">{m.empty_grid_subtitle()}</p>
 		</div>
-		{#if onLoadSampleTemplate}
-			<button
-				type="button"
-				class="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#2563eb] px-4 py-2 font-[inherit] text-xs font-semibold text-white shadow-lg transition-all hover:bg-[#1d4ed8]"
-				onclick={onLoadSampleTemplate}
-			>
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-				</svg>
-				{m.load_sample_template()}
-			</button>
-		{/if}
+		<a
+			href="/presets"
+			class="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#2563eb] px-4 py-2 font-[inherit] text-xs font-semibold text-white shadow-lg transition-all hover:bg-[#1d4ed8]"
+		>
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+				<line x1="3" y1="6" x2="21" y2="6"/>
+				<path d="M16 10a4 4 0 0 1-8 0"/>
+			</svg>
+			{m.preset_marketplace()}
+		</a>
 	</div>
 {/if}
 
