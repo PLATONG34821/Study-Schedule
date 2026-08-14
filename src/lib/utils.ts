@@ -1,6 +1,51 @@
 import { colord } from 'colord';
 import lzString from 'lz-string';
 import { nanoid } from 'nanoid';
+import { object, array, string, boolean, nullable, optional, is, type Infer } from 'superstruct';
+
+export const daySchema = object({
+	id: string(),
+	name: string()
+});
+
+export const slotSchema = object({
+	id: string(),
+	label: string()
+});
+
+export const paletteColorSchema = object({
+	id: string(),
+	color: string()
+});
+
+export const classBlockSchema = object({
+	id: string(),
+	dayId: string(),
+	timeSlotId: string(),
+	title: string(),
+	time: optional(string()),
+	room: optional(string()),
+	section: optional(string()),
+	type: optional(string()),
+	colorId: nullable(string()),
+	pattern: optional(boolean())
+});
+
+export const scheduleConfigSchema = object({
+	days: array(daySchema),
+	slots: array(slotSchema),
+	palette: array(paletteColorSchema),
+	blocks: array(classBlockSchema)
+});
+
+export type ScheduleConfigData = Infer<typeof scheduleConfigSchema>;
+
+export const validateScheduleConfig = (data: unknown): ScheduleConfigData | null => {
+	if (is(data, scheduleConfigSchema)) {
+		return data as ScheduleConfigData;
+	}
+	return null;
+};
 
 export const generateUid = (): string => nanoid(10);
 
@@ -34,7 +79,8 @@ export const compressConfigCode = async (data: unknown): Promise<string> => {
 	return 'schedule:' + lzString.compressToEncodedURIComponent(jsonStr);
 };
 
-export const decompressConfigCode = async (codeString: string): Promise<unknown> => {
+export const decompressConfigCode = async (codeString: string): Promise<ScheduleConfigData | null> => {
+	let parsedData: unknown = null;
 	const trimmed = codeString.trim();
 	const rawCode = trimmed.startsWith('schedule:') ? trimmed.slice(9) : trimmed;
 
@@ -50,28 +96,41 @@ export const decompressConfigCode = async (codeString: string): Promise<unknown>
 					.pipeThrough(new DecompressionStream('deflate-raw'));
 				const buffer = await new Response(stream).arrayBuffer();
 				const decodedText = new TextDecoder().decode(new Uint8Array(buffer));
-				return JSON.parse(decodedText);
+				parsedData = JSON.parse(decodedText);
 			} catch {
 				// Continue
 			}
 		}
-		const decodedText = new TextDecoder().decode(bytes);
-		return JSON.parse(decodedText);
+		if (!parsedData) {
+			const decodedText = new TextDecoder().decode(bytes);
+			parsedData = JSON.parse(decodedText);
+		}
 	} catch {
 		// Continue
 	}
 
 	// 2. Try lz-string
-	try {
-		const decompressedLz = lzString.decompressFromEncodedURIComponent(rawCode);
-		if (decompressedLz) {
-			return JSON.parse(decompressedLz);
+	if (!parsedData) {
+		try {
+			const decompressedLz = lzString.decompressFromEncodedURIComponent(rawCode);
+			if (decompressedLz) {
+				parsedData = JSON.parse(decompressedLz);
+			}
+		} catch {
+			// Continue
 		}
-	} catch {
-		// Continue
 	}
 
 	// 3. Fallback raw JSON
-	return JSON.parse(trimmed);
+	if (!parsedData) {
+		try {
+			parsedData = JSON.parse(trimmed);
+		} catch {
+			return null;
+		}
+	}
+
+	return validateScheduleConfig(parsedData);
 };
+
 
