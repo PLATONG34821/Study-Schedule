@@ -220,14 +220,27 @@
 					max="1.15"
 					step="0.01"
 					bind:value={gridScaleModifier}
-					class="w-full cursor-pointer"
+					class="w-full cursor-pointer accent-[#2563eb]"
 				/>
 			</div>
 
-			<div class="mt-2.5 flex flex-col gap-1">
-				<label class="block text-xs font-medium text-[#a1a1aa]" for="slotRowHeightRange">
-					{m.row_height({ height: slotRowHeight })}
-				</label>
+			<div class="mt-2.5 flex flex-col gap-1.5">
+				<div class="flex items-center justify-between">
+					<label class="block text-xs font-medium text-[#a1a1aa]" for="slotRowHeightRange">
+						{m.row_height({ height: slotRowHeight })}
+					</label>
+					<div class="flex items-center gap-1">
+						<input
+							type="number"
+							min="50"
+							max="1000"
+							step="5"
+							bind:value={slotRowHeight}
+							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+						/>
+						<span class="text-xs text-[#71717a]">px</span>
+					</div>
+				</div>
 				<input
 					id="slotRowHeightRange"
 					type="range"
@@ -235,14 +248,27 @@
 					max="1000"
 					step="5"
 					bind:value={slotRowHeight}
-					class="w-full cursor-pointer"
+					class="w-full cursor-pointer accent-[#2563eb]"
 				/>
 			</div>
 
-			<div class="mt-2.5 flex flex-col gap-1">
-				<label class="block text-xs font-medium text-[#a1a1aa]" for="dayColWidthRange">
-					{m.column_width({ width: dayColumnWidth })}
-				</label>
+			<div class="mt-2.5 flex flex-col gap-1.5">
+				<div class="flex items-center justify-between">
+					<label class="block text-xs font-medium text-[#a1a1aa]" for="dayColWidthRange">
+						{m.column_width({ width: dayColumnWidth })}
+					</label>
+					<div class="flex items-center gap-1">
+						<input
+							type="number"
+							min="50"
+							max="1000"
+							step="5"
+							bind:value={dayColumnWidth}
+							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+						/>
+						<span class="text-xs text-[#71717a]">px</span>
+					</div>
+				</div>
 				<input
 					id="dayColWidthRange"
 					type="range"
@@ -250,7 +276,7 @@
 					max="1000"
 					step="5"
 					bind:value={dayColumnWidth}
-					class="w-full cursor-pointer"
+					class="w-full cursor-pointer accent-[#2563eb]"
 				/>
 			</div>
 		</div>
@@ -261,10 +287,23 @@
 	</div>
 
 	<div class="flex flex-col gap-3 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
-		<div class="flex flex-col gap-1">
-			<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeTitleRange">
-				{m.font_size_title({ size: fontSizeTitle })}
-			</label>
+		<div class="flex flex-col gap-1.5">
+			<div class="flex items-center justify-between">
+				<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeTitleRange">
+					{m.font_size_title({ size: fontSizeTitle })}
+				</label>
+				<div class="flex items-center gap-1">
+					<input
+						type="number"
+						min="12"
+						max="36"
+						step="1"
+						bind:value={fontSizeTitle}
+						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+					/>
+					<span class="text-xs text-[#71717a]">px</span>
+				</div>
+			</div>
 			<input
 				id="fontSizeTitleRange"
 				type="range"
@@ -272,14 +311,27 @@
 				max="36"
 				step="1"
 				bind:value={fontSizeTitle}
-				class="w-full cursor-pointer"
+				class="w-full cursor-pointer accent-[#2563eb]"
 			/>
 		</div>
 
-		<div class="flex flex-col gap-1">
-			<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeDayRange">
-				{m.font_size_day({ size: fontSizeDay })}
-			</label>
+		<div class="flex flex-col gap-1.5">
+			<div class="flex items-center justify-between">
+				<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeDayRange">
+					{m.font_size_day({ size: fontSizeDay })}
+				</label>
+				<div class="flex items-center gap-1">
+					<input
+						type="number"
+						min="12"
+						max="36"
+						step="1"
+						bind:value={fontSizeDay}
+						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+					/>
+					<span class="text-xs text-[#71717a]">px</span>
+				</div>
+			</div>
 			<input
 				id="fontSizeDayRange"
 				type="range"
@@ -287,14 +339,27 @@
 				max="36"
 				step="1"
 				bind:value={fontSizeDay}
-				class="w-full cursor-pointer"
+				class="w-full cursor-pointer accent-[#2563eb]"
 			/>
 		</div>
 
-		<div class="flex flex-col gap-1">
-			<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeTimeRange">
-				{m.font_size_time({ size: fontSizeTime })}
-			</label>
+		<div class="flex flex-col gap-1.5">
+			<div class="flex items-center justify-between">
+				<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeTimeRange">
+					{m.font_size_time({ size: fontSizeTime })}
+				</label>
+				<div class="flex items-center gap-1">
+					<input
+						type="number"
+						min="10"
+						max="28"
+						step="1"
+						bind:value={fontSizeTime}
+						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+					/>
+					<span class="text-xs text-[#71717a]">px</span>
+				</div>
+			</div>
 			<input
 				id="fontSizeTimeRange"
 				type="range"
@@ -302,14 +367,27 @@
 				max="28"
 				step="1"
 				bind:value={fontSizeTime}
-				class="w-full cursor-pointer"
+				class="w-full cursor-pointer accent-[#2563eb]"
 			/>
 		</div>
 
-		<div class="flex flex-col gap-1">
-			<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeBadgeRange">
-				{m.font_size_badge({ size: fontSizeBadge })}
-			</label>
+		<div class="flex flex-col gap-1.5">
+			<div class="flex items-center justify-between">
+				<label class="block text-xs font-medium text-[#a1a1aa]" for="fontSizeBadgeRange">
+					{m.font_size_badge({ size: fontSizeBadge })}
+				</label>
+				<div class="flex items-center gap-1">
+					<input
+						type="number"
+						min="8"
+						max="20"
+						step="1"
+						bind:value={fontSizeBadge}
+						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+					/>
+					<span class="text-xs text-[#71717a]">px</span>
+				</div>
+			</div>
 			<input
 				id="fontSizeBadgeRange"
 				type="range"
@@ -317,7 +395,7 @@
 				max="20"
 				step="1"
 				bind:value={fontSizeBadge}
-				class="w-full cursor-pointer"
+				class="w-full cursor-pointer accent-[#2563eb]"
 			/>
 		</div>
 	</div>
