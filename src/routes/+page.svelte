@@ -634,30 +634,33 @@
 		<div
 			class="z-20 flex items-center justify-between border-b border-[#27272a] bg-[#18181b] px-4 py-2.5 text-white lg:hidden"
 		>
-			<button
-				type="button"
-				class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
-				onclick={() => {
-					isLeftSidebarOpen = !isLeftSidebarOpen;
-					if (isLeftSidebarOpen) isRightDrawerOpen = false;
-				}}
-			>
-				<svg
-					width="15"
-					height="15"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line
-						x1="3"
-						y1="18"
-						x2="21"
-						y2="18"
-					/></svg
+			<div class="flex items-center gap-2">
+				<button
+					type="button"
+					class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
+					onclick={() => {
+						isLeftSidebarOpen = !isLeftSidebarOpen;
+						if (isLeftSidebarOpen) isRightDrawerOpen = false;
+					}}
 				>
-				{m.app_title()}
-			</button>
+					<svg
+						width="15"
+						height="15"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line
+							x1="3"
+							y1="18"
+							x2="21"
+							y2="18"
+						/></svg
+					>
+					{m.app_title()}
+				</button>
+			</div>
+
 			<button
 				type="button"
 				class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
@@ -678,6 +681,38 @@
 					/></svg
 				>
 				{m.display_settings()}
+			</button>
+		</div>
+
+		<!-- Top-Left Floating Undo/Redo Toolbar -->
+		<div
+			class="absolute top-14 left-4 z-30 flex items-center gap-1 rounded-full border border-[#3f3f46] bg-[#18181b]/90 p-1.5 shadow-2xl backdrop-blur-md lg:top-4"
+		>
+			<button
+				type="button"
+				class="flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
+				onclick={undoState}
+				disabled={!canUndo}
+				aria-label={m.undo()}
+				title="{m.undo()} (Ctrl+Z / ⌘Z)"
+			>
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<path d="M3 7v6h6" />
+					<path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+				</svg>
+			</button>
+			<button
+				type="button"
+				class="flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
+				onclick={redoState}
+				disabled={!canRedo}
+				aria-label={m.redo()}
+				title="{m.redo()} (Ctrl+Y / ⌘⇧Z)"
+			>
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<path d="M21 7v6h-6" />
+					<path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+				</svg>
 			</button>
 		</div>
 		<div
@@ -790,27 +825,6 @@
 		<div
 			class="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-3.5 py-2 text-[#e4e4e7] shadow-2xl backdrop-blur-md"
 		>
-			<button
-				type="button"
-				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-xs font-bold text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
-				onclick={undoState}
-				disabled={!canUndo}
-				aria-label={m.undo()}
-				title="{m.undo()} (Ctrl+Z / ⌘Z)"
-			>
-				↺
-			</button>
-			<button
-				type="button"
-				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-xs font-bold text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
-				onclick={redoState}
-				disabled={!canRedo}
-				aria-label={m.redo()}
-				title="{m.redo()} (Ctrl+Y / ⌘⇧Z)"
-			>
-				↻
-			</button>
-			<div class="mx-1 h-4 w-px bg-[#3f3f46]"></div>
 			<button
 				type="button"
 				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-sm font-bold text-white transition-colors hover:bg-[#3f3f46]"

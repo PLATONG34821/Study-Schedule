@@ -162,36 +162,7 @@
 		{/if}
 	</div>
 
-	<div class="mt-2.5 flex items-center gap-2">
-		<button
-			type="button"
-			class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-2.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
-			onclick={onUndo}
-			disabled={!canUndo}
-			aria-label={m.undo()}
-			title="{m.undo()} (Ctrl+Z / ⌘Z)"
-		>
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<path d="M3 7v6h6" />
-				<path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
-			</svg>
-			{m.undo()}
-		</button>
-		<button
-			type="button"
-			class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-2.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
-			onclick={onRedo}
-			disabled={!canRedo}
-			aria-label={m.redo()}
-			title="{m.redo()} (Ctrl+Y / ⌘⇧Z)"
-		>
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<path d="M21 7v6h-6" />
-				<path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
-			</svg>
-			{m.redo()}
-		</button>
-	</div>
+
 
 	<div class="mt-2 flex flex-col gap-2">
 		<div class="flex items-center justify-between px-0.5">
