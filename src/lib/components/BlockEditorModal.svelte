@@ -23,6 +23,8 @@
 		}
 	});
 
+	let modalEl = $state<HTMLDivElement | null>(null);
+
 	const handleSave = () => {
 		if (draft) {
 			onSave(draft);
@@ -36,8 +38,23 @@
 	};
 
 	const handleKeyDown = (e: KeyboardEvent) => {
-		if (block && e.key === 'Escape') {
+		if (!block) return;
+		if (e.key === 'Escape') {
 			onClose();
+		} else if (e.key === 'Tab' && modalEl) {
+			const focusables = modalEl.querySelectorAll<HTMLElement>(
+				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+			);
+			if (focusables.length === 0) return;
+			const first = focusables[0];
+			const last = focusables[focusables.length - 1];
+			if (e.shiftKey && document.activeElement === first) {
+				e.preventDefault();
+				last.focus();
+			} else if (!e.shiftKey && document.activeElement === last) {
+				e.preventDefault();
+				first.focus();
+			}
 		}
 	};
 
@@ -50,13 +67,16 @@
 <svelte:window onkeydown={handleKeyDown} />
 
 {#if draft}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-[4px]"
 		onclick={handleBackdropClick}
+		role="presentation"
 	>
 		<div
+			bind:this={modalEl}
+			role="dialog"
+			aria-modal="true"
+			aria-label={m.edit_subject()}
 			class="flex max-h-[90vh] w-full max-w-[460px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-2xl"
 		>
 			<!-- Header -->

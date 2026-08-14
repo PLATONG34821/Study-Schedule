@@ -46,6 +46,8 @@
 		}
 	};
 
+	let modalEl = $state<HTMLDivElement | null>(null);
+
 	const handleBackdropClick = (e: MouseEvent) => {
 		if ((e.target as HTMLElement).classList.contains('modalBackdrop')) {
 			onClose();
@@ -53,8 +55,23 @@
 	};
 
 	const handleKeyDown = (e: KeyboardEvent) => {
-		if (isOpen && e.key === 'Escape') {
+		if (!isOpen) return;
+		if (e.key === 'Escape') {
 			onClose();
+		} else if (e.key === 'Tab' && modalEl) {
+			const focusables = modalEl.querySelectorAll<HTMLElement>(
+				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+			);
+			if (focusables.length === 0) return;
+			const first = focusables[0];
+			const last = focusables[focusables.length - 1];
+			if (e.shiftKey && document.activeElement === first) {
+				e.preventDefault();
+				last.focus();
+			} else if (!e.shiftKey && document.activeElement === last) {
+				e.preventDefault();
+				first.focus();
+			}
 		}
 	};
 </script>
@@ -62,13 +79,16 @@
 <svelte:window onkeydown={handleKeyDown} />
 
 {#if isOpen}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-[4px]"
 		onclick={handleBackdropClick}
+		role="presentation"
 	>
 		<div
+			bind:this={modalEl}
+			role="dialog"
+			aria-modal="true"
+			aria-label={mode === 'export' ? m.export_code() : m.import_code()}
 			class="flex max-h-[90vh] w-full max-w-[500px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-none"
 		>
 			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-[18px]">

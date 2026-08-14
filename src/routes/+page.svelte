@@ -142,16 +142,32 @@
 			return;
 		}
 
-		isCanvasPanning = true;
 		const container = e.currentTarget as HTMLElement;
-		container.setPointerCapture(e.pointerId);
-		const startX = e.clientX - previewPanX;
-		const startY = e.clientY - previewPanY;
+		const initialX = e.clientX;
+		const initialY = e.clientY;
+		const initialPanX = previewPanX;
+		const initialPanY = previewPanY;
+		let hasCaptured = false;
 
 		const handlePointerMove = (moveEvent: PointerEvent) => {
-			if (!isCanvasPanning) return;
-			previewPanX = moveEvent.clientX - startX;
-			previewPanY = moveEvent.clientY - startY;
+			const deltaX = moveEvent.clientX - initialX;
+			const deltaY = moveEvent.clientY - initialY;
+			const distance = Math.hypot(deltaX, deltaY);
+
+			if (!hasCaptured && distance > 4) {
+				hasCaptured = true;
+				isCanvasPanning = true;
+				try {
+					container.setPointerCapture(e.pointerId);
+				} catch {
+					// pointer capture fallback
+				}
+			}
+
+			if (isCanvasPanning) {
+				previewPanX = initialPanX + deltaX;
+				previewPanY = initialPanY + deltaY;
+			}
 		};
 
 		const handlePointerUp = () => {
