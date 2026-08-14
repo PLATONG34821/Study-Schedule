@@ -197,6 +197,11 @@
 	});
 
 	let finalScale = $derived(isWallpaperMode ? computedScale * gridScaleModifier : 1);
+	let safeScale = $derived(isWallpaperMode ? Math.max(finalScale, 0.05) : 1);
+	let effectiveFontSizeDay = $derived(Math.round(fontSizeDay / safeScale));
+	let effectiveFontSizeTime = $derived(Math.round(fontSizeTime / safeScale));
+	let effectiveFontSizeTitle = $derived(Math.round(fontSizeTitle / safeScale));
+	let effectiveFontSizeBadge = $derived(Math.round(fontSizeBadge / safeScale));
 
 	let blocks = $state<ClassBlock[]>(defaultBlocks);
 
@@ -782,10 +787,10 @@
 										{timeBgColor}
 										{dayHeaderBgColor}
 										{cellBgColor}
-										{fontSizeDay}
-										{fontSizeTime}
-										{fontSizeTitle}
-										{fontSizeBadge}
+										fontSizeDay={effectiveFontSizeDay}
+										fontSizeTime={effectiveFontSizeTime}
+										fontSizeTitle={effectiveFontSizeTitle}
+										fontSizeBadge={effectiveFontSizeBadge}
 										onSelectBlock={(id: string) => (selectedId = id)}
 										onAddBlock={addBlock}
 										onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
@@ -816,10 +821,10 @@
 						{timeBgColor}
 						{dayHeaderBgColor}
 						{cellBgColor}
-						{fontSizeDay}
-						{fontSizeTime}
-						{fontSizeTitle}
-						{fontSizeBadge}
+						fontSizeDay={effectiveFontSizeDay}
+						fontSizeTime={effectiveFontSizeTime}
+						fontSizeTitle={effectiveFontSizeTitle}
+						fontSizeBadge={effectiveFontSizeBadge}
 						onSelectBlock={(id: string) => (selectedId = id)}
 						onAddBlock={addBlock}
 						onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
