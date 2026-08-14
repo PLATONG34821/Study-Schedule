@@ -139,6 +139,10 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		}
 	};
 
+	const activePointers = new Map<number, { clientX: number; clientY: number }>();
+	let initialPinchDist = 0;
+	let initialPinchZoom = 1;
+
 	const handleCanvasPointerDown = (e: PointerEvent) => {
 		const target = e.target as HTMLElement;
 		if (
@@ -154,41 +158,76 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		}
 
 		const container = e.currentTarget as HTMLElement;
+		activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+		try {
+			container.setPointerCapture(e.pointerId);
+		} catch {
+			// fallback
+		}
+
 		const initialX = e.clientX;
 		const initialY = e.clientY;
 		const initialPanX = previewPanX;
 		const initialPanY = previewPanY;
 		let hasCaptured = false;
 
-		const handlePointerMove = (moveEvent: PointerEvent) => {
-			const deltaX = moveEvent.clientX - initialX;
-			const deltaY = moveEvent.clientY - initialY;
-			const distance = Math.hypot(deltaX, deltaY);
+		if (activePointers.size === 2) {
+			const points = Array.from(activePointers.values());
+			initialPinchDist = Math.hypot(points[0].clientX - points[1].clientX, points[0].clientY - points[1].clientY);
+			initialPinchZoom = previewZoom;
+		}
 
-			if (!hasCaptured && distance > 4) {
-				hasCaptured = true;
-				isCanvasPanning = true;
-				try {
-					container.setPointerCapture(e.pointerId);
-				} catch {
-					// fallback
+		const handlePointerMove = (moveEvent: PointerEvent) => {
+			if (!activePointers.has(moveEvent.pointerId)) return;
+			activePointers.set(moveEvent.pointerId, { clientX: moveEvent.clientX, clientY: moveEvent.clientY });
+
+			if (activePointers.size === 2) {
+				const points = Array.from(activePointers.values());
+				const dist = Math.hypot(points[0].clientX - points[1].clientX, points[0].clientY - points[1].clientY);
+				if (initialPinchDist > 0) {
+					const scale = dist / initialPinchDist;
+					previewZoom = Math.min(Math.max(Math.round(initialPinchZoom * scale * 100) / 100, 0.2), 3);
 				}
+				return;
 			}
 
-			if (isCanvasPanning) {
-				previewPanX = initialPanX + deltaX;
-				previewPanY = initialPanY + deltaY;
+			if (activePointers.size === 1) {
+				const deltaX = moveEvent.clientX - initialX;
+				const deltaY = moveEvent.clientY - initialY;
+				const distance = Math.hypot(deltaX, deltaY);
+
+				if (!hasCaptured && distance > 3) {
+					hasCaptured = true;
+					isCanvasPanning = true;
+				}
+
+				if (isCanvasPanning) {
+					previewPanX = initialPanX + deltaX;
+					previewPanY = initialPanY + deltaY;
+				}
 			}
 		};
 
-		const handlePointerUp = () => {
-			isCanvasPanning = false;
+		const handlePointerUp = (upEvent: PointerEvent) => {
+			activePointers.delete(upEvent.pointerId);
+			if (activePointers.size === 0) {
+				isCanvasPanning = false;
+				initialPinchDist = 0;
+			}
+			try {
+				container.releasePointerCapture(upEvent.pointerId);
+			} catch {
+				// fallback
+			}
 			container.removeEventListener('pointermove', handlePointerMove as EventListener);
 			container.removeEventListener('pointerup', handlePointerUp as EventListener);
+			container.removeEventListener('pointercancel', handlePointerUp as EventListener);
 		};
 
 		container.addEventListener('pointermove', handlePointerMove as EventListener);
 		container.addEventListener('pointerup', handlePointerUp as EventListener);
+		container.addEventListener('pointercancel', handlePointerUp as EventListener);
 	};
 
 
@@ -742,7 +781,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 			</button>
 		</div>
 		<div
-			class="box-border flex h-full w-full items-center justify-center p-10"
+			class="box-border flex h-full w-full items-center justify-center p-10 touch-none"
 			style="cursor: {isCanvasPanning
 				? 'grabbing'
 				: 'grab'}; transform: translate({previewPanX}px, {previewPanY}px);"
