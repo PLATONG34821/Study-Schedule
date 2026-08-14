@@ -527,6 +527,13 @@
 		}
 	};
 
+	const loadSampleTemplate = () => {
+		blocks = JSON.parse(JSON.stringify(defaultBlocks));
+		selectedId = null;
+		pushHistoryState();
+		addToast(m.sample_loaded(), 'success');
+	};
+
 	const resetToDefault = () => {
 		if (typeof window !== 'undefined' && confirm(m.reset_confirm())) {
 			localStorage.removeItem('study_schedule_autosave');
@@ -614,6 +621,7 @@
 		onFieldChange={pushHistoryState}
 		{lastSavedTime}
 		onResetDefault={resetToDefault}
+		onLoadSampleTemplate={loadSampleTemplate}
 	/>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -739,6 +747,7 @@
 										{fontSizeBadge}
 										onSelectBlock={(id: string) => (selectedId = id)}
 										onAddBlock={addBlock}
+										onLoadSampleTemplate={loadSampleTemplate}
 									/>
 								</div>
 							</div>
@@ -771,6 +780,7 @@
 						{fontSizeBadge}
 						onSelectBlock={(id: string) => (selectedId = id)}
 						onAddBlock={addBlock}
+						onLoadSampleTemplate={loadSampleTemplate}
 					/>
 				</div>
 			{/if}

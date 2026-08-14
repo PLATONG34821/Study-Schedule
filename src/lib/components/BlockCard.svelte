@@ -23,6 +23,7 @@
 	let colorObj = $derived(palette.find((c) => c.id === block.colorId));
 	let colorVal = $derived(colorObj ? colorObj.color : '#dddddd');
 	let textVal = $derived(textColorFor(colorVal));
+	let isDarkBg = $derived(textVal === '#ffffff');
 </script>
 
 <button
@@ -47,11 +48,15 @@
 			{#if block.time || block.room}
 				<div class="flex flex-wrap items-center gap-1">
 					{#if block.time}<span
-							class="shrink-0 rounded-xl border-[1.5px] border-[#111111] bg-white/90 px-2 py-0.5 font-[JetBrains_Mono,monospace] font-semibold text-[#111111]"
+							class="shrink-0 rounded-xl border-[1.5px] border-[#111111] px-2 py-0.5 font-[JetBrains_Mono,monospace] font-semibold {isDarkBg
+								? 'bg-white/95 text-[#111111]'
+								: 'bg-[#111111]/90 text-white'}"
 							style="font-size: {fontSizeBadge}px;">{block.time}</span
 						>{/if}
 					{#if block.room}<span
-							class="shrink-0 rounded-xl border-[1.5px] border-[#111111] bg-white/90 px-2 py-0.5 font-[JetBrains_Mono,monospace] font-semibold text-[#111111]"
+							class="shrink-0 rounded-xl border-[1.5px] border-[#111111] px-2 py-0.5 font-[JetBrains_Mono,monospace] font-semibold {isDarkBg
+								? 'bg-white/95 text-[#111111]'
+								: 'bg-[#111111]/90 text-white'}"
 							style="font-size: {fontSizeBadge}px;">{block.room}</span
 						>{/if}
 				</div>
@@ -59,11 +64,15 @@
 			{#if block.section || block.type}
 				<div class="flex flex-wrap items-center gap-1">
 					{#if block.section}<span
-							class="shrink-0 rounded border-[1.5px] border-[#111111] bg-white px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold text-[#111111]"
+							class="shrink-0 rounded border-[1.5px] border-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold {isDarkBg
+								? 'bg-white text-[#111111]'
+								: 'bg-[#111111] text-white'}"
 							style="font-size: {fontSizeBadge}px;">Sec {block.section}</span
 						>{/if}
 					{#if block.type}<span
-							class="shrink-0 rounded border-[1.5px] border-[#111111] bg-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold text-white uppercase"
+							class="shrink-0 rounded border-[1.5px] border-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold uppercase {isDarkBg
+								? 'bg-[#111111] text-white'
+								: 'bg-white text-[#111111]'}"
 							style="font-size: {fontSizeBadge}px;">{block.type}</span
 						>{/if}
 				</div>

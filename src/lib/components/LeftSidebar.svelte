@@ -30,6 +30,8 @@
 		onFieldChange?: () => void;
 		lastSavedTime?: string | null;
 		onResetDefault?: () => void;
+		onLoadSampleTemplate?: () => void;
+		onClearAllBlocks?: () => void;
 	}
 
 	let {
@@ -58,7 +60,9 @@
 		onRedo,
 		onFieldChange,
 		lastSavedTime = null,
-		onResetDefault
+		onResetDefault,
+		onLoadSampleTemplate,
+		onClearAllBlocks
 	}: Props = $props();
 
 	let isResizing = $state(false);
@@ -244,6 +248,19 @@
 			{/if}
 		</button>
 	</div>
+
+	{#if onLoadSampleTemplate}
+		<button
+			type="button"
+			class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#2563eb]/50 bg-[#2563eb]/20 px-3 py-2 font-[inherit] text-xs font-semibold text-[#60a5fa] transition-colors hover:bg-[#2563eb]/30 hover:text-white"
+			onclick={onLoadSampleTemplate}
+		>
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+			</svg>
+			{m.load_sample_template()}
+		</button>
+	{/if}
 
 	<div class="mb-0.5 flex gap-2">
 		<button

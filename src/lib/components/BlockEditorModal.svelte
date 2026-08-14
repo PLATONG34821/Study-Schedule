@@ -44,6 +44,7 @@
 	let previewColorObj = $derived(palette.find((c) => c.id === draft?.colorId));
 	let previewColorVal = $derived(previewColorObj ? previewColorObj.color : '#dddddd');
 	let previewTextVal = $derived(textColorFor(previewColorVal));
+	let previewIsDarkBg = $derived(previewTextVal === '#ffffff');
 </script>
 
 <svelte:window onkeydown={handleKeyDown} />
@@ -96,25 +97,33 @@
 							<div class="flex flex-wrap items-center gap-1 text-[10px]">
 								{#if draft.time}
 									<span
-										class="rounded-md border border-[#111111] bg-white/90 px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-semibold text-[#111111]"
+										class="rounded-md border border-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-semibold {previewIsDarkBg
+											? 'bg-white/95 text-[#111111]'
+											: 'bg-[#111111]/90 text-white'}"
 										>{draft.time}</span
 									>
 								{/if}
 								{#if draft.room}
 									<span
-										class="rounded-md border border-[#111111] bg-white/90 px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-semibold text-[#111111]"
+										class="rounded-md border border-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-semibold {previewIsDarkBg
+											? 'bg-white/95 text-[#111111]'
+											: 'bg-[#111111]/90 text-white'}"
 										>{draft.room}</span
 									>
 								{/if}
 								{#if draft.section}
 									<span
-										class="rounded border border-[#111111] bg-white px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold text-[#111111]"
+										class="rounded border border-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold {previewIsDarkBg
+											? 'bg-white text-[#111111]'
+											: 'bg-[#111111] text-white'}"
 										>Sec {draft.section}</span
 									>
 								{/if}
 								{#if draft.type}
 									<span
-										class="rounded border border-[#111111] bg-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold text-white uppercase"
+										class="rounded border border-[#111111] px-1.5 py-0.5 font-[JetBrains_Mono,monospace] font-bold uppercase {previewIsDarkBg
+											? 'bg-[#111111] text-white'
+											: 'bg-white text-[#111111]'}"
 										>{draft.type}</span
 									>
 								{/if}
