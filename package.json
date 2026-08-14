@@ -37,6 +37,9 @@
 		"vite": "^8.0.16"
 	},
 	"dependencies": {
-		"html-to-image": "^1.11.13"
+		"@types/lz-string": "^1.5.0",
+		"colord": "^2.9.3",
+		"html-to-image": "^1.11.13",
+		"lz-string": "^1.5.0"
 	}
 }
