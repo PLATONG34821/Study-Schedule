@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query';
+	import { createVirtualizer } from '@tanstack/svelte-virtual';
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
 	import { textColorFor, compressConfigCode } from '$lib/utils';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
@@ -25,6 +26,7 @@
 	let searchQuery = $state('');
 	let selectedCategory = $state('All');
 	let previewPreset = $state<CustomSchedulePreset | null>(null);
+	let scrollContainerEl = $state<HTMLDivElement | null>(null);
 
 	const presetsList: CustomSchedulePreset[] = [
 		{
@@ -538,6 +540,18 @@
 		});
 	});
 
+	let rowVirtualizer = $derived.by(() => {
+		if (typeof window === 'undefined' || !scrollContainerEl) return null;
+		return createVirtualizer({
+			count: filteredPresets.length,
+			getScrollElement: () => scrollContainerEl,
+			estimateSize: () => 380,
+			overscan: 4
+		});
+	});
+
+	let virtualItems = $derived($rowVirtualizer ? $rowVirtualizer.getVirtualItems() : []);
+
 	const applyPresetAndNavigate = async (preset: CustomSchedulePreset) => {
 		if (typeof window === 'undefined') return;
 		const configObj = {
@@ -576,7 +590,7 @@
 	<title>{m.preset_marketplace()} | Study Schedule</title>
 </svelte:head>
 
-<div class="h-screen w-full overflow-y-auto bg-[#121214] text-[#e4e4e7]">
+<div bind:this={scrollContainerEl} class="h-screen w-full overflow-y-auto bg-[#121214] text-[#e4e4e7]">
 	<!-- Navbar Header -->
 	<header class="sticky top-0 z-30 border-b border-[#27272a] bg-[#18181b]/90 backdrop-blur-md">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
