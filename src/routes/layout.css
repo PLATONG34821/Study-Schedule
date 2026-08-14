@@ -29,10 +29,11 @@
 		background-color: #2563eb;
 	}
 
+	html,
 	body {
-		background: #f4f4f5;
+		background: #121214;
 		font-family: 'Space Grotesk', sans-serif;
-		color: #111111;
+		color: #e4e4e7;
 		height: 100vh;
 		overflow: hidden;
 	}

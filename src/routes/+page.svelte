@@ -657,7 +657,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	});
 </script>
 
-<div class="relative flex h-screen w-screen flex-col overflow-hidden lg:flex-row">
+<div class="relative flex h-screen w-screen flex-col overflow-hidden lg:flex-row transition-opacity duration-150 {isInitialLoaded ? 'opacity-100' : 'opacity-0 pointer-events-none'}">
 	{#if isLeftSidebarOpen}
 		<button
 			type="button"
@@ -677,7 +677,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	{/if}
 
 	<PaneGroup autoSaveId="study-schedule-layout" direction="horizontal" class="relative flex h-screen w-screen overflow-hidden">
-		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full">
+		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full shrink-0" style="flex: 20 1 0px;">
 			<LeftSidebar
 				isOpen={isLeftSidebarOpen}
 				onClose={() => (isLeftSidebarOpen = false)}
@@ -700,7 +700,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 
 		<PaneResizer class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block" />
 
-		<Pane class="relative flex flex-1 flex-col overflow-hidden bg-[#121214]">
+		<Pane class="relative flex flex-1 flex-col overflow-hidden bg-[#121214]" style="flex: 60 1 0px;">
 		<!-- Mobile Header Toolbar -->
 		<div
 			class="z-20 flex items-center justify-between border-b border-[#27272a] bg-[#18181b] px-4 py-2.5 text-white lg:hidden"
@@ -953,7 +953,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 
 		<PaneResizer class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block" />
 
-		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full">
+		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full shrink-0" style="flex: 20 1 0px;">
 			<RightDrawer
 				{phonePresets}
 				isOpen={isRightDrawerOpen}

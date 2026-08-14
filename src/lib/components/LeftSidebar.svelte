@@ -47,9 +47,9 @@
 </script>
 
 <aside
-	class="fixed inset-y-0 left-0 z-40 box-border flex h-full w-full shrink-0 flex-col gap-3 overflow-y-auto border-r border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none lg:transition-none {isOpen
-		? 'translate-x-0'
-		: '-translate-x-full lg:translate-x-0'}"
+	class="box-border flex h-full w-full flex-col gap-3 overflow-y-auto border-r border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-40 max-lg:w-[320px] max-lg:max-w-[calc(100vw-3rem)] max-lg:shadow-2xl max-lg:transition-transform max-lg:duration-300 max-lg:ease-in-out {isOpen
+		? 'max-lg:translate-x-0'
+		: 'max-lg:-translate-x-full'}"
 >
 	<div class="flex items-start justify-between">
 		<div>
