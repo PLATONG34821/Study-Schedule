@@ -534,13 +534,10 @@
 
 	$effect(() => {
 		// Watch state for continuous URL hash sync
-		days; slots; palette; blocks; selectedPresetId; customPresetWidth; customPresetHeight;
-		gridRotationAngle; customTopGapPercent; scaleMode; gridScaleModifier; slotRowHeight;
-		dayColumnWidth; gridBorderRadius; bgColor; gridLineColor; timeBgColor; dayHeaderBgColor; cellBgColor;
-		fontSizeDay; fontSizeTime; fontSizeTitle; fontSizeBadge;
+		const configObj = getFullConfigObj();
 
 		if (isInitialLoaded && typeof window !== 'undefined') {
-			compressConfigCode(getFullConfigObj()).then((code) => {
+			compressConfigCode(configObj).then((code) => {
 				if (code) {
 					history.replaceState(null, '', `${window.location.pathname}${window.location.search}#s=${code}`);
 				}
@@ -593,7 +590,9 @@
 			if (typeof window !== 'undefined') {
 				try {
 					localStorage.removeItem('study_schedule_autosave');
-				} catch {}
+				} catch {
+					// Ignore storage errors
+				}
 			}
 
 			const hash = window.location.hash;

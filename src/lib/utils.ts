@@ -1,24 +1,24 @@
 import { colord } from 'colord';
 import lzString from 'lz-string';
 import { nanoid } from 'nanoid';
-import { object, array, string, boolean, nullable, optional, is, type Infer } from 'superstruct';
+import { type as structType, array, string, boolean, nullable, optional, any, is, type Infer } from 'superstruct';
 
-export const daySchema = object({
+export const daySchema = structType({
 	id: string(),
 	name: string()
 });
 
-export const slotSchema = object({
+export const slotSchema = structType({
 	id: string(),
 	label: string()
 });
 
-export const paletteColorSchema = object({
+export const paletteColorSchema = structType({
 	id: string(),
 	color: string()
 });
 
-export const classBlockSchema = object({
+export const classBlockSchema = structType({
 	id: string(),
 	dayId: string(),
 	timeSlotId: string(),
@@ -31,11 +31,12 @@ export const classBlockSchema = object({
 	pattern: optional(boolean())
 });
 
-export const scheduleConfigSchema = object({
+export const scheduleConfigSchema = structType({
 	days: array(daySchema),
 	slots: array(slotSchema),
 	palette: array(paletteColorSchema),
-	blocks: array(classBlockSchema)
+	blocks: array(classBlockSchema),
+	settings: optional(any())
 });
 
 export type ScheduleConfigData = Infer<typeof scheduleConfigSchema>;
