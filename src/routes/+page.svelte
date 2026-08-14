@@ -107,21 +107,25 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		}
 	};
 
-	let previewZoom = $state<number>(1);
+	let previewZoom = $state<number>(1.3);
 	let previewPanX = $state<number>(0);
 	let previewPanY = $state<number>(0);
 	let isCanvasPanning = $state<boolean>(false);
 
 	const zoomIn = () => {
-		previewZoom = Math.min(Math.round((previewZoom + 0.15) * 100) / 100, 3);
+		const currentPercent = Math.round((previewZoom / 1.3) * 100);
+		const nextPercent = Math.min(currentPercent + 5, 300);
+		previewZoom = Math.round(((nextPercent / 100) * 1.3) * 1000) / 1000;
 	};
 
 	const zoomOut = () => {
-		previewZoom = Math.max(Math.round((previewZoom - 0.15) * 100) / 100, 0.2);
+		const currentPercent = Math.round((previewZoom / 1.3) * 100);
+		const nextPercent = Math.max(currentPercent - 5, 15);
+		previewZoom = Math.round(((nextPercent / 100) * 1.3) * 1000) / 1000;
 	};
 
 	const resetPreviewView = () => {
-		previewZoom = 1;
+		previewZoom = 1.3;
 		previewPanX = 0;
 		previewPanY = 0;
 	};
@@ -651,6 +655,8 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 			}
 
 			isInitialLoaded = true;
+			await tick();
+			resetPreviewView();
 		};
 
 		initData();
@@ -913,7 +919,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 				onclick={resetPreviewView}
 				title="Reset Zoom & Position"
 			>
-				{Math.round(previewZoom * 100)}%
+				{Math.round((previewZoom / 1.3) * 100)}%
 			</button>
 
 			<button
