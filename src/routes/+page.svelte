@@ -142,6 +142,8 @@
 		const target = e.target as HTMLElement;
 		if (
 			target.closest('button') ||
+			target.closest('[role="button"]') ||
+			target.closest('.svelte-dnd-draggable') ||
 			target.closest('input') ||
 			target.closest('select') ||
 			target.closest('a') ||
@@ -394,6 +396,15 @@
 	const updateBlock = (updatedBlock: ClassBlock) => {
 		blocks = blocks.map((b) => (b.id === updatedBlock.id ? updatedBlock : b));
 		selectedId = null;
+		pushHistoryState();
+	};
+
+	const moveBlock = (blockId: string, targetDayId: string, targetTimeSlotId: string) => {
+		const block = blocks.find((b) => b.id === blockId);
+		if (!block) return;
+		if (block.dayId === targetDayId && block.timeSlotId === targetTimeSlotId) return;
+		block.dayId = targetDayId;
+		block.timeSlotId = targetTimeSlotId;
 		pushHistoryState();
 	};
 
@@ -783,6 +794,7 @@
 										fontSizeBadge={effectiveFontSizeBadge}
 										onSelectBlock={(id: string) => (selectedId = id)}
 										onAddBlock={addBlock}
+										onMoveBlock={moveBlock}
 									/>
 								</div>
 							</div>
@@ -816,6 +828,7 @@
 						fontSizeBadge={effectiveFontSizeBadge}
 						onSelectBlock={(id: string) => (selectedId = id)}
 						onAddBlock={addBlock}
+						onMoveBlock={moveBlock}
 					/>
 				</div>
 			{/if}

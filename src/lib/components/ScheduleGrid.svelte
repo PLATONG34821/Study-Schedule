@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { draggable, droppable } from '@thisux/sveltednd';
 	import type { Day, Slot, ClassBlock, PaletteColor } from '$lib/types';
 	import { textColorFor } from '$lib/utils';
 	import * as m from '$lib/paraglide/messages';
@@ -25,6 +26,7 @@
 		fontSizeBadge?: number;
 		onSelectBlock: (id: string) => void;
 		onAddBlock: (dayId: string, timeSlotId: string) => void;
+		onMoveBlock?: (blockId: string, targetDayId: string, targetTimeSlotId: string) => void;
 	}
 
 	let {
@@ -47,7 +49,8 @@
 		fontSizeTitle = 20,
 		fontSizeBadge = 11,
 		onSelectBlock,
-		onAddBlock
+		onAddBlock,
+		onMoveBlock
 	}: Props = $props();
 
 	let timeTextColor = $derived(textColorFor(timeBgColor));
@@ -97,16 +100,35 @@
 					days.length - 1
 						? 'none'
 						: 'solid'}; border-bottom-style: {rowIdx === slots.length - 1 ? 'none' : 'solid'};"
+					use:droppable={{
+						container: 'scheduleGrid',
+						callbacks: {
+							onDrop: (state) => {
+								const dragged = state.draggedItem as ClassBlock;
+								if (dragged && (dragged.dayId !== day.id || dragged.timeSlotId !== slot.id)) {
+									onMoveBlock?.(dragged.id, day.id, slot.id);
+								}
+							}
+						}
+					}}
 				>
 					{#each cellBlocks as block (block.id)}
-						<BlockCard
-							{block}
-							{palette}
-							{fontSizeTitle}
-							{fontSizeBadge}
-							isSelected={selectedId === block.id}
-							onSelect={() => onSelectBlock(block.id)}
-						/>
+						<div
+							class="h-full w-full touch-none"
+							use:draggable={{
+								container: 'scheduleGrid',
+								dragData: block
+							}}
+						>
+							<BlockCard
+								{block}
+								{palette}
+								{fontSizeTitle}
+								{fontSizeBadge}
+								isSelected={selectedId === block.id}
+								onSelect={() => onSelectBlock(block.id)}
+							/>
+						</div>
 					{/each}
 
 					{#if !hasBlock && !isExporting}

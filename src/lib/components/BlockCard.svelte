@@ -26,13 +26,15 @@
 	let isDarkBg = $derived(textVal === '#ffffff');
 </script>
 
-<button
-	type="button"
+<div
+	role="button"
+	tabindex="0"
 	class="relative box-border flex h-full w-full cursor-pointer flex-col justify-between overflow-hidden rounded-[14px] border-[2.5px] border-[#111111] px-3.5 py-3 text-left shadow-none transition-transform duration-100 ease-in-out hover:-translate-x-px hover:-translate-y-px {isSelected
 		? 'outline-3 outline-offset-2 outline-[#2563eb]'
 		: ''}"
 	style="background: {colorVal}; color: {textVal};"
 	onclick={onSelect}
+	onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect()}
 >
 	{#if block.pattern}
 		<div
@@ -79,4 +81,4 @@
 			{/if}
 		</div>
 	</div>
-</button>
+</div>
