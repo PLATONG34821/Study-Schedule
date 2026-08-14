@@ -87,14 +87,25 @@
 	<div class="mt-2 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.preset_label()}
 	</div>
-	<select
-		class="w-full cursor-pointer rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 font-[inherit] text-[13px] text-white"
-		bind:value={selectedPresetId}
-	>
-		{#each phonePresets as preset (preset.id)}
-			<option value={preset.id}>{preset.name}</option>
-		{/each}
-	</select>
+	<div class="relative w-full">
+		<select
+			class="w-full cursor-pointer appearance-none rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 pr-8 font-[inherit] text-[13px] text-white focus:outline-none focus:ring-2 focus:ring-[#2563eb]"
+			bind:value={selectedPresetId}
+			style="color-scheme: dark; -webkit-appearance: none;"
+		>
+			{#each phonePresets as preset (preset.id)}
+				<option value={preset.id} class="bg-[#18181b] text-white">{preset.name}</option>
+			{/each}
+			{#if !phonePresets.some((p) => p.id === selectedPresetId)}
+				<option value={selectedPresetId} class="bg-[#18181b] text-white">{selectedPresetId}</option>
+			{/if}
+		</select>
+		<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-[#a1a1aa]">
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+				<path d="M6 9l6 6 6-6"/>
+			</svg>
+		</div>
+	</div>
 
 	<div class="grid grid-cols-2 gap-2 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
 		<div>
@@ -148,11 +159,12 @@
 				id="gridRotationSelect"
 				class="box-border w-full rounded-md border border-[#3f3f46] bg-[#18181b] px-2.5 py-2 font-[inherit] text-[13px] text-white"
 				bind:value={gridRotationAngle}
+				style="color-scheme: dark;"
 			>
-				<option value={90}>{m.rotate_90()}</option>
-				<option value={180}>{m.rotate_180()}</option>
-				<option value={270}>{m.rotate_270()}</option>
-				<option value={0}>{m.rotate_0()}</option>
+				<option value={90} class="bg-[#18181b] text-white">{m.rotate_90()}</option>
+				<option value={180} class="bg-[#18181b] text-white">{m.rotate_180()}</option>
+				<option value={270} class="bg-[#18181b] text-white">{m.rotate_270()}</option>
+				<option value={0} class="bg-[#18181b] text-white">{m.rotate_0()}</option>
 			</select>
 
 			<label class="block text-xs text-[#a1a1aa]" for="scaleModeSelect">{m.scale_mode()}</label>
@@ -160,9 +172,10 @@
 				id="scaleModeSelect"
 				class="box-border w-full rounded-md border border-[#3f3f46] bg-[#18181b] px-2.5 py-2 font-[inherit] text-[13px] text-white"
 				bind:value={scaleMode}
+				style="color-scheme: dark;"
 			>
-				<option value="fillWidth">{m.scale_fill_width()}</option>
-				<option value="fitBoth">{m.scale_fit_both()}</option>
+				<option value="fillWidth" class="bg-[#18181b] text-white">{m.scale_fill_width()}</option>
+				<option value="fitBoth" class="bg-[#18181b] text-white">{m.scale_fit_both()}</option>
 			</select>
 
 			<div class="mt-2.5 flex flex-col gap-1.5">

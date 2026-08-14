@@ -552,7 +552,12 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		const st = data.settings as Record<string, unknown> | undefined;
 		if (st) {
 			if (typeof st.selectedPresetId === 'string') {
-				selectedPresetId = st.selectedPresetId.startsWith('ip') ? 'iphone' : st.selectedPresetId;
+				const id = st.selectedPresetId;
+				selectedPresetId = phonePresets.some((p) => p.id === id)
+					? id
+					: id.startsWith('ip')
+						? 'iphone'
+						: 'desktop';
 			}
 			if (typeof st.customPresetWidth === 'number') customPresetWidth = st.customPresetWidth;
 			if (typeof st.customPresetHeight === 'number') customPresetHeight = st.customPresetHeight;
