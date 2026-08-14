@@ -876,7 +876,10 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 
 		<!-- Top-Left Floating Undo/Redo Toolbar -->
 		<div
-			class="absolute top-16 left-4 z-30 flex items-center gap-1 rounded-full border border-[#3f3f46] bg-[#18181b]/90 p-1.5 shadow-2xl backdrop-blur-md lg:top-4"
+			class={clsx(
+				'absolute top-16 left-4 z-30 flex items-center gap-1 rounded-full border border-[#3f3f46] bg-[#18181b]/90 p-1.5 shadow-2xl backdrop-blur-md transition-all duration-200 ease-in-out lg:top-4',
+				(isLeftSidebarOpen || isRightDrawerOpen) && 'max-lg:pointer-events-none max-lg:opacity-0 max-lg:blur-md'
+			)}
 		>
 			<button
 				type="button"
@@ -1015,7 +1018,10 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 
 		<!-- Floating View & Zoom Toolbar -->
 		<div
-			class="absolute bottom-6 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-1.5 sm:gap-2 overflow-x-auto rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-[#e4e4e7] shadow-2xl backdrop-blur-md"
+			class={clsx(
+				'absolute bottom-6 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-1.5 overflow-x-auto rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-2.5 py-1.5 text-[#e4e4e7] shadow-2xl backdrop-blur-md transition-all duration-200 ease-in-out sm:gap-2 sm:px-3.5 sm:py-2',
+				(isLeftSidebarOpen || isRightDrawerOpen) && 'max-lg:pointer-events-none max-lg:opacity-0 max-lg:blur-md'
+			)}
 		>
 			<button
 				type="button"

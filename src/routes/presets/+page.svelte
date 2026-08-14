@@ -679,8 +679,8 @@
 					onclick={() => (previewPreset = preset)}
 				>
 					<!-- Custom Days & Slots Header Preview Box -->
-					<div class="relative flex min-h-[190px] sm:min-h-[230px] w-full flex-col overflow-hidden border-b border-[#27272a] p-3 sm:p-3.5" style="background: {preset.bgColor};">
-						<div class="mb-2 flex items-center justify-between z-10">
+					<div class="relative flex min-h-[180px] sm:min-h-[230px] w-full flex-col overflow-hidden border-b border-[#27272a] p-2.5 sm:p-3.5" style="background: {preset.bgColor};">
+						<div class="mb-1.5 flex items-center justify-between z-10">
 							<span class="rounded bg-[#2563eb]/20 px-2 py-0.5 font-mono text-[10px] font-bold text-[#60a5fa] uppercase">
 								{preset.category}
 							</span>
@@ -692,19 +692,19 @@
 						<!-- Custom Grid Timetable Preview -->
 						<div class="flex flex-1 flex-col overflow-hidden rounded-lg border shadow-inner" style="border-color: {preset.gridLineColor}; background: {preset.gridLineColor};">
 							<!-- Header Days row -->
-							<div class="grid gap-px" style="grid-template-columns: 32px repeat({preset.days.length}, minmax(0, 1fr)); background: {preset.gridLineColor};">
-								<div class="p-1 text-center font-mono text-[8px] font-bold" style="background: {preset.timeBgColor}; color: {textColorFor(preset.timeBgColor)};">Time</div>
+							<div class="grid gap-px" style="grid-template-columns: 28px repeat({preset.days.length}, minmax(0, 1fr)); background: {preset.gridLineColor};">
+								<div class="flex items-center justify-center p-0.5 font-mono text-[7px] sm:text-[8px] font-bold" style="background: {preset.timeBgColor}; color: {textColorFor(preset.timeBgColor)};">Time</div>
 								{#each preset.days as d (d.id)}
-									<div class="min-w-0 overflow-hidden truncate p-1 text-center font-mono text-[8px] font-extrabold uppercase" style="background: {preset.dayHeaderBgColor}; color: {textColorFor(preset.dayHeaderBgColor)};">
+									<div class="flex items-center justify-center min-w-0 overflow-hidden truncate p-0.5 text-center font-mono text-[7px] sm:text-[8px] font-extrabold uppercase" style="background: {preset.dayHeaderBgColor}; color: {textColorFor(preset.dayHeaderBgColor)};">
 										{d.name.slice(0, 3)}
 									</div>
 								{/each}
 							</div>
 
 							<!-- Slots rows grid -->
-							<div class="grid flex-1 gap-px" style="grid-template-columns: 32px repeat({preset.days.length}, minmax(0, 1fr)); background: {preset.gridLineColor};">
+							<div class="grid flex-1 gap-px" style="grid-template-columns: 28px repeat({preset.days.length}, minmax(0, 1fr)); background: {preset.gridLineColor};">
 								{#each preset.slots as slot (slot.id)}
-									<div class="flex items-center justify-center p-0.5 font-mono text-[8px] font-bold" style="background: {preset.timeBgColor}; color: {textColorFor(preset.timeBgColor)};">
+									<div class="flex items-center justify-center p-0.5 font-mono text-[7px] sm:text-[8px] font-bold" style="background: {preset.timeBgColor}; color: {textColorFor(preset.timeBgColor)};">
 										{slot.label}
 									</div>
 									{#each preset.days as d (d.id)}
@@ -716,12 +716,12 @@
 													{@const bg = colObj ? colObj.color : '#55E6A5'}
 													{@const textCol = textColorFor(bg)}
 													<div
-														class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden rounded-[3px] p-1 text-[8px] font-extrabold leading-tight shadow-sm"
+														class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden rounded-[3px] p-0.5 sm:p-1 text-[7px] sm:text-[8px] font-extrabold leading-tight shadow-sm"
 														style="background: {bg}; color: {textCol};"
 													>
 														<div class="min-w-0 truncate font-bold">{b.title}</div>
 														{#if b.room}
-															<div class="min-w-0 truncate font-mono text-[7px] opacity-80">{b.room}</div>
+															<div class="min-w-0 truncate font-mono text-[6px] sm:text-[7px] opacity-80">{b.room}</div>
 														{/if}
 													</div>
 												{/each}
@@ -768,7 +768,7 @@
 		onclick={(e) => (e.target as HTMLElement).classList.contains('modalBackdrop') && (previewPreset = null)}
 	>
 		<div
-			class="flex max-h-[92vh] w-full max-w-4xl animate-popIn flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-[#3f3f46] bg-[#18181b] text-white shadow-2xl"
+			class="flex h-[92vh] sm:h-[88vh] max-h-[96vh] w-full max-w-4xl animate-popIn flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-[#3f3f46] bg-[#18181b] text-white shadow-2xl"
 		>
 			<div class="flex items-center justify-between border-b border-[#27272a] px-4 py-3 sm:px-6 sm:py-4">
 				<div class="flex items-center gap-2 min-w-0">
@@ -786,10 +786,75 @@
 				</button>
 			</div>
 
-			<div class="flex-1 overflow-auto p-3 sm:p-6" style="background: {previewPreset.bgColor};">
-				<!-- Full Custom Days x Slots Preset Grid -->
-				<div class="w-full overflow-x-auto">
-					<div class="flex min-w-[500px] sm:min-w-0 flex-col overflow-hidden rounded-xl border shadow-2xl" style="border-color: {previewPreset.gridLineColor}; background: {previewPreset.gridLineColor};">
+			<div class="flex-1 flex flex-col overflow-hidden p-0 sm:p-6" style="background: {previewPreset.bgColor};">
+				<!-- MOBILE ONLY: Transposed Grid (Time slots across top, Days down right column) -->
+				<div class="flex sm:hidden h-full w-full flex-1 flex-col overflow-x-auto">
+					<div
+						class="flex h-full w-full flex-1 min-w-[320px] flex-col overflow-hidden rounded-none border shadow-md"
+						style="border-color: {previewPreset.gridLineColor}; background: {previewPreset.gridLineColor};"
+					>
+						<!-- Header Row: Time Slots across first columns + "Day" label in last column -->
+						<div
+							class="grid gap-px"
+							style="grid-template-columns: repeat({previewPreset.slots.length}, minmax(0, 1fr)) minmax(28px, 44px); background: {previewPreset.gridLineColor};"
+						>
+							{#each previewPreset.slots as slot (slot.id)}
+								<div class="flex items-center justify-center min-w-0 truncate p-1 text-center font-mono text-[10px] font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
+									{slot.label}
+								</div>
+							{/each}
+							<div class="flex items-center justify-center p-1 font-mono text-[10px] font-bold uppercase min-w-0 truncate" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
+								Day
+							</div>
+						</div>
+
+						<!-- Days rows grid: 1 Row per Day -->
+						<div
+							class="grid flex-1 gap-px min-h-0"
+							style="grid-template-columns: repeat({previewPreset.slots.length}, minmax(0, 1fr)) minmax(28px, 44px); grid-template-rows: repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};"
+						>
+							{#each previewPreset.days as d (d.id)}
+								<!-- Slot Cells for this Day -->
+								{#each previewPreset.slots as slot (slot.id)}
+									{@const cellBlocks = previewPreset.blocks.filter((b) => b.dayId === d.id && b.timeSlotId === slot.id)}
+									<div class="relative flex min-w-0 min-h-0 flex-col gap-0.5 p-0.5" style="background: {previewPreset.cellBgColor};">
+										{#if cellBlocks.length > 0}
+											{#each cellBlocks as b (b.id)}
+												{@const colObj = previewPreset.palette.find((c) => c.id === b.colorId)}
+												{@const bg = colObj ? colObj.color : '#55E6A5'}
+												{@const textCol = textColorFor(bg)}
+												<div
+													class="flex flex-1 flex-col justify-between rounded-md p-1 text-[9px] font-extrabold shadow-sm min-w-0 min-h-0 overflow-hidden [writing-mode:vertical-lr]"
+													style="background: {bg}; color: {textCol};"
+												>
+													<div class="min-w-0 truncate font-bold leading-tight">{b.title}</div>
+													{#if b.time || b.room}
+														<div class="mt-0.5 flex flex-wrap gap-0.5 text-[8px] opacity-90 font-normal">
+															{#if b.time}<span class="rounded bg-black/15 px-1 py-0.5 font-mono">{b.time}</span>{/if}
+															{#if b.room}<span class="rounded bg-black/15 px-1 py-0.5 font-mono">{b.room}</span>{/if}
+														</div>
+													{/if}
+												</div>
+											{/each}
+										{/if}
+									</div>
+								{/each}
+
+								<!-- Right Day Column Cell (last column) -->
+								<div class="flex items-center justify-center p-0.5 text-center text-[10px] font-extrabold uppercase min-h-0 truncate [writing-mode:vertical-lr]" style="background: {previewPreset.dayHeaderBgColor}; color: {textColorFor(previewPreset.dayHeaderBgColor)};">
+									{d.name}
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+
+				<!-- DESKTOP ONLY: Standard Timetable Grid (Days across top, Time slots down left column) -->
+				<div class="hidden sm:flex h-full w-full flex-1 flex-col overflow-x-auto">
+					<div
+						class="flex h-full w-full flex-1 flex-col overflow-hidden rounded-xl border shadow-2xl"
+						style="border-color: {previewPreset.gridLineColor}; background: {previewPreset.gridLineColor};"
+					>
 						<!-- Header Days row -->
 						<div class="grid gap-px" style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};">
 							<div class="flex items-center justify-center p-3 font-mono text-xs font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
@@ -803,7 +868,10 @@
 						</div>
 
 						<!-- Slots rows grid -->
-						<div class="grid flex-1 gap-px" style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};">
+						<div
+							class="grid flex-1 gap-px"
+							style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};"
+						>
 							{#each previewPreset.slots as slot (slot.id)}
 								<!-- Time Column Cell -->
 								<div class="flex items-center justify-center p-3 font-mono text-xs font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
