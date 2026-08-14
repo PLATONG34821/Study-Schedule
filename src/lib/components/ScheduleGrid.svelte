@@ -102,6 +102,7 @@
 						: 'solid'}; border-bottom-style: {rowIdx === slots.length - 1 ? 'none' : 'solid'};"
 					use:droppable={{
 						container: 'scheduleGrid',
+						disabled: isExporting,
 						callbacks: {
 							onDrop: (state) => {
 								const dragged = state.draggedItem as ClassBlock;
@@ -117,7 +118,8 @@
 							class="h-full w-full touch-none"
 							use:draggable={{
 								container: 'scheduleGrid',
-								dragData: block
+								dragData: block,
+								disabled: isExporting
 							}}
 						>
 							<BlockCard

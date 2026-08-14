@@ -403,6 +403,15 @@
 		const block = blocks.find((b) => b.id === blockId);
 		if (!block) return;
 		if (block.dayId === targetDayId && block.timeSlotId === targetTimeSlotId) return;
+
+		const existingBlock = blocks.find(
+			(b) => b.dayId === targetDayId && b.timeSlotId === targetTimeSlotId
+		);
+		if (existingBlock) {
+			existingBlock.dayId = block.dayId;
+			existingBlock.timeSlotId = block.timeSlotId;
+		}
+
 		block.dayId = targetDayId;
 		block.timeSlotId = targetTimeSlotId;
 		pushHistoryState();

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { dndState } from '@thisux/sveltednd';
 	import type { ClassBlock, PaletteColor } from '$lib/types';
 	import { textColorFor } from '$lib/utils';
 
@@ -24,6 +25,12 @@
 	let colorVal = $derived(colorObj ? colorObj.color : '#dddddd');
 	let textVal = $derived(textColorFor(colorVal));
 	let isDarkBg = $derived(textVal === '#ffffff');
+
+	const handleSelect = () => {
+		if (!dndState.isDragging) {
+			onSelect();
+		}
+	};
 </script>
 
 <div
@@ -33,8 +40,8 @@
 		? 'outline-3 outline-offset-2 outline-[#2563eb]'
 		: ''}"
 	style="background: {colorVal}; color: {textVal};"
-	onclick={onSelect}
-	onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect()}
+	onclick={handleSelect}
+	onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && handleSelect()}
 >
 	{#if block.pattern}
 		<div
