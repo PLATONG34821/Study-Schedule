@@ -338,8 +338,25 @@
 		pushHistoryState();
 	};
 
+	const defaultPaletteColors = [
+		'#55E6A5',
+		'#FF764A',
+		'#38BDF8',
+		'#A855F7',
+		'#FACC15',
+		'#EC4899',
+		'#26D0CE',
+		'#F43F5E',
+		'#10B981',
+		'#8B5CF6'
+	];
+
 	const addColor = () => {
-		palette.push({ id: generateUid(), color: '#999999' });
+		const nextColor =
+			defaultPaletteColors.find(
+				(c) => !palette.some((p) => p.color.toLowerCase() === c.toLowerCase())
+			) || `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+		palette.push({ id: generateUid(), color: nextColor });
 		pushHistoryState();
 	};
 

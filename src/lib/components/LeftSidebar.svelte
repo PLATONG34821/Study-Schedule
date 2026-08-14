@@ -66,6 +66,7 @@
 	}: Props = $props();
 
 	let isResizing = $state(false);
+	let activeColorId = $state<string | null>(null);
 
 	const handlePointerDown = (e: PointerEvent) => {
 		isResizing = true;
@@ -375,20 +376,42 @@
 	</div>
 	<div class="mb-2 flex flex-wrap gap-2">
 		{#each palette as item (item.id)}
-			<div class="relative flex items-center">
-				<input
-					type="color"
-					bind:value={item.color}
-					onchange={onFieldChange}
-					class="h-9 w-9 cursor-pointer rounded-lg border-2 border-[#3f3f46] bg-none p-0"
-				/>
-				<button
-					class="absolute -top-1 -right-1 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border-none bg-[#ef4444] text-[9px] text-white"
-					onclick={() => onRemoveColor(item.id)}
-					aria-label={m.removeColor()}
-					title={m.removeColor()}>✕</button
-				>
-			</div>
+			{@const isActive = activeColorId === item.id}
+			<button
+				type="button"
+				class="relative flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 transition-all hover:scale-105 {isActive
+					? 'border-[#ef4444] ring-2 ring-[#ef4444]/50'
+					: 'border-[#3f3f46] hover:border-white/50'}"
+				style="background: {item.color};"
+				onclick={() => {
+					if (isActive) {
+						onRemoveColor(item.id);
+						activeColorId = null;
+					} else {
+						activeColorId = item.id;
+					}
+				}}
+				aria-label={isActive ? 'Click again to delete color' : 'Click to select color'}
+				title={isActive ? 'Click again to delete' : 'Click to select'}
+			>
+				{#if isActive}
+					<div
+						class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-white"
+					>
+						<svg
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.5"
+						>
+							<line x1="18" y1="6" x2="6" y2="18" />
+							<line x1="6" y1="6" x2="18" y2="18" />
+						</svg>
+					</div>
+				{/if}
+			</button>
 		{/each}
 	</div>
 	<button
