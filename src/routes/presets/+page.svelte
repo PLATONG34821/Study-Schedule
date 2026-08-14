@@ -593,20 +593,20 @@
 <div bind:this={scrollContainerEl} class="h-screen w-full overflow-y-auto bg-[#121214] text-[#e4e4e7]">
 	<!-- Navbar Header -->
 	<header class="sticky top-0 z-30 border-b border-[#27272a] bg-[#18181b]/90 backdrop-blur-md">
-		<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-			<div class="flex items-center gap-4">
+		<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+			<div class="flex items-center gap-2 sm:gap-4 min-w-0">
 				<a
 					href="/"
-					class="flex cursor-pointer items-center gap-2 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
+					class="flex cursor-pointer items-center gap-2 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46] shrink-0"
 				>
 					{m.back_to_editor()}
 				</a>
-				<div class="h-5 w-px bg-[#3f3f46]"></div>
-				<h1 class="m-0 text-lg font-bold text-white leading-tight">{m.preset_marketplace()}</h1>
+				<div class="h-5 w-px bg-[#3f3f46] shrink-0"></div>
+				<h1 class="m-0 text-sm sm:text-lg font-bold text-white leading-tight truncate">{m.preset_marketplace()}</h1>
 			</div>
 
 			<!-- Language Switcher -->
-			<div class="flex gap-1 rounded-lg border border-[#3f3f46] bg-[#27272a] p-1">
+			<div class="flex gap-1 rounded-lg border border-[#3f3f46] bg-[#27272a] p-1 shrink-0">
 				<button
 					type="button"
 					class="rounded px-2.5 py-1 text-xs font-semibold transition-colors {getLocale() === 'th'
@@ -630,15 +630,15 @@
 	</header>
 
 	<!-- Main Content Area -->
-	<main class="mx-auto max-w-7xl px-6 py-8">
+	<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
 		<!-- Search & Category Filters -->
-		<div class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+		<div class="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4 md:flex-row md:items-center md:justify-between">
 			<!-- Category Tabs -->
-			<div class="flex flex-wrap gap-2">
+			<div class="flex w-full items-center gap-1.5 overflow-x-auto pb-1 sm:gap-2 md:w-auto md:flex-wrap md:pb-0">
 				{#each categories as cat (cat)}
 					<button
 						type="button"
-						class="cursor-pointer rounded-xl px-4 py-2 text-xs font-semibold transition-all {selectedCategory === cat
+						class="shrink-0 cursor-pointer rounded-xl px-3 py-1.5 text-xs font-semibold transition-all sm:px-4 sm:py-2 {selectedCategory === cat
 							? 'bg-[#2563eb] text-white shadow-lg'
 							: 'border border-[#3f3f46] bg-[#18181b] text-[#a1a1aa] hover:border-[#52525b] hover:text-white'}"
 						onclick={() => (selectedCategory = cat)}
@@ -670,16 +670,16 @@
 		</div>
 
 		<!-- Presets Grid -->
-		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+		<div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each filteredPresets as preset (preset.id)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
-					class="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-[#27272a] bg-[#18181b] transition-all hover:border-[#2563eb]/60 hover:shadow-2xl"
+					class="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border border-[#27272a] bg-[#18181b] transition-all hover:border-[#2563eb]/60 hover:shadow-2xl"
 					onclick={() => (previewPreset = preset)}
 				>
 					<!-- Custom Days & Slots Header Preview Box -->
-					<div class="relative flex min-h-[230px] w-full flex-col overflow-hidden border-b border-[#27272a] p-3.5" style="background: {preset.bgColor};">
+					<div class="relative flex min-h-[190px] sm:min-h-[230px] w-full flex-col overflow-hidden border-b border-[#27272a] p-3 sm:p-3.5" style="background: {preset.bgColor};">
 						<div class="mb-2 flex items-center justify-between z-10">
 							<span class="rounded bg-[#2563eb]/20 px-2 py-0.5 font-mono text-[10px] font-bold text-[#60a5fa] uppercase">
 								{preset.category}
@@ -734,7 +734,7 @@
 					</div>
 
 					<!-- Details Body -->
-					<div class="flex flex-1 items-center justify-between p-4">
+					<div class="flex flex-1 items-center justify-between p-3 sm:p-4">
 						<!-- Palette Preview Dots -->
 						<div class="flex items-center gap-1.5">
 							{#each preset.palette as col (col.id)}
@@ -744,7 +744,7 @@
 
 						<button
 							type="button"
-							class="flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#2563eb] px-4 py-2 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#1d4ed8]"
+							class="flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#2563eb] px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#1d4ed8]"
 							onclick={(e) => {
 								e.stopPropagation();
 								applyPresetAndNavigate(preset);
@@ -764,85 +764,87 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/80 p-6 backdrop-blur-md"
+		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/80 p-3 sm:p-6 backdrop-blur-md"
 		onclick={(e) => (e.target as HTMLElement).classList.contains('modalBackdrop') && (previewPreset = null)}
 	>
 		<div
-			class="flex max-h-[90vh] w-full max-w-4xl animate-popIn flex-col overflow-hidden rounded-2xl border border-[#3f3f46] bg-[#18181b] text-white shadow-2xl"
+			class="flex max-h-[92vh] w-full max-w-4xl animate-popIn flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-[#3f3f46] bg-[#18181b] text-white shadow-2xl"
 		>
-			<div class="flex items-center justify-between border-b border-[#27272a] px-6 py-4">
-				<div class="flex items-center gap-2">
-					<h2 class="m-0 text-lg font-bold">{previewPreset.themeName}</h2>
-					<span class="rounded bg-[#2563eb]/20 px-2 py-0.5 font-mono text-xs font-bold text-[#60a5fa]">
+			<div class="flex items-center justify-between border-b border-[#27272a] px-4 py-3 sm:px-6 sm:py-4">
+				<div class="flex items-center gap-2 min-w-0">
+					<h2 class="m-0 text-base sm:text-lg font-bold truncate">{previewPreset.themeName}</h2>
+					<span class="rounded bg-[#2563eb]/20 px-2 py-0.5 font-mono text-xs font-bold text-[#60a5fa] shrink-0">
 						{previewPreset.category}
 					</span>
 				</div>
 				<button
 					type="button"
-					class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-[#3f3f46] bg-[#27272a] text-base text-[#a1a1aa] hover:text-white"
+					class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[#3f3f46] bg-[#27272a] text-base text-[#a1a1aa] hover:text-white"
 					onclick={() => (previewPreset = null)}
 				>
 					✕
 				</button>
 			</div>
 
-			<div class="flex-1 overflow-auto p-6" style="background: {previewPreset.bgColor};">
+			<div class="flex-1 overflow-auto p-3 sm:p-6" style="background: {previewPreset.bgColor};">
 				<!-- Full Custom Days x Slots Preset Grid -->
-				<div class="flex flex-col overflow-hidden rounded-xl border shadow-2xl" style="border-color: {previewPreset.gridLineColor}; background: {previewPreset.gridLineColor};">
-					<!-- Header Days row -->
-					<div class="grid gap-px" style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};">
-						<div class="flex items-center justify-center p-3 font-mono text-xs font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
-							Time
-						</div>
-						{#each previewPreset.days as d (d.id)}
-							<div class="flex items-center justify-center min-w-0 truncate p-3 text-center text-xs font-extrabold uppercase" style="background: {previewPreset.dayHeaderBgColor}; color: {textColorFor(previewPreset.dayHeaderBgColor)};">
-								{d.name}
-							</div>
-						{/each}
-					</div>
-
-					<!-- Slots rows grid -->
-					<div class="grid flex-1 gap-px" style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};">
-						{#each previewPreset.slots as slot (slot.id)}
-							<!-- Time Column Cell -->
+				<div class="w-full overflow-x-auto">
+					<div class="flex min-w-[500px] sm:min-w-0 flex-col overflow-hidden rounded-xl border shadow-2xl" style="border-color: {previewPreset.gridLineColor}; background: {previewPreset.gridLineColor};">
+						<!-- Header Days row -->
+						<div class="grid gap-px" style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};">
 							<div class="flex items-center justify-center p-3 font-mono text-xs font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
-								{slot.label}
+								Time
 							</div>
-
-							<!-- Day Cells -->
 							{#each previewPreset.days as d (d.id)}
-								{@const cellBlocks = previewPreset.blocks.filter((b) => b.dayId === d.id && b.timeSlotId === slot.id)}
-								<div class="relative flex min-w-0 flex-col gap-1.5 p-1.5 min-h-[90px]" style="background: {previewPreset.cellBgColor};">
-									{#if cellBlocks.length > 0}
-										{#each cellBlocks as b (b.id)}
-											{@const colObj = previewPreset.palette.find((c) => c.id === b.colorId)}
-											{@const bg = colObj ? colObj.color : '#55E6A5'}
-											{@const textCol = textColorFor(bg)}
-											<div
-												class="flex flex-1 flex-col justify-between rounded-lg p-2.5 text-xs font-extrabold shadow-sm min-w-0 overflow-hidden"
-												style="background: {bg}; color: {textCol};"
-											>
-												<div class="min-w-0 truncate font-bold">{b.title}</div>
-												{#if b.time || b.room}
-													<div class="mt-1 flex flex-wrap gap-1 text-[10px] opacity-90 font-normal">
-														{#if b.time}<span class="rounded bg-black/15 px-1.5 py-0.5 font-mono">{b.time}</span>{/if}
-														{#if b.room}<span class="rounded bg-black/15 px-1.5 py-0.5 font-mono">{b.room}</span>{/if}
-													</div>
-												{/if}
-											</div>
-										{/each}
-									{/if}
+								<div class="flex items-center justify-center min-w-0 truncate p-3 text-center text-xs font-extrabold uppercase" style="background: {previewPreset.dayHeaderBgColor}; color: {textColorFor(previewPreset.dayHeaderBgColor)};">
+									{d.name}
 								</div>
 							{/each}
-						{/each}
+						</div>
+
+						<!-- Slots rows grid -->
+						<div class="grid flex-1 gap-px" style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};">
+							{#each previewPreset.slots as slot (slot.id)}
+								<!-- Time Column Cell -->
+								<div class="flex items-center justify-center p-3 font-mono text-xs font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
+									{slot.label}
+								</div>
+
+								<!-- Day Cells -->
+								{#each previewPreset.days as d (d.id)}
+									{@const cellBlocks = previewPreset.blocks.filter((b) => b.dayId === d.id && b.timeSlotId === slot.id)}
+									<div class="relative flex min-w-0 flex-col gap-1.5 p-1.5 min-h-[90px]" style="background: {previewPreset.cellBgColor};">
+										{#if cellBlocks.length > 0}
+											{#each cellBlocks as b (b.id)}
+												{@const colObj = previewPreset.palette.find((c) => c.id === b.colorId)}
+												{@const bg = colObj ? colObj.color : '#55E6A5'}
+												{@const textCol = textColorFor(bg)}
+												<div
+													class="flex flex-1 flex-col justify-between rounded-lg p-2.5 text-xs font-extrabold shadow-sm min-w-0 overflow-hidden"
+													style="background: {bg}; color: {textCol};"
+												>
+													<div class="min-w-0 truncate font-bold">{b.title}</div>
+													{#if b.time || b.room}
+														<div class="mt-1 flex flex-wrap gap-1 text-[10px] opacity-90 font-normal">
+															{#if b.time}<span class="rounded bg-black/15 px-1.5 py-0.5 font-mono">{b.time}</span>{/if}
+															{#if b.room}<span class="rounded bg-black/15 px-1.5 py-0.5 font-mono">{b.room}</span>{/if}
+														</div>
+													{/if}
+												</div>
+											{/each}
+										{/if}
+									</div>
+								{/each}
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="flex items-center justify-end border-t border-[#27272a] px-6 py-4 bg-[#18181b]">
+			<div class="flex items-center justify-end border-t border-[#27272a] px-4 py-3 sm:px-6 sm:py-4 bg-[#18181b]">
 				<button
 					type="button"
-					class="flex cursor-pointer items-center gap-2 rounded-xl bg-[#2563eb] px-5 py-2.5 text-xs font-semibold text-white shadow-lg hover:bg-[#1d4ed8]"
+					class="flex cursor-pointer items-center gap-2 rounded-xl bg-[#2563eb] px-4 py-2 sm:px-5 sm:py-2.5 text-xs font-semibold text-white shadow-lg hover:bg-[#1d4ed8]"
 					onclick={() => applyPresetAndNavigate(previewPreset!)}
 				>
 					{m.apply_preset()}

@@ -683,7 +683,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	{/if}
 
 	<PaneGroup autoSaveId="study-schedule-layout" direction="horizontal" class="relative flex h-screen w-screen overflow-hidden">
-		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full shrink-0" style="flex: 20 1 0px;">
+		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full shrink-0 max-lg:!w-0 max-lg:!min-w-0 max-lg:!flex-none max-lg:overflow-visible" style="flex: 20 1 0px;">
 			<LeftSidebar
 				isOpen={isLeftSidebarOpen}
 				onClose={() => (isLeftSidebarOpen = false)}
@@ -787,11 +787,13 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 			</button>
 		</div>
 		<div
-			class="box-border flex h-full w-full items-center justify-center p-10 touch-none"
+			class="box-border flex h-full w-full items-center justify-center p-3 sm:p-6 lg:p-10 touch-none"
 			style="cursor: {isCanvasPanning
 				? 'grabbing'
 				: 'grab'}; transform: translate({previewPanX}px, {previewPanY}px);"
 			onpointerdown={handleCanvasPointerDown}
+			role="region"
+			aria-label="Schedule Canvas"
 		>
 			{#if isWallpaperMode}
 				<div
@@ -899,7 +901,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 
 		<!-- Floating View & Zoom Toolbar -->
 		<div
-			class="absolute bottom-6 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-2 overflow-x-auto rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-3.5 py-2 text-[#e4e4e7] shadow-2xl backdrop-blur-md"
+			class="absolute bottom-6 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-1.5 sm:gap-2 overflow-x-auto rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-[#e4e4e7] shadow-2xl backdrop-blur-md"
 		>
 			<button
 				type="button"
@@ -959,7 +961,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 
 		<PaneResizer class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block" />
 
-		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full shrink-0" style="flex: 20 1 0px;">
+		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full shrink-0 max-lg:!w-0 max-lg:!min-w-0 max-lg:!flex-none max-lg:overflow-visible" style="flex: 20 1 0px;">
 			<RightDrawer
 				{phonePresets}
 				isOpen={isRightDrawerOpen}
