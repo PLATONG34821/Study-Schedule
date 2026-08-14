@@ -11,6 +11,7 @@
 		isOpen?: boolean;
 		isExporting?: boolean;
 		linkCopied?: boolean;
+		exportPixelRatio?: 1 | 2 | 4;
 		onClose?: () => void;
 		onExport: () => void;
 		onOpenExportCode: () => void;
@@ -32,6 +33,7 @@
 		isOpen = true,
 		isExporting = false,
 		linkCopied = false,
+		exportPixelRatio = $bindable(2),
 		onClose,
 		onExport,
 		onOpenExportCode,
@@ -122,41 +124,61 @@
 		</div>
 	</div>
 
-	<button
-		class="mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg border-none bg-[#2563eb] px-4 py-3 font-[inherit] text-sm font-semibold text-white transition-colors duration-150 ease-in-out hover:not-disabled:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-60"
-		onclick={onExport}
-		disabled={isExporting}
-	>
-		{#if isExporting}
-			<svg
-				class="animate-spin"
-				width="18"
-				height="18"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-			>
-				<circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
-				<path d="M12 2a10 10 0 0 1 10 10" />
-			</svg>
-			{m.exporting()}
-		{:else}
-			<svg
-				width="18"
-				height="18"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-			>
-				<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-				<polyline points="7 10 12 15 17 10" />
-				<line x1="12" y1="15" x2="12" y2="3" />
-			</svg>
-			{m.export_png()}
-		{/if}
-	</button>
+	<div class="mt-2 flex flex-col gap-2">
+		<div class="flex items-center justify-between px-0.5">
+			<span class="text-[11px] font-semibold text-[#a1a1aa] uppercase">Quality</span>
+			<div class="flex gap-1 rounded-lg border border-[#3f3f46] bg-[#27272a] p-1">
+				{#each [1, 2, 4] as ratio (ratio)}
+					<button
+						type="button"
+						class="rounded px-2 py-0.5 text-xs font-bold transition-colors {exportPixelRatio ===
+						ratio
+							? 'bg-[#2563eb] text-white shadow-sm'
+							: 'text-[#a1a1aa] hover:text-white'}"
+						onclick={() => (exportPixelRatio = ratio as 1 | 2 | 4)}
+					>
+						{ratio}x
+					</button>
+				{/each}
+			</div>
+		</div>
+
+		<button
+			class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-none bg-[#2563eb] px-4 py-3 font-[inherit] text-sm font-semibold text-white transition-colors duration-150 ease-in-out hover:not-disabled:bg-[#1d4ed8] disabled:cursor-not-allowed disabled:opacity-60"
+			onclick={onExport}
+			disabled={isExporting}
+		>
+			{#if isExporting}
+				<svg
+					class="animate-spin"
+					width="18"
+					height="18"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
+					<path d="M12 2a10 10 0 0 1 10 10" />
+				</svg>
+				{m.exporting()}
+			{:else}
+				<svg
+					width="18"
+					height="18"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+					<polyline points="7 10 12 15 17 10" />
+					<line x1="12" y1="15" x2="12" y2="3" />
+				</svg>
+				{m.export_png()}
+			{/if}
+		</button>
+	</div>
 
 	<div class="mb-0.5 flex gap-2">
 		<button

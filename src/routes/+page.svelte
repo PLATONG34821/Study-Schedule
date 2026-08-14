@@ -10,6 +10,7 @@
 	import ScheduleGrid from '$lib/components/ScheduleGrid.svelte';
 	import BlockEditorModal from '$lib/components/BlockEditorModal.svelte';
 	import ConfigCodeModal from '$lib/components/ConfigCodeModal.svelte';
+	import ToastContainer, { type ToastItem } from '$lib/components/ToastContainer.svelte';
 
 	let days = $state<Day[]>([
 		{ id: 'day1', name: 'Monday' },
@@ -81,6 +82,20 @@
 	let rightDrawerWidth = $state<number>(320);
 	let isLeftSidebarOpen = $state<boolean>(false);
 	let isRightDrawerOpen = $state<boolean>(false);
+	let exportPixelRatio = $state<1 | 2 | 4>(2);
+	let toasts = $state<ToastItem[]>([]);
+
+	const addToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+		const id = generateUid();
+		toasts.push({ id, message, type });
+		setTimeout(() => {
+			dismissToast(id);
+		}, 3500);
+	};
+
+	const dismissToast = (id: string) => {
+		toasts = toasts.filter((t) => t.id !== id);
+	};
 
 	let previewZoom = $state<number>(1);
 	let previewPanX = $state<number>(0);
@@ -266,14 +281,15 @@
 				backgroundColor: bgColor,
 				width: currentPreset.width,
 				height: currentPreset.height,
-				pixelRatio: 1
+				pixelRatio: exportPixelRatio
 			});
 			const downloadLink = document.createElement('a');
 			downloadLink.download = `schedule-wallpaper-${currentPreset.id}.png`;
 			downloadLink.href = dataUrl;
 			downloadLink.click();
+			addToast(`Exported PNG at ${exportPixelRatio}x resolution!`, 'success');
 		} catch (error) {
-			alert('Export failed: ' + (error as Error).message);
+			addToast('Export failed: ' + (error as Error).message, 'error');
 		} finally {
 			previewZoom = previousZoom;
 			previewPanX = previousPanX;
@@ -366,6 +382,7 @@
 			}
 
 			selectedId = null;
+			addToast('Schedule imported successfully!', 'success');
 			return true;
 		} catch {
 			return false;
@@ -379,6 +396,7 @@
 		try {
 			await navigator.clipboard.writeText(shareUrl);
 			linkCopied = true;
+			addToast('Schedule share link copied to clipboard!', 'success');
 			setTimeout(() => {
 				linkCopied = false;
 			}, 2500);
@@ -423,6 +441,7 @@
 	<LeftSidebar
 		{isExporting}
 		{linkCopied}
+		bind:exportPixelRatio
 		isOpen={isLeftSidebarOpen}
 		onClose={() => (isLeftSidebarOpen = false)}
 		bind:width={leftSidebarWidth}
@@ -696,4 +715,6 @@
 		onClose={() => (isCodeModalOpen = false)}
 		onImport={handleImportCode}
 	/>
+
+	<ToastContainer {toasts} onDismiss={dismissToast} />
 </div>
