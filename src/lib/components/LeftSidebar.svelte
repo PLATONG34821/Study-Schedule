@@ -135,15 +135,15 @@
 		{m.days_section()}
 	</div>
 	{#each days as day (day.id)}
-		<div class="mb-1.5 flex items-center gap-1.5">
+		<div class="mb-1.5 flex items-stretch gap-1.5">
 			<input
 				type="text"
 				bind:value={day.name}
 				onchange={onFieldChange}
-				class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2 py-1.5 font-[inherit] text-[13px] text-white"
+				class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2.5 py-1.5 font-[inherit] text-[13px] text-white"
 			/>
 			<button
-				class="h-7 w-7 cursor-pointer rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] hover:bg-[#ef4444] hover:text-white"
+				class="flex h-auto aspect-square shrink-0 cursor-pointer items-center justify-center rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] transition-colors hover:bg-[#ef4444] hover:text-white"
 				onclick={() => onRemoveDay(day.id)}
 				aria-label={m.removeDay({ name: day.name })}
 				title={m.removeDay({ name: day.name })}>✕</button
@@ -159,15 +159,15 @@
 		{m.rows_section()}
 	</div>
 	{#each slots as slot (slot.id)}
-		<div class="mb-1.5 flex items-center gap-1.5">
+		<div class="mb-1.5 flex items-stretch gap-1.5">
 			<input
 				type="text"
 				bind:value={slot.label}
 				onchange={onFieldChange}
-				class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
+				class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
 			/>
 			<button
-				class="h-7 w-7 cursor-pointer rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] hover:bg-[#ef4444] hover:text-white"
+				class="flex h-auto aspect-square shrink-0 cursor-pointer items-center justify-center rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] transition-colors hover:bg-[#ef4444] hover:text-white"
 				onclick={() => onRemoveSlot(slot.id)}
 				aria-label={m.removeSlot({ label: slot.label })}
 				title={m.removeSlot({ label: slot.label })}>✕</button
@@ -225,7 +225,7 @@
 		{/each}
 	</div>
 
-	<div class="mb-3 flex items-center gap-2">
+	<div class="mb-3 flex items-stretch gap-2">
 		<div class="flex-1">
 			<ColorWheelPicker
 				color="#2563eb"
@@ -236,7 +236,7 @@
 
 		<button
 			type="button"
-			class="flex h-8.5 w-8.5 shrink-0 cursor-pointer items-center justify-center rounded-md border border-[#3f3f46] bg-[#27272a] text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
+			class="flex h-auto aspect-square shrink-0 cursor-pointer items-center justify-center rounded-md border border-[#3f3f46] bg-[#27272a] text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
 			onclick={onAddRandomColor}
 			aria-label="Add random color"
 			title="Add random color"
