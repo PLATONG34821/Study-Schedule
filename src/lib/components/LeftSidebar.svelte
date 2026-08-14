@@ -28,7 +28,6 @@
 		onUndo?: () => void;
 		onRedo?: () => void;
 		onFieldChange?: () => void;
-		lastSavedTime?: string | null;
 		onResetDefault?: () => void;
 		onOpenPresetMarketplace?: () => void;
 		onClearAllBlocks?: () => void;
@@ -60,7 +59,6 @@
 		onUndo,
 		onRedo,
 		onFieldChange,
-		lastSavedTime = null,
 		onResetDefault,
 		onOpenPresetMarketplace,
 		onClearAllBlocks,
@@ -157,25 +155,6 @@
 				</button>
 			{/if}
 		</div>
-	</div>
-
-	<div class="flex items-center justify-between rounded-md border border-[#27272a] bg-[#121214] px-2.5 py-1.5 text-[11px] text-[#a1a1aa]">
-		<div class="flex items-center gap-1.5">
-			<span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-			<span class="font-medium text-emerald-400">{m.autosaved()}</span>
-			{#if lastSavedTime}
-				<span class="text-[#71717a]">({lastSavedTime})</span>
-			{/if}
-		</div>
-		{#if onResetDefault}
-			<button
-				type="button"
-				class="text-[11px] text-[#a1a1aa] transition-colors hover:text-red-400 hover:underline"
-				onclick={onResetDefault}
-			>
-				{m.reset_to_default()}
-			</button>
-		{/if}
 	</div>
 
 

@@ -456,7 +456,6 @@
 	let codeModalMode = $state<'export' | 'import'>('export');
 	let exportedCodeString = $state('');
 	let isInitialLoaded = $state(false);
-	let lastSavedTime = $state<string | null>(null);
 
 	const getFullConfigObj = () => ({
 		days,
@@ -527,19 +526,18 @@
 	};
 
 	$effect(() => {
-		// Watch state for autosave
+		// Watch state for continuous URL hash sync
 		days; slots; palette; blocks; selectedPresetId; customPresetWidth; customPresetHeight;
 		gridRotationAngle; customTopGapPercent; scaleMode; gridScaleModifier; slotRowHeight;
 		dayColumnWidth; gridBorderRadius; bgColor; gridLineColor; timeBgColor; dayHeaderBgColor; cellBgColor;
 		fontSizeDay; fontSizeTime; fontSizeTitle; fontSizeBadge;
 
 		if (isInitialLoaded && typeof window !== 'undefined') {
-			try {
-				localStorage.setItem('study_schedule_autosave', JSON.stringify(getFullConfigObj()));
-				lastSavedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-			} catch {
-				// Ignore quota errors
-			}
+			compressConfigCode(getFullConfigObj()).then((code) => {
+				if (code) {
+					history.replaceState(null, '', `${window.location.pathname}${window.location.search}#s=${code}`);
+				}
+			});
 		}
 	});
 
@@ -598,37 +596,31 @@
 
 	const resetToDefault = () => {
 		if (typeof window !== 'undefined' && confirm(m.reset_confirm())) {
-			localStorage.removeItem('study_schedule_autosave');
+			try {
+				localStorage.removeItem('study_schedule_autosave');
+			} catch {}
+			history.replaceState(null, '', window.location.pathname);
 			window.location.reload();
 		}
 	};
 
 	onMount(() => {
 		const initData = async () => {
+			if (typeof window !== 'undefined') {
+				try {
+					localStorage.removeItem('study_schedule_autosave');
+				} catch {}
+			}
+
 			const hash = window.location.hash;
-			let loadedFromHash = false;
 			if (hash && hash.includes('s=')) {
 				const code = hash.split('s=')[1];
 				if (code) {
-					loadedFromHash = await handleImportCode(code);
-				}
-			}
-
-			if (!loadedFromHash && typeof window !== 'undefined') {
-				const saved = localStorage.getItem('study_schedule_autosave');
-				if (saved) {
-					try {
-						const data = JSON.parse(saved) as Record<string, unknown>;
-						applyConfigData(data);
-						addToast(m.restored_autosave(), 'info');
-					} catch {
-						// Invalid JSON in localStorage
-					}
+					await handleImportCode(code);
 				}
 			}
 
 			isInitialLoaded = true;
-			lastSavedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 		};
 
 		initData();
@@ -682,7 +674,6 @@
 		onUndo={undoState}
 		onRedo={redoState}
 		onFieldChange={pushHistoryState}
-		{lastSavedTime}
 		onResetDefault={resetToDefault}
 		onOpenPresetMarketplace={() => (isPresetMarketplaceOpen = true)}
 	/>

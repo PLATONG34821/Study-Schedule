@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
-	import { textColorFor } from '$lib/utils';
+	import { textColorFor, compressConfigCode } from '$lib/utils';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import * as m from '$lib/paraglide/messages';
 
@@ -542,7 +542,7 @@
 		});
 	});
 
-	const applyPresetAndNavigate = (preset: CustomSchedulePreset) => {
+	const applyPresetAndNavigate = async (preset: CustomSchedulePreset) => {
 		if (typeof window === 'undefined') return;
 		const configObj = {
 			days: preset.days,
@@ -571,8 +571,8 @@
 			}
 		};
 
-		localStorage.setItem('study_schedule_autosave', JSON.stringify(configObj));
-		window.location.href = '/';
+		const code = await compressConfigCode(configObj);
+		window.location.href = `/#s=${code}`;
 	};
 </script>
 
