@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { tick, onMount } from 'svelte';
-	import { toPng } from 'html-to-image';
+	import { domToPng } from 'modern-screenshot';
+	import { toast } from 'svelte-sonner';
+	import hotkeys from 'hotkeys-js';
+	import { dequal } from 'dequal';
+	import { Undo2, Redo2 } from 'lucide-svelte';
+	import clsx from 'clsx';
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
 	import { generateUid, compressConfigCode, decompressConfigCode, textColorFor } from '$lib/utils';
 	import { phonePresets } from '$lib/constants';
@@ -11,7 +16,7 @@
 	import BlockEditorModal from '$lib/components/BlockEditorModal.svelte';
 	import ExportModal from '$lib/components/ExportModal.svelte';
 	import ImportModal from '$lib/components/ImportModal.svelte';
-	import ToastContainer, { type ToastItem } from '$lib/components/ToastContainer.svelte';
+	import ToastContainer from '$lib/components/ToastContainer.svelte';
 
 	let days = $state<Day[]>([
 		{ id: 'day1', name: 'Monday' },
@@ -90,18 +95,15 @@
 	let isLeftSidebarOpen = $state<boolean>(false);
 	let isRightDrawerOpen = $state<boolean>(false);
 	let exportPixelRatio = $state<1 | 2 | 4>(2);
-	let toasts = $state<ToastItem[]>([]);
 
 	const addToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
-		const id = generateUid();
-		toasts.push({ id, message, type });
-		setTimeout(() => {
-			dismissToast(id);
-		}, 3500);
-	};
-
-	const dismissToast = (id: string) => {
-		toasts = toasts.filter((t) => t.id !== id);
+		if (type === 'error') {
+			toast.error(message);
+		} else if (type === 'info') {
+			toast.info(message);
+		} else {
+			toast.success(message);
+		}
 	};
 
 	let previewZoom = $state<number>(1);
@@ -166,7 +168,7 @@
 				try {
 					container.setPointerCapture(e.pointerId);
 				} catch {
-					// pointer capture fallback
+					// fallback
 				}
 			}
 
@@ -185,6 +187,8 @@
 		container.addEventListener('pointermove', handlePointerMove as EventListener);
 		container.addEventListener('pointerup', handlePointerUp as EventListener);
 	};
+
+
 
 	let currentPreset = $derived.by(() => {
 		const preset = phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[0];
@@ -253,7 +257,7 @@
 	const pushHistoryState = () => {
 		const snapshot = createSnapshot();
 		if (historyIndex >= 0 && historyIndex < historyStack.length) {
-			if (JSON.stringify(historyStack[historyIndex]) === JSON.stringify(snapshot)) {
+			if (dequal(historyStack[historyIndex], snapshot)) {
 				return;
 			}
 		}
@@ -293,34 +297,20 @@
 
 	onMount(() => {
 		pushHistoryState();
-	});
 
-	const handleKeyDown = (e: KeyboardEvent) => {
-		const target = e.target as HTMLElement | null;
-		if (
-			target &&
-			(target.tagName === 'INPUT' ||
-				target.tagName === 'TEXTAREA' ||
-				target.tagName === 'SELECT' ||
-				target.isContentEditable)
-		) {
-			return;
-		}
-
-		const isCmdOrCtrl = e.metaKey || e.ctrlKey;
-		if (isCmdOrCtrl && e.key.toLowerCase() === 'z') {
-			if (e.shiftKey) {
-				e.preventDefault();
-				redoState();
-			} else {
-				e.preventDefault();
-				undoState();
-			}
-		} else if (isCmdOrCtrl && e.key.toLowerCase() === 'y') {
+		hotkeys('cmd+z, ctrl+z', (e) => {
+			e.preventDefault();
+			undoState();
+		});
+		hotkeys('cmd+shift+z, ctrl+shift+z, cmd+y, ctrl+y', (e) => {
 			e.preventDefault();
 			redoState();
-		}
-	};
+		});
+
+		return () => {
+			hotkeys.unbind('cmd+z, ctrl+z, cmd+shift+z, ctrl+shift+z, cmd+y, ctrl+y');
+		};
+	});
 
 	const addDay = () => {
 		days.push({ id: generateUid(), name: m.new_day() });
@@ -424,11 +414,11 @@
 		await document.fonts.ready;
 		await new Promise((resolve) => setTimeout(resolve, 150));
 		try {
-			const dataUrl = await toPng(captureWrapEl, {
+			const dataUrl = await domToPng(captureWrapEl, {
 				backgroundColor: bgColor,
 				width: currentPreset.width,
 				height: currentPreset.height,
-				pixelRatio: exportPixelRatio
+				scale: exportPixelRatio
 			});
 			const downloadLink = document.createElement('a');
 			downloadLink.download = `schedule-wallpaper-${currentPreset.id}.png`;
@@ -601,8 +591,6 @@
 	});
 </script>
 
-<svelte:window onkeydown={handleKeyDown} />
-
 <div class="relative flex h-screen w-screen flex-col overflow-hidden lg:flex-row">
 	{#if isLeftSidebarOpen}
 		<button
@@ -644,7 +632,6 @@
 	<div
 		class="relative flex flex-1 flex-col overflow-hidden bg-[#121214] select-none"
 		onwheel={handleCanvasWheel}
-		onpointerdown={handleCanvasPointerDown}
 	>
 		<!-- Mobile Header Toolbar -->
 		<div
@@ -712,10 +699,7 @@
 				aria-label={m.undo()}
 				title="{m.undo()} (Ctrl+Z / ⌘Z)"
 			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-					<path d="M3 7v6h6" />
-					<path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
-				</svg>
+				<Undo2 class="h-4 w-4" />
 			</button>
 			<button
 				type="button"
@@ -725,10 +709,7 @@
 				aria-label={m.redo()}
 				title="{m.redo()} (Ctrl+Y / ⌘⇧Z)"
 			>
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-					<path d="M21 7v6h-6" />
-					<path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
-				</svg>
+				<Redo2 class="h-4 w-4" />
 			</button>
 		</div>
 		<div
@@ -736,6 +717,7 @@
 			style="cursor: {isCanvasPanning
 				? 'grabbing'
 				: 'grab'}; transform: translate({previewPanX}px, {previewPanY}px);"
+			onpointerdown={handleCanvasPointerDown}
 		>
 			{#if isWallpaperMode}
 				<div
@@ -743,9 +725,10 @@
 					style="transform: scale({0.35 * previewZoom});"
 				>
 					<div
-						class="flex flex-col overflow-hidden p-0 {selectedPresetId === 'iphone'
-							? 'rounded-[48px]'
-							: 'rounded-2xl'} shadow-none"
+						class={clsx(
+							'flex flex-col overflow-hidden p-0 shadow-none',
+							selectedPresetId === 'iphone' ? 'rounded-[48px]' : 'rounded-2xl'
+						)}
 						bind:this={captureWrapEl}
 						style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor};"
 					>
@@ -952,5 +935,5 @@
 		onImport={handleImportCode}
 	/>
 
-	<ToastContainer {toasts} onDismiss={dismissToast} />
+	<ToastContainer />
 </div>

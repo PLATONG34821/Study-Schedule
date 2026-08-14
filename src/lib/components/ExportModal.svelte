@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Download, Copy, Check, Loader2 } from 'lucide-svelte';
 	import * as m from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 
@@ -31,10 +32,17 @@
 	let activeTab = $state<'image' | 'share' | 'code'>('image');
 	let codeCopied = $state(false);
 
+	let dialogEl = $state<HTMLDialogElement | null>(null);
+
 	$effect(() => {
 		if (isOpen) {
 			activeTab = initialTab === 'code' || initialTab === 'share' ? initialTab : 'image';
 			codeCopied = false;
+			if (dialogEl && !dialogEl.open) {
+				dialogEl.showModal();
+			}
+		} else if (dialogEl && dialogEl.open) {
+			dialogEl.close();
 		}
 	});
 
@@ -50,60 +58,37 @@
 		}
 	};
 
-	let modalEl = $state<HTMLDivElement | null>(null);
-
-	const handleBackdropClick = (e: MouseEvent) => {
-		if ((e.target as HTMLElement).classList.contains('modalBackdrop')) {
-			onClose();
-		}
+	const handleCancel = (e: Event) => {
+		e.preventDefault();
+		onClose();
 	};
 
-	const handleKeyDown = (e: KeyboardEvent) => {
-		if (!isOpen) return;
-		if (e.key === 'Escape') {
+	const handleBackdropClick = (e: MouseEvent) => {
+		if (!dialogEl) return;
+		const rect = dialogEl.getBoundingClientRect();
+		const isClickInside =
+			rect.top <= e.clientY &&
+			e.clientY <= rect.bottom &&
+			rect.left <= e.clientX &&
+			e.clientX <= rect.right;
+		if (!isClickInside) {
 			onClose();
-		} else if (e.key === 'Tab' && modalEl) {
-			const focusables = modalEl.querySelectorAll<HTMLElement>(
-				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-			);
-			if (focusables.length === 0) return;
-			const first = focusables[0];
-			const last = focusables[focusables.length - 1];
-			if (e.shiftKey && document.activeElement === first) {
-				e.preventDefault();
-				last.focus();
-			} else if (!e.shiftKey && document.activeElement === last) {
-				e.preventDefault();
-				first.focus();
-			}
 		}
 	};
 </script>
 
-<svelte:window onkeydown={handleKeyDown} />
-
 {#if isOpen}
-	<div
-		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-[4px]"
+	<dialog
+		bind:this={dialogEl}
+		oncancel={handleCancel}
 		onclick={handleBackdropClick}
-		role="presentation"
+		class="fixed inset-0 z-[999] m-auto flex max-h-[90vh] w-full max-w-[480px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] p-0 text-[#e4e4e7] shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-[4px]"
 	>
-		<div
-			bind:this={modalEl}
-			role="dialog"
-			aria-modal="true"
-			aria-label="Export & Share Schedule"
-			class="flex max-h-[90vh] w-full max-w-[480px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-2xl"
-		>
 			<!-- Header -->
 			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-4">
 				<div class="flex items-center gap-2">
 					<div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#2563eb]/20 text-[#60a5fa]">
-						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-							<polyline points="7 10 12 15 17 10" />
-							<line x1="12" y1="15" x2="12" y2="3" />
-						</svg>
+						<Download class="h-4 w-4" />
 					</div>
 					<h2 class="m-0 text-base font-bold text-white">Export & Share</h2>
 				</div>
@@ -179,25 +164,10 @@
 							disabled={isExporting}
 						>
 							{#if isExporting}
-								<svg
-									class="animate-spin"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-								>
-									<circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
-									<path d="M12 2a10 10 0 0 1 10 10" />
-								</svg>
+								<Loader2 class="h-4.5 w-4.5 animate-spin" />
 								{m.exporting()}
 							{:else}
-								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-									<polyline points="7 10 12 15 17 10" />
-									<line x1="12" y1="15" x2="12" y2="3" />
-								</svg>
+								<Download class="h-4.5 w-4.5" />
 								Download PNG ({exportPixelRatio}x)
 							{/if}
 						</button>
@@ -223,7 +193,7 @@
 								onclick={onShareLink}
 							>
 								{#if linkCopied}
-									✓ {m.link_copied()}
+									<Check class="h-3.5 w-3.5" /> {m.link_copied()}
 								{:else}
 									{m.share_link()}
 								{/if}
@@ -248,18 +218,14 @@
 							onclick={handleCopyCode}
 						>
 							{#if codeCopied}
-								✓ {m.copied()}
+								<Check class="h-3.5 w-3.5" /> {m.copied()}
 							{:else}
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-									<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-									<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-								</svg>
+								<Copy class="h-3.5 w-3.5" />
 								{m.copy_code()}
 							{/if}
 						</button>
 					</div>
 				{/if}
 			</div>
-		</div>
-	</div>
+</dialog>
 {/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { FileCode } from 'lucide-svelte';
 	import * as m from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 
@@ -13,10 +14,17 @@
 	let inputCode = $state('');
 	let errorMsg = $state('');
 
+	let dialogEl = $state<HTMLDialogElement | null>(null);
+
 	$effect(() => {
 		if (isOpen) {
 			inputCode = '';
 			errorMsg = '';
+			if (dialogEl && !dialogEl.open) {
+				dialogEl.showModal();
+			}
+		} else if (dialogEl && dialogEl.open) {
+			dialogEl.close();
 		}
 	});
 
@@ -30,60 +38,37 @@
 		}
 	};
 
-	let modalEl = $state<HTMLDivElement | null>(null);
-
-	const handleBackdropClick = (e: MouseEvent) => {
-		if ((e.target as HTMLElement).classList.contains('modalBackdrop')) {
-			onClose();
-		}
+	const handleCancel = (e: Event) => {
+		e.preventDefault();
+		onClose();
 	};
 
-	const handleKeyDown = (e: KeyboardEvent) => {
-		if (!isOpen) return;
-		if (e.key === 'Escape') {
+	const handleBackdropClick = (e: MouseEvent) => {
+		if (!dialogEl) return;
+		const rect = dialogEl.getBoundingClientRect();
+		const isClickInside =
+			rect.top <= e.clientY &&
+			e.clientY <= rect.bottom &&
+			rect.left <= e.clientX &&
+			e.clientX <= rect.right;
+		if (!isClickInside) {
 			onClose();
-		} else if (e.key === 'Tab' && modalEl) {
-			const focusables = modalEl.querySelectorAll<HTMLElement>(
-				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-			);
-			if (focusables.length === 0) return;
-			const first = focusables[0];
-			const last = focusables[focusables.length - 1];
-			if (e.shiftKey && document.activeElement === first) {
-				e.preventDefault();
-				last.focus();
-			} else if (!e.shiftKey && document.activeElement === last) {
-				e.preventDefault();
-				first.focus();
-			}
 		}
 	};
 </script>
 
-<svelte:window onkeydown={handleKeyDown} />
-
 {#if isOpen}
-	<div
-		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-[4px]"
+	<dialog
+		bind:this={dialogEl}
+		oncancel={handleCancel}
 		onclick={handleBackdropClick}
-		role="presentation"
+		class="fixed inset-0 z-[999] m-auto flex max-h-[90vh] w-full max-w-[460px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] p-0 text-[#e4e4e7] shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-[4px]"
 	>
-		<div
-			bind:this={modalEl}
-			role="dialog"
-			aria-modal="true"
-			aria-label={m.import_code()}
-			class="flex max-h-[90vh] w-full max-w-[460px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] text-[#e4e4e7] shadow-2xl"
-		>
 			<!-- Header -->
 			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-4">
 				<div class="flex items-center gap-2">
 					<div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#2563eb]/20 text-[#60a5fa]">
-						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M14 4H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7" />
-							<polyline points="13 8 9 12 13 16" />
-							<line x1="20" y1="12" x2="9" y2="12" />
-						</svg>
+						<FileCode class="h-4 w-4" />
 					</div>
 					<h2 class="m-0 text-base font-bold text-white">{m.import_code()}</h2>
 				</div>
@@ -127,6 +112,5 @@
 					{m.apply_code()}
 				</button>
 			</div>
-		</div>
-	</div>
+</dialog>
 {/if}
