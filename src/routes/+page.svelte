@@ -11,9 +11,11 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import { generateUid, compressConfigCode, decompressConfigCode, textColorFor } from '$lib/utils';
 	import { phonePresets } from '$lib/constants';
 	import * as m from '$lib/paraglide/messages';
+	import { dndState } from '@thisux/sveltednd';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightDrawer from '$lib/components/RightDrawer.svelte';
 	import ScheduleGrid from '$lib/components/ScheduleGrid.svelte';
+	import BlockCard from '$lib/components/BlockCard.svelte';
 	import BlockEditorModal from '$lib/components/BlockEditorModal.svelte';
 	import ExportModal from '$lib/components/ExportModal.svelte';
 	import ImportModal from '$lib/components/ImportModal.svelte';
@@ -143,11 +145,167 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		}
 	};
 
-	const activePointers = new Map<number, { clientX: number; clientY: number }>();
+	let touchContainerEl = $state<HTMLDivElement | null>(null);
 	let initialPinchDist = 0;
 	let initialPinchZoom = 1;
+	let initialTouchPanX = 0;
+	let initialTouchPanY = 0;
+	let initialTouchCenterX = 0;
+	let initialTouchCenterY = 0;
+	let isPinching = false;
+
+	let dragPointerX = $state(0);
+	let dragPointerY = $state(0);
+
+	onMount(() => {
+		const updatePointerCoords = (x: number, y: number) => {
+			dragPointerX = x;
+			dragPointerY = y;
+		};
+
+		const handleGlobalPointerMove = (e: PointerEvent) => {
+			updatePointerCoords(e.clientX, e.clientY);
+		};
+
+		const handleGlobalTouchMove = (e: TouchEvent) => {
+			if (e.touches.length > 0) {
+				updatePointerCoords(e.touches[0].clientX, e.touches[0].clientY);
+			}
+		};
+
+		const handleGlobalDragOver = (e: DragEvent) => {
+			updatePointerCoords(e.clientX, e.clientY);
+		};
+
+		window.addEventListener('pointermove', handleGlobalPointerMove, { passive: true });
+		window.addEventListener('touchmove', handleGlobalTouchMove, { passive: true });
+		window.addEventListener('dragover', handleGlobalDragOver, { passive: true });
+
+		return () => {
+			window.removeEventListener('pointermove', handleGlobalPointerMove);
+			window.removeEventListener('touchmove', handleGlobalTouchMove);
+			window.removeEventListener('dragover', handleGlobalDragOver);
+		};
+	});
+
+	$effect(() => {
+		const el = touchContainerEl;
+		if (!el) return;
+
+		const isDraggableBlock = (target: HTMLElement | null) => {
+			if (!target) return false;
+			return Boolean(target.closest('.svelte-dnd-draggable'));
+		};
+
+		const handleTouchStart = (e: TouchEvent) => {
+			// Multi-touch (>= 2 fingers) always handles canvas pinch zoom & pan regardless of target
+			if (e.touches.length >= 2) {
+				isCanvasPanning = true;
+				isPinching = true;
+				const t1 = e.touches[0];
+				const t2 = e.touches[1];
+				initialPinchDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+				initialPinchZoom = previewZoom;
+				initialTouchCenterX = (t1.clientX + t2.clientX) / 2;
+				initialTouchCenterY = (t1.clientY + t2.clientY) / 2;
+				initialTouchPanX = previewPanX;
+				initialTouchPanY = previewPanY;
+				return;
+			}
+
+			// For 1-finger touch: yield to DnD ONLY if touching a subject block card (.svelte-dnd-draggable)
+			if (e.touches.length === 1) {
+				if (isDraggableBlock(e.target as HTMLElement)) {
+					isCanvasPanning = false;
+					isPinching = false;
+					return; // Yield to @thisux/sveltednd for subject block dragging
+				}
+				isCanvasPanning = true;
+				isPinching = false;
+				initialTouchCenterX = e.touches[0].clientX;
+				initialTouchCenterY = e.touches[0].clientY;
+				initialTouchPanX = previewPanX;
+				initialTouchPanY = previewPanY;
+				initialPinchDist = 0;
+			}
+		};
+
+		const handleTouchMove = (e: TouchEvent) => {
+			if (e.touches.length >= 2) {
+				if (e.cancelable) e.preventDefault();
+				const t1 = e.touches[0];
+				const t2 = e.touches[1];
+				const currentDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+
+				// Dynamically initialize pinch baseline if second finger landed after touchstart
+				if (initialPinchDist <= 0 || !isPinching) {
+					initialPinchDist = currentDist;
+					initialPinchZoom = previewZoom;
+					initialTouchCenterX = (t1.clientX + t2.clientX) / 2;
+					initialTouchCenterY = (t1.clientY + t2.clientY) / 2;
+					initialTouchPanX = previewPanX;
+					initialTouchPanY = previewPanY;
+					isPinching = true;
+					return;
+				}
+
+				if (initialPinchDist > 0) {
+					const scale = currentDist / initialPinchDist;
+					previewZoom = Math.min(Math.max(Math.round(initialPinchZoom * scale * 100) / 100, 0.2), 3);
+				}
+
+				const currentCenterX = (t1.clientX + t2.clientX) / 2;
+				const currentCenterY = (t1.clientY + t2.clientY) / 2;
+				previewPanX = initialTouchPanX + (currentCenterX - initialTouchCenterX);
+				previewPanY = initialTouchPanY + (currentCenterY - initialTouchCenterY);
+			} else if (e.touches.length === 1) {
+				if (isDraggableBlock(e.target as HTMLElement)) {
+					// Prevent native browser scroll from firing pointercancel while dragging a subject card
+					if (e.cancelable) e.preventDefault();
+					return;
+				}
+				if (isCanvasPanning) {
+					if (e.cancelable) e.preventDefault();
+					isPinching = false;
+					initialPinchDist = 0;
+					const deltaX = e.touches[0].clientX - initialTouchCenterX;
+					const deltaY = e.touches[0].clientY - initialTouchCenterY;
+					previewPanX = initialTouchPanX + deltaX;
+					previewPanY = initialTouchPanY + deltaY;
+				}
+			}
+		};
+
+		const handleTouchEnd = (e: TouchEvent) => {
+			if (e.touches.length === 0) {
+				isCanvasPanning = false;
+				isPinching = false;
+				initialPinchDist = 0;
+			} else if (e.touches.length === 1) {
+				isPinching = false;
+				initialPinchDist = 0;
+				initialTouchCenterX = e.touches[0].clientX;
+				initialTouchCenterY = e.touches[0].clientY;
+				initialTouchPanX = previewPanX;
+				initialTouchPanY = previewPanY;
+			}
+		};
+
+		el.addEventListener('touchstart', handleTouchStart, { passive: false });
+		el.addEventListener('touchmove', handleTouchMove, { passive: false });
+		el.addEventListener('touchend', handleTouchEnd);
+		el.addEventListener('touchcancel', handleTouchEnd);
+
+		return () => {
+			el.removeEventListener('touchstart', handleTouchStart);
+			el.removeEventListener('touchmove', handleTouchMove);
+			el.removeEventListener('touchend', handleTouchEnd);
+			el.removeEventListener('touchcancel', handleTouchEnd);
+		};
+	});
 
 	const handleCanvasPointerDown = (e: PointerEvent) => {
+		if (e.pointerType === 'touch') return;
 		const target = e.target as HTMLElement;
 		if (
 			target.closest('button') ||
@@ -161,77 +319,27 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 			return;
 		}
 
-		const container = e.currentTarget as HTMLElement;
-		activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
-
-		try {
-			container.setPointerCapture(e.pointerId);
-		} catch {
-			// fallback
-		}
-
 		const initialX = e.clientX;
 		const initialY = e.clientY;
 		const initialPanX = previewPanX;
 		const initialPanY = previewPanY;
-		let hasCaptured = false;
-
-		if (activePointers.size === 2) {
-			const points = Array.from(activePointers.values());
-			initialPinchDist = Math.hypot(points[0].clientX - points[1].clientX, points[0].clientY - points[1].clientY);
-			initialPinchZoom = previewZoom;
-		}
+		isCanvasPanning = true;
 
 		const handlePointerMove = (moveEvent: PointerEvent) => {
-			if (!activePointers.has(moveEvent.pointerId)) return;
-			activePointers.set(moveEvent.pointerId, { clientX: moveEvent.clientX, clientY: moveEvent.clientY });
-
-			if (activePointers.size === 2) {
-				const points = Array.from(activePointers.values());
-				const dist = Math.hypot(points[0].clientX - points[1].clientX, points[0].clientY - points[1].clientY);
-				if (initialPinchDist > 0) {
-					const scale = dist / initialPinchDist;
-					previewZoom = Math.min(Math.max(Math.round(initialPinchZoom * scale * 100) / 100, 0.2), 3);
-				}
-				return;
-			}
-
-			if (activePointers.size === 1) {
-				const deltaX = moveEvent.clientX - initialX;
-				const deltaY = moveEvent.clientY - initialY;
-				const distance = Math.hypot(deltaX, deltaY);
-
-				if (!hasCaptured && distance > 3) {
-					hasCaptured = true;
-					isCanvasPanning = true;
-				}
-
-				if (isCanvasPanning) {
-					previewPanX = initialPanX + deltaX;
-					previewPanY = initialPanY + deltaY;
-				}
+			if (isCanvasPanning) {
+				previewPanX = initialPanX + (moveEvent.clientX - initialX);
+				previewPanY = initialPanY + (moveEvent.clientY - initialY);
 			}
 		};
 
-		const handlePointerUp = (upEvent: PointerEvent) => {
-			activePointers.delete(upEvent.pointerId);
-			if (activePointers.size === 0) {
-				isCanvasPanning = false;
-				initialPinchDist = 0;
-			}
-			try {
-				container.releasePointerCapture(upEvent.pointerId);
-			} catch {
-				// fallback
-			}
-			container.removeEventListener('pointermove', handlePointerMove as EventListener);
-			container.removeEventListener('pointerup', handlePointerUp as EventListener);
-			container.removeEventListener('pointercancel', handlePointerUp as EventListener);
+		const handlePointerUp = () => {
+			isCanvasPanning = false;
+			window.removeEventListener('pointermove', handlePointerMove);
+			window.removeEventListener('pointerup', handlePointerUp);
 		};
 
-		container.addEventListener('pointermove', handlePointerMove as EventListener);
-		container.addEventListener('pointerup', handlePointerUp as EventListener);
-		container.addEventListener('pointercancel', handlePointerUp as EventListener);
+		window.addEventListener('pointermove', handlePointerMove);
+		window.addEventListener('pointerup', handlePointerUp);
 	};
 
 
@@ -792,6 +900,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 			</button>
 		</div>
 		<div
+			bind:this={touchContainerEl}
 			class="box-border flex h-full w-full items-center justify-center p-3 sm:p-6 lg:p-10 touch-none"
 			style="cursor: {isCanvasPanning
 				? 'grabbing'
@@ -1023,6 +1132,22 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		onClose={() => (isImportModalOpen = false)}
 		onImport={handleImportCode}
 	/>
+
+	{#if dndState.isDragging && dndState.draggedItem}
+		<div
+			class="pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-1/2 origin-center shadow-2xl transition-transform duration-75 ease-out scale-65 sm:scale-100 rotate-2 opacity-95"
+			style="left: {dragPointerX}px; top: {dragPointerY}px; width: {dayColumnWidth}px; height: {slotRowHeight}px;"
+		>
+			<BlockCard
+				block={dndState.draggedItem as ClassBlock}
+				{palette}
+				fontSizeTitle={effectiveFontSizeTitle}
+				fontSizeBadge={effectiveFontSizeBadge}
+				isSelected={false}
+				onSelect={() => {}}
+			/>
+		</div>
+	{/if}
 
 	<ToastContainer />
 </div>

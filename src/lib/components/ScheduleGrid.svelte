@@ -115,12 +115,15 @@
 				>
 					{#each cellBlocks as block (block.id)}
 						<div
-							class="h-full w-full touch-none"
+							role="presentation"
+							class="h-full w-full touch-none svelte-dnd-draggable"
+							draggable={false}
 							use:draggable={{
 								container: 'scheduleGrid',
 								dragData: block,
 								disabled: isExporting
 							}}
+							ondragstart={(e) => e.preventDefault()}
 						>
 							<BlockCard
 								{block}

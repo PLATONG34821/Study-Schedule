@@ -165,4 +165,17 @@
 		transform: scale(1.25);
 		box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.35);
 	}
+
+	/* Disable default @thisux/sveltednd blue line drop indicators */
+	.drop-before::before,
+	.drop-after::after,
+	.drop-left::before,
+	.drop-right::after {
+		display: none !important;
+		content: none !important;
+	}
+
+	.svelte-dnd-drop-target {
+		outline: none !important;
+	}
 }
