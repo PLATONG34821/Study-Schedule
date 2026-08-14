@@ -2,7 +2,7 @@
 	import { tick, onMount } from 'svelte';
 	import { toPng } from 'html-to-image';
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
-	import { generateUid, compressConfigCode, decompressConfigCode } from '$lib/utils';
+	import { generateUid, compressConfigCode, decompressConfigCode, textColorFor } from '$lib/utils';
 	import { phonePresets, defaultBlocks } from '$lib/constants';
 	import * as m from '$lib/paraglide/messages';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
@@ -202,6 +202,10 @@
 	let effectiveFontSizeTime = $derived(Math.round(fontSizeTime / safeScale));
 	let effectiveFontSizeTitle = $derived(Math.round(fontSizeTitle / safeScale));
 	let effectiveFontSizeBadge = $derived(Math.round(fontSizeBadge / safeScale));
+
+	let isDarkBg = $derived(textColorFor(bgColor) === '#ffffff');
+	let clockGuideTextColor = $derived(isDarkBg ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.35)');
+	let clockGuideBorderColor = $derived(isDarkBg ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)');
 
 	let blocks = $state<ClassBlock[]>(defaultBlocks);
 
@@ -588,21 +592,21 @@
 
 <div class="relative flex h-screen w-screen flex-col overflow-hidden lg:flex-row">
 	{#if isLeftSidebarOpen}
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			class="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
+		<button
+			type="button"
+			class="fixed inset-0 z-30 cursor-default border-none bg-black/60 p-0 backdrop-blur-sm lg:hidden"
 			onclick={() => (isLeftSidebarOpen = false)}
-		></div>
+			aria-label="Close sidebar"
+		></button>
 	{/if}
 
 	{#if isRightDrawerOpen}
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			class="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
+		<button
+			type="button"
+			class="fixed inset-0 z-30 cursor-default border-none bg-black/60 p-0 backdrop-blur-sm lg:hidden"
 			onclick={() => (isRightDrawerOpen = false)}
-		></div>
+			aria-label="Close drawer"
+		></button>
 	{/if}
 
 	<LeftSidebar
@@ -697,7 +701,7 @@
 
 		<!-- Top-Left Floating Undo/Redo Toolbar -->
 		<div
-			class="absolute top-14 left-4 z-30 flex items-center gap-1 rounded-full border border-[#3f3f46] bg-[#18181b]/90 p-1.5 shadow-2xl backdrop-blur-md lg:top-4"
+			class="absolute top-16 left-4 z-30 flex items-center gap-1 rounded-full border border-[#3f3f46] bg-[#18181b]/90 p-1.5 shadow-2xl backdrop-blur-md lg:top-4"
 		>
 			<button
 				type="button"
@@ -750,7 +754,8 @@
 						>
 							{#if !isExporting && customTopGapPercent > 0}
 								<div
-									class="rounded-[20px] border-2 border-dashed border-black/15 px-10 py-4 text-center font-[Space_Grotesk,sans-serif] text-black/35"
+									class="rounded-[20px] border-2 border-dashed px-10 py-4 text-center font-[Space_Grotesk,sans-serif]"
+									style="color: {clockGuideTextColor}; border-color: {clockGuideBorderColor};"
 								>
 									<div class="text-[64px] leading-none font-bold">12:08</div>
 									<div class="mt-1.5 font-[JetBrains_Mono,monospace] text-sm">
@@ -835,7 +840,7 @@
 
 		<!-- Floating View & Zoom Toolbar -->
 		<div
-			class="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-3.5 py-2 text-[#e4e4e7] shadow-2xl backdrop-blur-md"
+			class="absolute bottom-6 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-2 overflow-x-auto rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-3.5 py-2 text-[#e4e4e7] shadow-2xl backdrop-blur-md"
 		>
 			<button
 				type="button"
