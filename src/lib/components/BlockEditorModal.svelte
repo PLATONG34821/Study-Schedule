@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Dialog } from 'bits-ui';
 	import type { ClassBlock, PaletteColor } from '$lib/types';
 	import { textColorFor } from '$lib/utils';
 	import * as m from '$lib/paraglide/messages';
@@ -23,41 +24,9 @@
 		}
 	});
 
-	let modalEl = $state<HTMLDivElement | null>(null);
-
 	const handleSave = () => {
 		if (draft) {
 			onSave(draft);
-		}
-	};
-
-	let dialogEl = $state<HTMLDialogElement | null>(null);
-
-	$effect(() => {
-		if (draft) {
-			if (dialogEl && !dialogEl.open) {
-				dialogEl.showModal();
-			}
-		} else if (dialogEl && dialogEl.open) {
-			dialogEl.close();
-		}
-	});
-
-	const handleCancel = (e: Event) => {
-		e.preventDefault();
-		onClose();
-	};
-
-	const handleBackdropClick = (e: MouseEvent) => {
-		if (!dialogEl) return;
-		const rect = dialogEl.getBoundingClientRect();
-		const isClickInside =
-			rect.top <= e.clientY &&
-			e.clientY <= rect.bottom &&
-			rect.left <= e.clientX &&
-			e.clientX <= rect.right;
-		if (!isClickInside) {
-			onClose();
 		}
 	};
 
@@ -67,27 +36,22 @@
 	let previewIsDarkBg = $derived(previewTextVal === '#ffffff');
 </script>
 
-{#if draft}
-	<dialog
-		bind:this={dialogEl}
-		oncancel={handleCancel}
-		onclick={handleBackdropClick}
-		class="fixed inset-0 z-[999] m-auto flex max-h-[90vh] w-full max-w-[460px] animate-popIn flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] p-0 text-[#e4e4e7] shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-[4px]"
-	>
-		<!-- Header -->
-			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-4">
-				<div class="flex items-center gap-2">
-					<div class="h-3 w-3 rounded-full bg-[#2563eb]"></div>
-					<h2 class="m-0 text-base font-bold text-white">{m.edit_subject()}</h2>
+<Dialog.Root open={Boolean(block)} onOpenChange={(open) => !open && onClose()}>
+	<Dialog.Portal>
+		{#if draft}
+			<Dialog.Overlay class="fixed inset-0 z-[999] bg-black/60 backdrop-blur-xs" />
+			<Dialog.Content class="fixed left-1/2 top-1/2 z-[999] flex max-h-[90vh] w-[calc(100vw-2rem)] max-w-[460px] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] p-0 text-[#e4e4e7] shadow-2xl">
+				<!-- Header -->
+				<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-4">
+					<div class="flex items-center gap-2">
+						<div class="h-3 w-3 rounded-full bg-[#2563eb]"></div>
+						<Dialog.Title class="m-0 text-base font-bold text-white">{m.edit_subject()}</Dialog.Title>
+					</div>
+					<Dialog.Close
+						class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-transparent text-lg text-[#a1a1aa] transition-colors hover:bg-[#27272a] hover:text-white"
+						aria-label="Close dialog"
+						title="Close dialog">✕</Dialog.Close>
 				</div>
-				<button
-					type="button"
-					class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-transparent bg-transparent text-lg text-[#a1a1aa] transition-colors hover:bg-[#27272a] hover:text-white"
-					onclick={onClose}
-					aria-label="Close dialog"
-					title="Close dialog">✕</button
-				>
-			</div>
 
 			<div class="flex flex-col gap-4 p-5">
 				<!-- Live Card Preview -->
@@ -275,18 +239,16 @@
 					class="cursor-pointer rounded-lg border border-[#ef4444]/40 bg-[#ef4444]/10 px-3.5 py-2 text-xs font-semibold text-[#ef4444] transition-colors hover:bg-[#ef4444] hover:text-white"
 					onclick={() => draft && onDelete(draft.id)}>{m.delete_subject()}</button
 				>
-				<div class="flex items-center gap-2">
-					<button
-						type="button"
+					<Dialog.Close
 						class="cursor-pointer rounded-lg border border-[#3f3f46] bg-[#27272a] px-4 py-2 text-xs font-semibold text-[#a1a1aa] transition-colors hover:text-white"
-						onclick={onClose}>Cancel</button
-					>
+						>Cancel</Dialog.Close>
 					<button
 						type="button"
 						class="cursor-pointer rounded-lg border-none bg-[#2563eb] px-5 py-2 font-[inherit] text-xs font-semibold text-white transition-colors hover:bg-[#1d4ed8]"
 						onclick={handleSave}>{m.save_close()}</button
 					>
 				</div>
-			</div>
-	</dialog>
-{/if}
+		</Dialog.Content>
+	{/if}
+	</Dialog.Portal>
+</Dialog.Root>

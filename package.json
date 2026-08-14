@@ -39,6 +39,7 @@
 	"dependencies": {
 		"@thisux/sveltednd": "^0.7.0",
 		"@types/lz-string": "^1.5.0",
+		"bits-ui": "^2.18.1",
 		"clsx": "^2.1.1",
 		"colord": "^2.9.3",
 		"dayjs": "^1.11.21",
