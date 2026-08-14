@@ -64,5 +64,9 @@
 	"new_subject": "New Subject",
 	"removeDay": "Remove day: {name}",
 	"removeSlot": "Remove time slot: {label}",
-	"removeColor": "Remove color"
+	"removeColor": "Remove color",
+	"undo": "Undo",
+	"redo": "Redo",
+	"undone": "Undone last action",
+	"redone": "Redone action"
 }

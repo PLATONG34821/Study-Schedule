@@ -64,5 +64,9 @@
 	"new_subject": "วิชาใหม่",
 	"removeDay": "ลบวัน: {name}",
 	"removeSlot": "ลบเวลา: {label}",
-	"removeColor": "ลบสี"
+	"removeColor": "ลบสี",
+	"undo": "เลิกทำ (Undo)",
+	"redo": "ทำซ้ำ (Redo)",
+	"undone": "เลิกทำรายการแล้ว",
+	"redone": "ทำซ้ำรายการแล้ว"
 }

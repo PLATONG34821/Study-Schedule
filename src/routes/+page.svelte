@@ -201,26 +201,120 @@
 
 	let selectedBlock = $derived(blocks.find((b) => b.id === selectedId) || null);
 
+	interface ScheduleSnapshot {
+		days: Day[];
+		slots: Slot[];
+		palette: PaletteColor[];
+		blocks: ClassBlock[];
+	}
+
+	let historyStack = $state<ScheduleSnapshot[]>([]);
+	let historyIndex = $state<number>(-1);
+
+	const createSnapshot = (): ScheduleSnapshot => ({
+		days: JSON.parse(JSON.stringify(days)),
+		slots: JSON.parse(JSON.stringify(slots)),
+		palette: JSON.parse(JSON.stringify(palette)),
+		blocks: JSON.parse(JSON.stringify(blocks))
+	});
+
+	const pushHistoryState = () => {
+		const snapshot = createSnapshot();
+		if (historyIndex >= 0 && historyIndex < historyStack.length) {
+			if (JSON.stringify(historyStack[historyIndex]) === JSON.stringify(snapshot)) {
+				return;
+			}
+		}
+		const newStack = historyStack.slice(0, historyIndex + 1);
+		newStack.push(snapshot);
+		if (newStack.length > 50) {
+			newStack.shift();
+		}
+		historyStack = newStack;
+		historyIndex = newStack.length - 1;
+	};
+
+	let canUndo = $derived(historyIndex > 0);
+	let canRedo = $derived(historyIndex >= 0 && historyIndex < historyStack.length - 1);
+
+	const undoState = () => {
+		if (!canUndo) return;
+		historyIndex -= 1;
+		const target = historyStack[historyIndex];
+		days = JSON.parse(JSON.stringify(target.days));
+		slots = JSON.parse(JSON.stringify(target.slots));
+		palette = JSON.parse(JSON.stringify(target.palette));
+		blocks = JSON.parse(JSON.stringify(target.blocks));
+		addToast(m.undone(), 'info');
+	};
+
+	const redoState = () => {
+		if (!canRedo) return;
+		historyIndex += 1;
+		const target = historyStack[historyIndex];
+		days = JSON.parse(JSON.stringify(target.days));
+		slots = JSON.parse(JSON.stringify(target.slots));
+		palette = JSON.parse(JSON.stringify(target.palette));
+		blocks = JSON.parse(JSON.stringify(target.blocks));
+		addToast(m.redone(), 'info');
+	};
+
+	onMount(() => {
+		pushHistoryState();
+	});
+
+	const handleKeyDown = (e: KeyboardEvent) => {
+		const target = e.target as HTMLElement | null;
+		if (
+			target &&
+			(target.tagName === 'INPUT' ||
+				target.tagName === 'TEXTAREA' ||
+				target.tagName === 'SELECT' ||
+				target.isContentEditable)
+		) {
+			return;
+		}
+
+		const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+		if (isCmdOrCtrl && e.key.toLowerCase() === 'z') {
+			if (e.shiftKey) {
+				e.preventDefault();
+				redoState();
+			} else {
+				e.preventDefault();
+				undoState();
+			}
+		} else if (isCmdOrCtrl && e.key.toLowerCase() === 'y') {
+			e.preventDefault();
+			redoState();
+		}
+	};
+
 	const addDay = () => {
 		days.push({ id: generateUid(), name: m.new_day() });
+		pushHistoryState();
 	};
 
 	const removeDay = (dayId: string) => {
 		days = days.filter((d) => d.id !== dayId);
 		blocks = blocks.filter((b) => b.dayId !== dayId);
+		pushHistoryState();
 	};
 
 	const addSlot = () => {
 		slots.push({ id: generateUid(), label: '17:00' });
+		pushHistoryState();
 	};
 
 	const removeSlot = (slotId: string) => {
 		slots = slots.filter((s) => s.id !== slotId);
 		blocks = blocks.filter((b) => b.timeSlotId !== slotId);
+		pushHistoryState();
 	};
 
 	const addColor = () => {
 		palette.push({ id: generateUid(), color: '#999999' });
+		pushHistoryState();
 	};
 
 	const removeColor = (colorId: string) => {
@@ -228,6 +322,7 @@
 		blocks.forEach((b) => {
 			if (b.colorId === colorId) b.colorId = null;
 		});
+		pushHistoryState();
 	};
 
 	const addBlock = (dayId: string, timeSlotId: string) => {
@@ -248,16 +343,19 @@
 		};
 		blocks.push(newBlock);
 		selectedId = newBlock.id;
+		pushHistoryState();
 	};
 
 	const removeBlock = (blockId: string) => {
 		blocks = blocks.filter((b) => b.id !== blockId);
 		if (selectedId === blockId) selectedId = null;
+		pushHistoryState();
 	};
 
 	const updateBlock = (updatedBlock: ClassBlock) => {
 		blocks = blocks.map((b) => (b.id === updatedBlock.id ? updatedBlock : b));
 		selectedId = null;
+		pushHistoryState();
 	};
 
 	const exportPng = async () => {
@@ -382,6 +480,7 @@
 			}
 
 			selectedId = null;
+			pushHistoryState();
 			addToast('Schedule imported successfully!', 'success');
 			return true;
 		} catch {
@@ -418,6 +517,8 @@
 		loadFromHash();
 	});
 </script>
+
+<svelte:window onkeydown={handleKeyDown} />
 
 <div class="relative flex h-screen w-screen flex-col overflow-hidden lg:flex-row">
 	{#if isLeftSidebarOpen}
@@ -458,6 +559,11 @@
 		onRemoveSlot={removeSlot}
 		onAddColor={addColor}
 		onRemoveColor={removeColor}
+		{canUndo}
+		{canRedo}
+		onUndo={undoState}
+		onRedo={redoState}
+		onFieldChange={pushHistoryState}
 	/>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -624,6 +730,27 @@
 		<div
 			class="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-3.5 py-2 text-[#e4e4e7] shadow-2xl backdrop-blur-md"
 		>
+			<button
+				type="button"
+				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-xs font-bold text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
+				onclick={undoState}
+				disabled={!canUndo}
+				aria-label={m.undo()}
+				title="{m.undo()} (Ctrl+Z / ⌘Z)"
+			>
+				↺
+			</button>
+			<button
+				type="button"
+				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-xs font-bold text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
+				onclick={redoState}
+				disabled={!canRedo}
+				aria-label={m.redo()}
+				title="{m.redo()} (Ctrl+Y / ⌘⇧Z)"
+			>
+				↻
+			</button>
+			<div class="mx-1 h-4 w-px bg-[#3f3f46]"></div>
 			<button
 				type="button"
 				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-sm font-bold text-white transition-colors hover:bg-[#3f3f46]"
