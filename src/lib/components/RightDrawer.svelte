@@ -143,10 +143,6 @@
 
 	{#if isWallpaperMode}
 		<div class="flex flex-col gap-2.5 rounded-lg border border-[#3f3f46] bg-[#27272a] p-3">
-			<div class="mb-2.5 font-[JetBrains_Mono,monospace] text-[11px] text-[#a1a1aa]">
-				{currentPreset.width} × {currentPreset.height} px
-			</div>
-
 			<label class="block text-xs text-[#a1a1aa]" for="gridRotationSelect">{m.rotate_grid()}</label>
 			<select
 				id="gridRotationSelect"
