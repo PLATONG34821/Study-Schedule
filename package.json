@@ -41,6 +41,7 @@
 		"@types/lz-string": "^1.5.0",
 		"clsx": "^2.1.1",
 		"colord": "^2.9.3",
+		"dayjs": "^1.11.21",
 		"dequal": "^2.0.3",
 		"hotkeys-js": "^4.0.4",
 		"immer": "^11.1.16",

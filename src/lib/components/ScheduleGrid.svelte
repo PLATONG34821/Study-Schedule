@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { draggable, droppable } from '@thisux/sveltednd';
 	import type { Day, Slot, ClassBlock, PaletteColor } from '$lib/types';
-	import { textColorFor } from '$lib/utils';
+	import { textColorFor, formatTimeRange } from '$lib/utils';
 	import * as m from '$lib/paraglide/messages';
 	import BlockCard from './BlockCard.svelte';
 
@@ -89,7 +89,7 @@
 					? 'none'
 					: 'solid'}; font-size: {fontSizeTime}px;"
 			>
-				{slot.label}
+				{formatTimeRange(slot.label)}
 			</div>
 			{#each days as day, colIdx (day.id)}
 				{@const cellBlocks = blocks.filter((b) => b.dayId === day.id && b.timeSlotId === slot.id)}

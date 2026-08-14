@@ -48,6 +48,24 @@ export const validateScheduleConfig = (data: unknown): ScheduleConfigData | null
 	return null;
 };
 
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
+
+export const formatTimeRange = (timeString: string, use24Hour = true): string => {
+	if (!timeString) return '';
+	const parts = timeString.split(/[-–—]/).map((s) => s.trim());
+	const formatPattern = use24Hour ? 'HH:mm' : 'h:mm A';
+
+	const formattedParts = parts.map((part) => {
+		const parsed = dayjs(part, ['HH:mm', 'H:mm', 'HH:mm:ss', 'h:mm A', 'h:mm a'], true);
+		return parsed.isValid() ? parsed.format(formatPattern) : part;
+	});
+
+	return formattedParts.join(' – ');
+};
+
 export const generateUid = (): string => nanoid(10);
 
 export const textColorFor = (hexColor: string): string =>

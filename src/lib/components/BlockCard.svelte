@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { dndState } from '@thisux/sveltednd';
 	import type { ClassBlock, PaletteColor } from '$lib/types';
-	import { textColorFor } from '$lib/utils';
+	import { textColorFor, formatTimeRange } from '$lib/utils';
 
 	interface Props {
 		block: ClassBlock;
@@ -60,7 +60,7 @@
 							class="shrink-0 rounded-xl border-[1.5px] border-[#111111] px-2 py-0.5 font-[JetBrains_Mono,monospace] font-semibold {isDarkBg
 								? 'bg-white/95 text-[#111111]'
 								: 'bg-[#111111]/90 text-white'}"
-							style="font-size: {fontSizeBadge}px;">{block.time}</span
+							style="font-size: {fontSizeBadge}px;">{formatTimeRange(block.time)}</span
 						>{/if}
 					{#if block.room}<span
 							class="shrink-0 rounded-xl border-[1.5px] border-[#111111] px-2 py-0.5 font-[JetBrains_Mono,monospace] font-semibold {isDarkBg
