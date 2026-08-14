@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PhonePreset } from '$lib/types';
 	import * as m from '$lib/paraglide/messages';
+	import ColorWheelPicker from './ColorWheelPicker.svelte';
 
 	interface Props {
 		phonePresets: PhonePreset[];
@@ -61,7 +62,7 @@
 </script>
 
 <aside
-	class="fixed inset-y-0 right-0 z-40 box-border flex h-full w-full shrink-0 flex-col gap-3 overflow-y-auto border-l border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none {isOpen
+	class="fixed inset-y-0 right-0 z-40 box-border flex h-full w-full shrink-0 flex-col gap-3 overflow-y-auto border-l border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none lg:transition-none {isOpen
 		? 'translate-x-0'
 		: 'translate-x-full lg:translate-x-0'}"
 >
@@ -408,12 +409,7 @@
 	<div class="flex flex-col gap-1">
 		<label class="block text-xs text-[#a1a1aa]" for="gridLineColorInput">{m.line_color()}</label>
 		<div class="flex items-center gap-2.5">
-			<input
-				id="gridLineColorInput"
-				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
-				type="color"
-				bind:value={gridLineColor}
-			/>
+			<ColorWheelPicker color={gridLineColor} onChange={(c) => (gridLineColor = c)} label={m.line_color()} />
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{gridLineColor}</span>
 		</div>
 	</div>
@@ -423,12 +419,7 @@
 			>{m.day_header_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
-			<input
-				id="dayHeaderBgColorInput"
-				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
-				type="color"
-				bind:value={dayHeaderBgColor}
-			/>
+			<ColorWheelPicker color={dayHeaderBgColor} onChange={(c) => (dayHeaderBgColor = c)} label={m.day_header_color()} />
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{dayHeaderBgColor}</span>
 		</div>
 	</div>
@@ -436,12 +427,7 @@
 	<div class="flex flex-col gap-1">
 		<label class="block text-xs text-[#a1a1aa]" for="timeBgColorInput">{m.time_slot_color()}</label>
 		<div class="flex items-center gap-2.5">
-			<input
-				id="timeBgColorInput"
-				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
-				type="color"
-				bind:value={timeBgColor}
-			/>
+			<ColorWheelPicker color={timeBgColor} onChange={(c) => (timeBgColor = c)} label={m.time_slot_color()} />
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{timeBgColor}</span>
 		</div>
 	</div>
@@ -451,12 +437,7 @@
 			>{m.subject_cell_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
-			<input
-				id="cellBgColorInput"
-				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
-				type="color"
-				bind:value={cellBgColor}
-			/>
+			<ColorWheelPicker color={cellBgColor} onChange={(c) => (cellBgColor = c)} label={m.subject_cell_color()} />
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{cellBgColor}</span>
 		</div>
 	</div>
@@ -464,12 +445,7 @@
 	<div class="flex flex-col gap-1">
 		<label class="block text-xs text-[#a1a1aa]" for="bgColorInput">{m.wallpaper_bg_color()}</label>
 		<div class="flex items-center gap-2.5">
-			<input
-				id="bgColorInput"
-				class="h-8 w-10 cursor-pointer rounded-md border-none bg-none p-0"
-				type="color"
-				bind:value={bgColor}
-			/>
+			<ColorWheelPicker color={bgColor} onChange={(c) => (bgColor = c)} label={m.wallpaper_bg_color()} />
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{bgColor}</span>
 		</div>
 	</div>

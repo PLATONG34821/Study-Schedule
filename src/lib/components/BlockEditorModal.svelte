@@ -3,6 +3,7 @@
 	import type { ClassBlock, PaletteColor } from '$lib/types';
 	import { textColorFor } from '$lib/utils';
 	import * as m from '$lib/paraglide/messages';
+	import ColorWheelPicker from './ColorWheelPicker.svelte';
 
 	interface Props {
 		block: ClassBlock | null;
@@ -182,7 +183,25 @@
 
 				<!-- Color Palette -->
 				<div class="flex flex-col gap-1.5">
-					<span class="text-xs font-medium text-[#a1a1aa]">{m.color()}</span>
+					<div class="flex items-center justify-between">
+						<span class="text-xs font-medium text-[#a1a1aa]">{m.color()}</span>
+						<ColorWheelPicker
+							color={previewColorVal}
+							onChange={(newHex) => {
+								if (draft) {
+									const existing = palette.find((p) => p.color.toLowerCase() === newHex.toLowerCase());
+									if (existing) {
+										draft.colorId = existing.id;
+									} else {
+										const newId = 'c_' + Math.random().toString(36).slice(2, 7);
+										palette.push({ id: newId, color: newHex });
+										draft.colorId = newId;
+									}
+								}
+							}}
+							label={m.color()}
+						/>
+					</div>
 					<div class="flex flex-wrap gap-2">
 						{#each palette as colorOption (colorOption.id)}
 							<button

@@ -350,12 +350,19 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		'#8B5CF6'
 	];
 
-	const addColor = () => {
+	const addColor = (colorHex?: string) => {
 		const nextColor =
+			colorHex ||
 			defaultPaletteColors.find(
 				(c) => !palette.some((p) => p.color.toLowerCase() === c.toLowerCase())
 			) || `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
 		palette.push({ id: generateUid(), color: nextColor });
+		pushHistoryState();
+	};
+
+	const addRandomColor = () => {
+		const randomHex = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+		palette.push({ id: generateUid(), color: randomHex });
 		pushHistoryState();
 	};
 
@@ -646,6 +653,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 				onAddSlot={addSlot}
 				onRemoveSlot={removeSlot}
 				onAddColor={addColor}
+				onAddRandomColor={addRandomColor}
 				onRemoveColor={removeColor}
 				onFieldChange={pushHistoryState}
 			/>

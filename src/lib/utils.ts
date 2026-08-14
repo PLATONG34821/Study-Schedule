@@ -16,7 +16,7 @@ export const getContrastRatio = (colorA: string, colorB: string): number => {
 	return colord(colorA).contrast(colorB);
 };
 
-export const generateUid = (): string => nanoid(10);
+
 
 export const textColorFor = (hexColor: string): string => {
 	const colorObj = colord(hexColor);
@@ -87,7 +87,7 @@ export const formatTimeRange = (timeString: string, use24Hour = true): string =>
 	return formattedParts.join(' – ');
 };
 
-
+export const generateUid = (): string => nanoid(10);
 
 const bytesToBase64 = (bytes: Uint8Array): string => {
 	let binary = '';

@@ -2,6 +2,8 @@
 	import type { Day, Slot, PaletteColor } from '$lib/types';
 	import * as m from '$lib/paraglide/messages';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
+	import { Shuffle } from 'lucide-svelte';
+	import ColorWheelPicker from './ColorWheelPicker.svelte';
 
 	interface Props {
 		days: Day[];
@@ -16,7 +18,8 @@
 		onRemoveDay: (id: string) => void;
 		onAddSlot: () => void;
 		onRemoveSlot: (id: string) => void;
-		onAddColor: () => void;
+		onAddColor: (colorHex?: string) => void;
+		onAddRandomColor?: () => void;
 		onRemoveColor: (id: string) => void;
 		onFieldChange?: () => void;
 	}
@@ -35,6 +38,7 @@
 		onAddSlot,
 		onRemoveSlot,
 		onAddColor,
+		onAddRandomColor,
 		onRemoveColor,
 		onFieldChange
 	}: Props = $props();
@@ -43,7 +47,7 @@
 </script>
 
 <aside
-	class="fixed inset-y-0 left-0 z-40 box-border flex h-full w-full shrink-0 flex-col gap-3 overflow-y-auto border-r border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none {isOpen
+	class="fixed inset-y-0 left-0 z-40 box-border flex h-full w-full shrink-0 flex-col gap-3 overflow-y-auto border-r border-[#27272a] bg-[#18181b] p-6 text-[#e4e4e7] shadow-2xl transition-transform duration-300 ease-in-out lg:static lg:z-10 lg:shadow-none lg:transition-none {isOpen
 		? 'translate-x-0'
 		: '-translate-x-full lg:translate-x-0'}"
 >
@@ -181,45 +185,63 @@
 	<div class="mb-2 flex flex-wrap gap-2">
 		{#each palette as item (item.id)}
 			{@const isActive = activeColorId === item.id}
-			<button
-				type="button"
-				class="relative flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 transition-all hover:scale-105 {isActive
-					? 'border-[#ef4444] ring-2 ring-[#ef4444]/50'
-					: 'border-[#3f3f46] hover:border-white/50'}"
-				style="background: {item.color};"
-				onclick={() => {
-					if (isActive) {
-						onRemoveColor(item.id);
-						activeColorId = null;
-					} else {
-						activeColorId = item.id;
-					}
-				}}
-				aria-label={isActive ? 'Click again to delete color' : 'Click to select color'}
-				title={isActive ? 'Click again to delete' : 'Click to select'}
-			>
-				{#if isActive}
-					<div
-						class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-white"
-					>
-						<svg
-							width="14"
-							height="14"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2.5"
+			<div class="relative flex h-9 w-9 items-center justify-center">
+				<button
+					type="button"
+					class="relative flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 transition-all hover:scale-105 {isActive
+						? 'border-[#ef4444] ring-2 ring-[#ef4444]/50'
+						: 'border-[#3f3f46] hover:border-white/50'}"
+					style="background: {item.color};"
+					onclick={() => {
+						if (isActive) {
+							onRemoveColor(item.id);
+							activeColorId = null;
+						} else {
+							activeColorId = item.id;
+						}
+					}}
+					aria-label={isActive ? 'Click again to delete color' : 'Click to select color'}
+					title={isActive ? 'Click again to delete' : 'Click to select'}
+				>
+					{#if isActive}
+						<div
+							class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-white"
 						>
-							<line x1="18" y1="6" x2="6" y2="18" />
-							<line x1="6" y1="6" x2="18" y2="18" />
-						</svg>
-					</div>
-				{/if}
-			</button>
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.5"
+							>
+								<line x1="18" y1="6" x2="6" y2="18" />
+								<line x1="6" y1="6" x2="18" y2="18" />
+							</svg>
+						</div>
+					{/if}
+				</button>
+			</div>
 		{/each}
 	</div>
-	<button
-		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#2563eb] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#60a5fa] hover:bg-[#2563eb]/10"
-		onclick={onAddColor}>{m.add_color()}</button
-	>
+
+	<div class="mb-3 flex items-center gap-2">
+		<div class="flex-1">
+			<ColorWheelPicker
+				color="#2563eb"
+				onChange={(hex) => onAddColor(hex)}
+				buttonText={m.add_color()}
+			/>
+		</div>
+
+		<button
+			type="button"
+			class="flex h-8.5 w-8.5 shrink-0 cursor-pointer items-center justify-center rounded-md border border-[#3f3f46] bg-[#27272a] text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
+			onclick={onAddRandomColor}
+			aria-label="Add random color"
+			title="Add random color"
+		>
+			<Shuffle class="h-4 w-4" />
+		</button>
+	</div>
 </aside>
