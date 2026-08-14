@@ -68,5 +68,9 @@
 	"undo": "Undo",
 	"redo": "Redo",
 	"undone": "Undone last action",
-	"redone": "Redone action"
+	"redone": "Redone action",
+	"autosaved": "Autosaved",
+	"restored_autosave": "Restored unsaved session from local storage",
+	"reset_to_default": "Reset to Default",
+	"reset_confirm": "Reset schedule to default? Unsaved changes will be cleared."
 }

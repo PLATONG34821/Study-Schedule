@@ -401,6 +401,8 @@
 	let isCodeModalOpen = $state(false);
 	let codeModalMode = $state<'export' | 'import'>('export');
 	let exportedCodeString = $state('');
+	let isInitialLoaded = $state(false);
+	let lastSavedTime = $state<string | null>(null);
 
 	const getFullConfigObj = () => ({
 		days,
@@ -429,6 +431,62 @@
 		}
 	});
 
+	const applyConfigData = (data: Record<string, unknown>) => {
+		if (Array.isArray(data.days)) days = data.days as Day[];
+		if (Array.isArray(data.slots)) slots = data.slots as Slot[];
+		if (Array.isArray(data.palette)) palette = data.palette as PaletteColor[];
+		if (Array.isArray(data.blocks)) blocks = data.blocks as ClassBlock[];
+
+		const st = data.settings as Record<string, unknown> | undefined;
+		if (st) {
+			if (typeof st.selectedPresetId === 'string') {
+				selectedPresetId = st.selectedPresetId.startsWith('ip') ? 'iphone' : st.selectedPresetId;
+			}
+			if (typeof st.customPresetWidth === 'number') customPresetWidth = st.customPresetWidth;
+			if (typeof st.customPresetHeight === 'number') customPresetHeight = st.customPresetHeight;
+			if (typeof st.gridRotationAngle === 'number') gridRotationAngle = st.gridRotationAngle;
+			if (typeof st.customTopGapPercent === 'number')
+				customTopGapPercent = st.customTopGapPercent;
+			if (
+				typeof st.scaleMode === 'string' &&
+				(st.scaleMode === 'fillWidth' || st.scaleMode === 'fitBoth')
+			)
+				scaleMode = st.scaleMode;
+			if (typeof st.gridScaleModifier === 'number') gridScaleModifier = st.gridScaleModifier;
+			if (typeof st.slotRowHeight === 'number') slotRowHeight = st.slotRowHeight;
+			if (typeof st.dayColumnWidth === 'number') dayColumnWidth = st.dayColumnWidth;
+			if (typeof st.bgColor === 'string') bgColor = st.bgColor;
+			if (typeof st.gridLineColor === 'string') gridLineColor = st.gridLineColor;
+			if (typeof st.timeBgColor === 'string') timeBgColor = st.timeBgColor;
+			if (typeof st.dayHeaderBgColor === 'string') dayHeaderBgColor = st.dayHeaderBgColor;
+			if (typeof st.cellBgColor === 'string') cellBgColor = st.cellBgColor;
+			if (typeof st.fontSizeDay === 'number') fontSizeDay = st.fontSizeDay;
+			if (typeof st.fontSizeTime === 'number') fontSizeTime = st.fontSizeTime;
+			if (typeof st.fontSizeTitle === 'number') fontSizeTitle = st.fontSizeTitle;
+			if (typeof st.fontSizeBadge === 'number') fontSizeBadge = st.fontSizeBadge;
+		}
+
+		selectedId = null;
+		pushHistoryState();
+	};
+
+	$effect(() => {
+		// Watch state for autosave
+		days; slots; palette; blocks; selectedPresetId; customPresetWidth; customPresetHeight;
+		gridRotationAngle; customTopGapPercent; scaleMode; gridScaleModifier; slotRowHeight;
+		dayColumnWidth; bgColor; gridLineColor; timeBgColor; dayHeaderBgColor; cellBgColor;
+		fontSizeDay; fontSizeTime; fontSizeTitle; fontSizeBadge;
+
+		if (isInitialLoaded && typeof window !== 'undefined') {
+			try {
+				localStorage.setItem('study_schedule_autosave', JSON.stringify(getFullConfigObj()));
+				lastSavedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+			} catch {
+				// Ignore quota errors
+			}
+		}
+	});
+
 	const openExportCode = async () => {
 		exportedCodeString = await compressConfigCode(getFullConfigObj());
 		codeModalMode = 'export';
@@ -445,42 +503,7 @@
 			const data = (await decompressConfigCode(codeString)) as Record<string, unknown> | null;
 			if (!data) return false;
 
-			if (Array.isArray(data.days)) days = data.days as Day[];
-			if (Array.isArray(data.slots)) slots = data.slots as Slot[];
-			if (Array.isArray(data.palette)) palette = data.palette as PaletteColor[];
-			if (Array.isArray(data.blocks)) blocks = data.blocks as ClassBlock[];
-
-			const st = data.settings as Record<string, unknown> | undefined;
-			if (st) {
-				if (typeof st.selectedPresetId === 'string') {
-					selectedPresetId = st.selectedPresetId.startsWith('ip') ? 'iphone' : st.selectedPresetId;
-				}
-				if (typeof st.customPresetWidth === 'number') customPresetWidth = st.customPresetWidth;
-				if (typeof st.customPresetHeight === 'number') customPresetHeight = st.customPresetHeight;
-				if (typeof st.gridRotationAngle === 'number') gridRotationAngle = st.gridRotationAngle;
-				if (typeof st.customTopGapPercent === 'number')
-					customTopGapPercent = st.customTopGapPercent;
-				if (
-					typeof st.scaleMode === 'string' &&
-					(st.scaleMode === 'fillWidth' || st.scaleMode === 'fitBoth')
-				)
-					scaleMode = st.scaleMode;
-				if (typeof st.gridScaleModifier === 'number') gridScaleModifier = st.gridScaleModifier;
-				if (typeof st.slotRowHeight === 'number') slotRowHeight = st.slotRowHeight;
-				if (typeof st.dayColumnWidth === 'number') dayColumnWidth = st.dayColumnWidth;
-				if (typeof st.bgColor === 'string') bgColor = st.bgColor;
-				if (typeof st.gridLineColor === 'string') gridLineColor = st.gridLineColor;
-				if (typeof st.timeBgColor === 'string') timeBgColor = st.timeBgColor;
-				if (typeof st.dayHeaderBgColor === 'string') dayHeaderBgColor = st.dayHeaderBgColor;
-				if (typeof st.cellBgColor === 'string') cellBgColor = st.cellBgColor;
-				if (typeof st.fontSizeDay === 'number') fontSizeDay = st.fontSizeDay;
-				if (typeof st.fontSizeTime === 'number') fontSizeTime = st.fontSizeTime;
-				if (typeof st.fontSizeTitle === 'number') fontSizeTitle = st.fontSizeTitle;
-				if (typeof st.fontSizeBadge === 'number') fontSizeBadge = st.fontSizeBadge;
-			}
-
-			selectedId = null;
-			pushHistoryState();
+			applyConfigData(data);
 			addToast('Schedule imported successfully!', 'success');
 			return true;
 		} catch {
@@ -504,17 +527,42 @@
 		}
 	};
 
+	const resetToDefault = () => {
+		if (typeof window !== 'undefined' && confirm(m.reset_confirm())) {
+			localStorage.removeItem('study_schedule_autosave');
+			window.location.reload();
+		}
+	};
+
 	onMount(() => {
-		const loadFromHash = async () => {
+		const initData = async () => {
 			const hash = window.location.hash;
+			let loadedFromHash = false;
 			if (hash && hash.includes('s=')) {
 				const code = hash.split('s=')[1];
 				if (code) {
-					await handleImportCode(code);
+					loadedFromHash = await handleImportCode(code);
 				}
 			}
+
+			if (!loadedFromHash && typeof window !== 'undefined') {
+				const saved = localStorage.getItem('study_schedule_autosave');
+				if (saved) {
+					try {
+						const data = JSON.parse(saved) as Record<string, unknown>;
+						applyConfigData(data);
+						addToast(m.restored_autosave(), 'info');
+					} catch {
+						// Invalid JSON in localStorage
+					}
+				}
+			}
+
+			isInitialLoaded = true;
+			lastSavedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 		};
-		loadFromHash();
+
+		initData();
 	});
 </script>
 
@@ -564,6 +612,8 @@
 		onUndo={undoState}
 		onRedo={redoState}
 		onFieldChange={pushHistoryState}
+		{lastSavedTime}
+		onResetDefault={resetToDefault}
 	/>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
