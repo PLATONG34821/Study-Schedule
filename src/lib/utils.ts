@@ -170,4 +170,37 @@ export const decompressConfigCode = async (codeString: string): Promise<Schedule
 	return validateScheduleConfig(parsedData);
 };
 
+import type { AutoAnimationPlugin } from '@formkit/auto-animate';
+
+export const smoothAnimate: AutoAnimationPlugin = (
+	el,
+	action,
+	oldCoordinates,
+	newCoordinates
+) => {
+	let keyframes: Keyframe[] = [];
+	if (action === 'add') {
+		keyframes = [
+			{ opacity: 0, transform: 'translateY(4px)' },
+			{ opacity: 1, transform: 'translateY(0)' }
+		];
+	} else if (action === 'remove') {
+		keyframes = [
+			{ opacity: 1, transform: 'translateY(0)' },
+			{ opacity: 0, transform: 'translateY(-4px)' }
+		];
+	} else if (action === 'remain' && oldCoordinates && newCoordinates) {
+		const deltaX = oldCoordinates.left - newCoordinates.left;
+		const deltaY = oldCoordinates.top - newCoordinates.top;
+		keyframes = [
+			{ transform: `translate(${deltaX}px, ${deltaY}px)` },
+			{ transform: 'translate(0, 0)' }
+		];
+	}
+	return new KeyframeEffect(el as HTMLElement, keyframes, {
+		duration: 160,
+		easing: 'cubic-bezier(0.2, 0, 0, 1)'
+	});
+};
+
 

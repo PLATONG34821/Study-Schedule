@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query';
 	import { createVirtualizer } from '@tanstack/svelte-virtual';
+	import autoAnimate from '@formkit/auto-animate';
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
-	import { textColorFor, compressConfigCode } from '$lib/utils';
+	import { textColorFor, compressConfigCode, smoothAnimate } from '$lib/utils';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import * as m from '$lib/paraglide/messages';
 
@@ -634,7 +635,7 @@
 		<!-- Search & Category Filters -->
 		<div class="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4 md:flex-row md:items-center md:justify-between">
 			<!-- Category Tabs -->
-			<div class="flex w-full items-center gap-1.5 overflow-x-auto pb-1 sm:gap-2 md:w-auto md:flex-wrap md:pb-0">
+			<div class="flex w-full items-center gap-1.5 overflow-x-auto pb-1 sm:gap-2 md:w-auto md:flex-wrap md:pb-0" use:autoAnimate={smoothAnimate}>
 				{#each categories as cat (cat)}
 					<button
 						type="button"
@@ -670,7 +671,7 @@
 		</div>
 
 		<!-- Presets Grid -->
-		<div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+		<div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3" use:autoAnimate={smoothAnimate}>
 			{#each filteredPresets as preset (preset.id)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->

@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { Day, Slot, PaletteColor } from '$lib/types';
+	import { smoothAnimate } from '$lib/utils';
 	import * as m from '$lib/paraglide/messages';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import { Shuffle } from 'lucide-svelte';
 	import ColorWheelPicker from './ColorWheelPicker.svelte';
+	import autoAnimate from '@formkit/auto-animate';
 
 	interface Props {
 		days: Day[];
@@ -134,22 +136,24 @@
 	<div class="mt-2 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.days_section()}
 	</div>
-	{#each days as day (day.id)}
-		<div class="mb-1.5 flex items-center gap-1.5">
-			<input
-				type="text"
-				bind:value={day.name}
-				onchange={onFieldChange}
-				class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2.5 py-1.5 font-[inherit] text-[13px] text-white"
-			/>
-			<button
-				class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] transition-colors hover:bg-[#ef4444] hover:text-white"
-				onclick={() => onRemoveDay(day.id)}
-				aria-label={m.removeDay({ name: day.name })}
-				title={m.removeDay({ name: day.name })}>✕</button
-			>
-		</div>
-	{/each}
+	<div use:autoAnimate={smoothAnimate}>
+		{#each days as day (day.id)}
+			<div class="mb-1.5 flex items-center gap-1.5">
+				<input
+					type="text"
+					bind:value={day.name}
+					onchange={onFieldChange}
+					class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2.5 py-1.5 font-[inherit] text-[13px] text-white"
+				/>
+				<button
+					class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] transition-colors hover:bg-[#ef4444] hover:text-white"
+					onclick={() => onRemoveDay(day.id)}
+					aria-label={m.removeDay({ name: day.name })}
+					title={m.removeDay({ name: day.name })}>✕</button
+				>
+			</div>
+		{/each}
+	</div>
 	<button
 		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#2563eb] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#60a5fa] hover:bg-[#2563eb]/10"
 		onclick={onAddDay}>{m.add_day()}</button
@@ -158,22 +162,24 @@
 	<div class="mt-3.5 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.rows_section()}
 	</div>
-	{#each slots as slot (slot.id)}
-		<div class="mb-1.5 flex items-center gap-1.5">
-			<input
-				type="text"
-				bind:value={slot.label}
-				onchange={onFieldChange}
-				class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
-			/>
-			<button
-				class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] transition-colors hover:bg-[#ef4444] hover:text-white"
-				onclick={() => onRemoveSlot(slot.id)}
-				aria-label={m.removeSlot({ label: slot.label })}
-				title={m.removeSlot({ label: slot.label })}>✕</button
-			>
-		</div>
-	{/each}
+	<div use:autoAnimate={smoothAnimate}>
+		{#each slots as slot (slot.id)}
+			<div class="mb-1.5 flex items-center gap-1.5">
+				<input
+					type="text"
+					bind:value={slot.label}
+					onchange={onFieldChange}
+					class="flex-1 rounded-md border border-[#3f3f46] bg-[#27272a] px-2.5 py-1.5 font-[JetBrains_Mono,monospace] text-[13px] text-white"
+				/>
+				<button
+					class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md border-none bg-[#3f3f46] font-bold text-[#ef4444] transition-colors hover:bg-[#ef4444] hover:text-white"
+					onclick={() => onRemoveSlot(slot.id)}
+					aria-label={m.removeSlot({ label: slot.label })}
+					title={m.removeSlot({ label: slot.label })}>✕</button
+				>
+			</div>
+		{/each}
+	</div>
 	<button
 		class="mb-3 cursor-pointer rounded-md border border-dashed border-[#2563eb] bg-transparent px-3 py-1.5 font-[inherit] text-xs font-semibold text-[#60a5fa] hover:bg-[#2563eb]/10"
 		onclick={onAddSlot}>{m.add_row()}</button
@@ -182,7 +188,7 @@
 	<div class="mt-3.5 text-[11px] font-bold tracking-[0.8px] text-[#a1a1aa] uppercase">
 		{m.subject_colors()}
 	</div>
-	<div class="mb-2 flex flex-wrap gap-2">
+	<div class="mb-2 flex flex-wrap gap-2" use:autoAnimate={smoothAnimate}>
 		{#each palette as item (item.id)}
 			{@const isActive = activeColorId === item.id}
 			<div class="relative flex h-9 w-9 items-center justify-center">
