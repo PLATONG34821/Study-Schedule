@@ -116,7 +116,7 @@
 					{#each cellBlocks as block (block.id)}
 						<div
 							role="presentation"
-							class="h-full w-full touch-none svelte-dnd-draggable"
+							class="svelte-dnd-draggable h-full w-full touch-none"
 							draggable={false}
 							use:draggable={{
 								container: 'scheduleGrid',

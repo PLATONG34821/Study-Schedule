@@ -1,12 +1,36 @@
 <script lang="ts">
 	import { Popover } from 'bits-ui';
-	import { Check, Plus, Loader2 } from 'lucide-svelte';
+	import { Check, Loader2 } from 'lucide-svelte';
 
 	interface Props {
 		color: string;
 		onChange: (newHex: string) => void;
 		buttonText?: string;
 		label?: string;
+	}
+
+	interface IroColor {
+		hexString: string;
+	}
+
+	interface IroPicker {
+		on: (event: string, callback: (color: IroColor) => void) => void;
+		destroy: () => void;
+	}
+
+	interface IroModule {
+		default?: {
+			ColorPicker: new (el: HTMLElement, opts: unknown) => IroPicker;
+			ui: {
+				Wheel: unknown;
+				Slider: unknown;
+			};
+		};
+		ColorPicker: new (el: HTMLElement, opts: unknown) => IroPicker;
+		ui: {
+			Wheel: unknown;
+			Slider: unknown;
+		};
 	}
 
 	let { color, onChange, buttonText, label }: Props = $props();
@@ -23,32 +47,44 @@
 	});
 
 	$effect(() => {
-		if (isOpen) {
+		let activePicker: IroPicker | null = null;
+		let isDestroyed = false;
+
+		if (isOpen && containerEl && typeof window !== 'undefined') {
 			isLoaded = false;
-			if (containerEl && typeof window !== 'undefined') {
-				const targetEl = containerEl;
-				targetEl.innerHTML = '';
-				import('@jaames/iro').then((iroModule) => {
-					const iro: any = iroModule.default || iroModule;
-					const picker = new iro.ColorPicker(targetEl, {
-						width: 170,
-						color: currentColor,
-						borderWidth: 2,
-						borderColor: '#3f3f46',
-						layout: [
-							{ component: iro.ui.Wheel },
-							{ component: iro.ui.Slider, options: { sliderType: 'value' } }
-						]
-					});
-
-					picker.on('color:change', (c: any) => {
-						currentColor = c.hexString;
-					});
-
-					isLoaded = true;
+			const targetEl = containerEl;
+			targetEl.innerHTML = '';
+			import('@jaames/iro').then((mod) => {
+				if (isDestroyed) return;
+				const iroModule = mod as unknown as IroModule;
+				const iroClass = iroModule.default || iroModule;
+				const picker = new iroClass.ColorPicker(targetEl, {
+					width: 170,
+					color: currentColor,
+					borderWidth: 2,
+					borderColor: '#3f3f46',
+					layout: [
+						{ component: iroClass.ui.Wheel },
+						{ component: iroClass.ui.Slider, options: { sliderType: 'value' } }
+					]
 				});
-			}
+
+				picker.on('color:change', (c: IroColor) => {
+					currentColor = c.hexString;
+				});
+
+				activePicker = picker;
+				isLoaded = true;
+			});
 		}
+
+		return () => {
+			isDestroyed = true;
+			if (activePicker) {
+				activePicker.destroy();
+				activePicker = null;
+			}
+		};
 	});
 
 	const handleConfirm = () => {
@@ -71,7 +107,10 @@
 			aria-label={label || 'Open Color Wheel'}
 			title={label || 'Open Color Wheel'}
 		>
-			<div class="h-full w-full rounded-md border border-black/20" style="background: {color};"></div>
+			<div
+				class="h-full w-full rounded-md border border-black/20"
+				style="background: {color};"
+			></div>
 		</Popover.Trigger>
 	{/if}
 

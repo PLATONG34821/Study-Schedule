@@ -13,6 +13,3 @@
 {#if browser && mounted}
 	<Toaster theme="dark" position="top-center" richColors />
 {/if}
-
-
-

@@ -2,6 +2,7 @@
 	import type { Day, Slot, PaletteColor } from '$lib/types';
 	import { smoothAnimate } from '$lib/utils';
 	import * as m from '$lib/paraglide/messages';
+	import { resolveRoute } from '$app/paths';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import { Shuffle } from 'lucide-svelte';
 	import ColorWheelPicker from './ColorWheelPicker.svelte';
@@ -11,7 +12,6 @@
 		days: Day[];
 		slots: Slot[];
 		palette: PaletteColor[];
-		width?: number;
 		isOpen?: boolean;
 		onClose?: () => void;
 		onOpenExportModal: () => void;
@@ -30,7 +30,6 @@
 		days = $bindable(),
 		slots = $bindable(),
 		palette = $bindable(),
-		width = $bindable(320),
 		isOpen = true,
 		onClose,
 		onOpenExportModal,
@@ -99,7 +98,14 @@
 			class="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl border-none bg-[#2563eb] px-3 py-2.5 font-[inherit] text-xs font-semibold text-white transition-colors duration-150 ease-in-out hover:bg-[#1d4ed8]"
 			onclick={onOpenExportModal}
 		>
-			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="15"
+				height="15"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
 				<polyline points="7 10 12 15 17 10" />
 				<line x1="12" y1="15" x2="12" y2="3" />
@@ -113,7 +119,16 @@
 			aria-label={m.import_code()}
 			title={m.import_code()}
 		>
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+			<svg
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
 				<path d="M14 4H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7" />
 				<polyline points="13 8 9 12 13 16" />
 				<line x1="20" y1="12" x2="9" y2="12" />
@@ -122,13 +137,20 @@
 	</div>
 
 	<a
-		href="/presets"
+		href={resolveRoute('/presets' as const)}
 		class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#2563eb]/50 bg-[#2563eb]/20 px-3 py-2 font-[inherit] text-xs font-semibold text-[#60a5fa] transition-colors hover:bg-[#2563eb]/30 hover:text-white"
 	>
-		<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-			<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-			<line x1="3" y1="6" x2="21" y2="6"/>
-			<path d="M16 10a4 4 0 0 1-8 0"/>
+		<svg
+			width="14"
+			height="14"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+		>
+			<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+			<line x1="3" y1="6" x2="21" y2="6" />
+			<path d="M16 10a4 4 0 0 1-8 0" />
 		</svg>
 		{m.preset_marketplace()}
 	</a>

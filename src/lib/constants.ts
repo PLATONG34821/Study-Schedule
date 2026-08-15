@@ -5,4 +5,3 @@ export const phonePresets: PhonePreset[] = [
 	{ id: 'iphone', name: 'iPhone (1,206 × 2,622)', width: 1206, height: 2622 },
 	{ id: 'custom', name: 'Custom Size', width: 1920, height: 1080 }
 ];
-

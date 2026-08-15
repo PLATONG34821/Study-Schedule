@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query';
-	import { createVirtualizer } from '@tanstack/svelte-virtual';
 	import autoAnimate from '@formkit/auto-animate';
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
-	import { textColorFor, compressConfigCode, smoothAnimate, estimatePresetCardHeight } from '$lib/utils';
+	import { textColorFor, compressConfigCode, smoothAnimate } from '$lib/utils';
+	import { resolveRoute } from '$app/paths';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import * as m from '$lib/paraglide/messages';
 
@@ -34,7 +34,8 @@
 			id: 'mon-fri-standard',
 			title: 'Standard University (Mon–Fri)',
 			category: 'Light Tone',
-			description: 'Classic 5-day academic timetable with clean light canvas and vibrant subject cards.',
+			description:
+				'Classic 5-day academic timetable with clean light canvas and vibrant subject cards.',
 			themeName: 'Clean Light',
 			bgColor: '#ffffff',
 			gridLineColor: '#111111',
@@ -142,7 +143,8 @@
 			id: 'mon-wed-fri-3day',
 			title: '3-Day Intensive (Mon, Wed, Fri)',
 			category: 'Dark Tone',
-			description: 'Midnight Slate theme with neon accents. Leaves Tue & Thu completely free for self-study or work.',
+			description:
+				'Midnight Slate theme with neon accents. Leaves Tue & Thu completely free for self-study or work.',
 			themeName: 'Midnight Dark',
 			bgColor: '#0f172a',
 			gridLineColor: '#334155',
@@ -248,7 +250,8 @@
 			id: 'weekend-evening',
 			title: 'Weekend & Evening Program (Fri–Sun)',
 			category: 'Dark Tone',
-			description: 'Dark Zinc aesthetic with warm gold and amber colors tailored for part-time professionals.',
+			description:
+				'Dark Zinc aesthetic with warm gold and amber colors tailored for part-time professionals.',
 			themeName: 'Dark Zinc',
 			bgColor: '#18181b',
 			gridLineColor: '#3f3f46',
@@ -436,7 +439,8 @@
 			id: 'mon-thu-block',
 			title: '4-Day Extended Block (Mon–Thu)',
 			category: 'Vibrant Tone',
-			description: 'Monochrome Dark Slate with neon orange & cobalt accents for studio block timetables.',
+			description:
+				'Monochrome Dark Slate with neon orange & cobalt accents for studio block timetables.',
 			themeName: 'Dark Gray Accent',
 			bgColor: '#111827',
 			gridLineColor: '#374151',
@@ -520,10 +524,7 @@
 
 	let presets = $derived(presetsQuery.data ?? presetsList);
 
-	let categories = $derived([
-		'All',
-		...Array.from(new Set(presets.map((p) => p.category)))
-	]);
+	let categories = $derived(['All', ...Array.from(new Set(presets.map((p) => p.category)))]);
 
 	let filteredPresets = $derived.by(() => {
 		return presets.filter((p) => {
@@ -540,21 +541,6 @@
 			return matchesCategory && matchesQuery;
 		});
 	});
-
-	let rowVirtualizer = $derived.by(() => {
-		if (typeof window === 'undefined' || !scrollContainerEl) return null;
-		return createVirtualizer({
-			count: filteredPresets.length,
-			getScrollElement: () => scrollContainerEl,
-			estimateSize: (index) => {
-				const item = filteredPresets[index];
-				return item ? estimatePresetCardHeight(item.title, item.description) : 380;
-			},
-			overscan: 4
-		});
-	});
-
-	let virtualItems = $derived($rowVirtualizer ? $rowVirtualizer.getVirtualItems() : []);
 
 	const applyPresetAndNavigate = async (preset: CustomSchedulePreset) => {
 		if (typeof window === 'undefined') return;
@@ -594,23 +580,28 @@
 	<title>{m.preset_marketplace()} | Study Schedule</title>
 </svelte:head>
 
-<div bind:this={scrollContainerEl} class="h-screen w-full overflow-y-auto bg-[#121214] text-[#e4e4e7]">
+<div
+	bind:this={scrollContainerEl}
+	class="h-screen w-full overflow-y-auto bg-[#121214] text-[#e4e4e7]"
+>
 	<!-- Navbar Header -->
 	<header class="sticky top-0 z-30 border-b border-[#27272a] bg-[#18181b]/90 backdrop-blur-md">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-			<div class="flex items-center gap-2 sm:gap-4 min-w-0">
+			<div class="flex min-w-0 items-center gap-2 sm:gap-4">
 				<a
-					href="/"
-					class="flex cursor-pointer items-center gap-2 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46] shrink-0"
+					href={resolveRoute('/' as const)}
+					class="flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
 				>
 					{m.back_to_editor()}
 				</a>
-				<div class="h-5 w-px bg-[#3f3f46] shrink-0"></div>
-				<h1 class="m-0 text-sm sm:text-lg font-bold text-white leading-tight truncate">{m.preset_marketplace()}</h1>
+				<div class="h-5 w-px shrink-0 bg-[#3f3f46]"></div>
+				<h1 class="m-0 truncate text-sm leading-tight font-bold text-white sm:text-lg">
+					{m.preset_marketplace()}
+				</h1>
 			</div>
 
 			<!-- Language Switcher -->
-			<div class="flex gap-1 rounded-lg border border-[#3f3f46] bg-[#27272a] p-1 shrink-0">
+			<div class="flex shrink-0 gap-1 rounded-lg border border-[#3f3f46] bg-[#27272a] p-1">
 				<button
 					type="button"
 					class="rounded px-2.5 py-1 text-xs font-semibold transition-colors {getLocale() === 'th'
@@ -636,13 +627,19 @@
 	<!-- Main Content Area -->
 	<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
 		<!-- Search & Category Filters -->
-		<div class="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4 md:flex-row md:items-center md:justify-between">
+		<div
+			class="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4 md:flex-row md:items-center md:justify-between"
+		>
 			<!-- Category Tabs -->
-			<div class="flex w-full items-center gap-1.5 overflow-x-auto pb-1 sm:gap-2 md:w-auto md:flex-wrap md:pb-0" use:autoAnimate={smoothAnimate}>
+			<div
+				class="flex w-full items-center gap-1.5 overflow-x-auto pb-1 sm:gap-2 md:w-auto md:flex-wrap md:pb-0"
+				use:autoAnimate={smoothAnimate}
+			>
 				{#each categories as cat (cat)}
 					<button
 						type="button"
-						class="shrink-0 cursor-pointer rounded-xl px-3 py-1.5 text-xs font-semibold transition-all sm:px-4 sm:py-2 {selectedCategory === cat
+						class="shrink-0 cursor-pointer rounded-xl px-3 py-1.5 text-xs font-semibold transition-all sm:px-4 sm:py-2 {selectedCategory ===
+						cat
 							? 'bg-[#2563eb] text-white shadow-lg'
 							: 'border border-[#3f3f46] bg-[#18181b] text-[#a1a1aa] hover:border-[#52525b] hover:text-white'}"
 						onclick={() => (selectedCategory = cat)}
@@ -674,58 +671,105 @@
 		</div>
 
 		<!-- Presets Grid -->
-		<div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3" use:autoAnimate={smoothAnimate}>
+		<div
+			class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"
+			use:autoAnimate={smoothAnimate}
+		>
 			{#each filteredPresets as preset (preset.id)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
-					class="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border border-[#27272a] bg-[#18181b] transition-all hover:border-[#2563eb]/60 hover:shadow-2xl"
+					class="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border border-[#27272a] bg-[#18181b] transition-all hover:border-[#2563eb]/60 hover:shadow-2xl sm:rounded-2xl"
 					onclick={() => (previewPreset = preset)}
 				>
 					<!-- Custom Days & Slots Header Preview Box -->
-					<div class="relative flex min-h-[180px] sm:min-h-[230px] w-full flex-col overflow-hidden border-b border-[#27272a] p-2.5 sm:p-3.5" style="background: {preset.bgColor};">
-						<div class="mb-1.5 flex items-center justify-between z-10">
-							<span class="rounded bg-[#2563eb]/20 px-2 py-0.5 font-mono text-[10px] font-bold text-[#60a5fa] uppercase">
+					<div
+						class="relative flex min-h-[180px] w-full flex-col overflow-hidden border-b border-[#27272a] p-2.5 sm:min-h-[230px] sm:p-3.5"
+						style="background: {preset.bgColor};"
+					>
+						<div class="z-10 mb-1.5 flex items-center justify-between">
+							<span
+								class="rounded bg-[#2563eb]/20 px-2 py-0.5 font-mono text-[10px] font-bold text-[#60a5fa] uppercase"
+							>
 								{preset.category}
 							</span>
-							<span class="rounded-md border border-white/20 bg-black/40 px-2 py-0.5 font-mono text-[10px] font-semibold text-white">
+							<span
+								class="rounded-md border border-white/20 bg-black/40 px-2 py-0.5 font-mono text-[10px] font-semibold text-white"
+							>
 								{preset.themeName}
 							</span>
 						</div>
 
 						<!-- Custom Grid Timetable Preview -->
-						<div class="flex flex-1 flex-col overflow-hidden rounded-lg border shadow-inner" style="border-color: {preset.gridLineColor}; background: {preset.gridLineColor};">
+						<div
+							class="flex flex-1 flex-col overflow-hidden rounded-lg border shadow-inner"
+							style="border-color: {preset.gridLineColor}; background: {preset.gridLineColor};"
+						>
 							<!-- Header Days row -->
-							<div class="grid gap-px" style="grid-template-columns: 28px repeat({preset.days.length}, minmax(0, 1fr)); background: {preset.gridLineColor};">
-								<div class="flex items-center justify-center p-0.5 font-mono text-[7px] sm:text-[8px] font-bold" style="background: {preset.timeBgColor}; color: {textColorFor(preset.timeBgColor)};">Time</div>
+							<div
+								class="grid gap-px"
+								style="grid-template-columns: 28px repeat({preset.days
+									.length}, minmax(0, 1fr)); background: {preset.gridLineColor};"
+							>
+								<div
+									class="flex items-center justify-center p-0.5 font-mono text-[7px] font-bold sm:text-[8px]"
+									style="background: {preset.timeBgColor}; color: {textColorFor(
+										preset.timeBgColor
+									)};"
+								>
+									Time
+								</div>
 								{#each preset.days as d (d.id)}
-									<div class="flex items-center justify-center min-w-0 overflow-hidden truncate p-0.5 text-center font-mono text-[7px] sm:text-[8px] font-extrabold uppercase" style="background: {preset.dayHeaderBgColor}; color: {textColorFor(preset.dayHeaderBgColor)};">
+									<div
+										class="flex min-w-0 items-center justify-center truncate overflow-hidden p-0.5 text-center font-mono text-[7px] font-extrabold uppercase sm:text-[8px]"
+										style="background: {preset.dayHeaderBgColor}; color: {textColorFor(
+											preset.dayHeaderBgColor
+										)};"
+									>
 										{d.name.slice(0, 3)}
 									</div>
 								{/each}
 							</div>
 
 							<!-- Slots rows grid -->
-							<div class="grid flex-1 gap-px" style="grid-template-columns: 28px repeat({preset.days.length}, minmax(0, 1fr)); background: {preset.gridLineColor};">
+							<div
+								class="grid flex-1 gap-px"
+								style="grid-template-columns: 28px repeat({preset.days
+									.length}, minmax(0, 1fr)); background: {preset.gridLineColor};"
+							>
 								{#each preset.slots as slot (slot.id)}
-									<div class="flex items-center justify-center p-0.5 font-mono text-[7px] sm:text-[8px] font-bold" style="background: {preset.timeBgColor}; color: {textColorFor(preset.timeBgColor)};">
+									<div
+										class="flex items-center justify-center p-0.5 font-mono text-[7px] font-bold sm:text-[8px]"
+										style="background: {preset.timeBgColor}; color: {textColorFor(
+											preset.timeBgColor
+										)};"
+									>
 										{slot.label}
 									</div>
 									{#each preset.days as d (d.id)}
-										{@const cellBlocks = preset.blocks.filter((b) => b.dayId === d.id && b.timeSlotId === slot.id)}
-										<div class="relative flex min-w-0 flex-col gap-0.5 overflow-hidden p-0.5" style="background: {preset.cellBgColor};">
+										{@const cellBlocks = preset.blocks.filter(
+											(b) => b.dayId === d.id && b.timeSlotId === slot.id
+										)}
+										<div
+											class="relative flex min-w-0 flex-col gap-0.5 overflow-hidden p-0.5"
+											style="background: {preset.cellBgColor};"
+										>
 											{#if cellBlocks.length > 0}
 												{#each cellBlocks as b (b.id)}
 													{@const colObj = preset.palette.find((c) => c.id === b.colorId)}
 													{@const bg = colObj ? colObj.color : '#55E6A5'}
 													{@const textCol = textColorFor(bg)}
 													<div
-														class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden rounded-[3px] p-0.5 sm:p-1 text-[7px] sm:text-[8px] font-extrabold leading-tight shadow-sm"
+														class="flex min-w-0 flex-1 flex-col justify-center overflow-hidden rounded-[3px] p-0.5 text-[7px] leading-tight font-extrabold shadow-sm sm:p-1 sm:text-[8px]"
 														style="background: {bg}; color: {textCol};"
 													>
 														<div class="min-w-0 truncate font-bold">{b.title}</div>
 														{#if b.room}
-															<div class="min-w-0 truncate font-mono text-[6px] sm:text-[7px] opacity-80">{b.room}</div>
+															<div
+																class="min-w-0 truncate font-mono text-[6px] opacity-80 sm:text-[7px]"
+															>
+																{b.room}
+															</div>
 														{/if}
 													</div>
 												{/each}
@@ -742,13 +786,16 @@
 						<!-- Palette Preview Dots -->
 						<div class="flex items-center gap-1.5">
 							{#each preset.palette as col (col.id)}
-								<span class="h-3.5 w-3.5 rounded-full border border-black/30 shadow-sm" style="background: {col.color};"></span>
+								<span
+									class="h-3.5 w-3.5 rounded-full border border-black/30 shadow-sm"
+									style="background: {col.color};"
+								></span>
 							{/each}
 						</div>
 
 						<button
 							type="button"
-							class="flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#2563eb] px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#1d4ed8]"
+							class="flex cursor-pointer items-center gap-1.5 rounded-xl bg-[#2563eb] px-3.5 py-1.5 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#1d4ed8] sm:px-4 sm:py-2"
 							onclick={(e) => {
 								e.stopPropagation();
 								applyPresetAndNavigate(preset);
@@ -768,16 +815,21 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/80 p-3 sm:p-6 backdrop-blur-md"
-		onclick={(e) => (e.target as HTMLElement).classList.contains('modalBackdrop') && (previewPreset = null)}
+		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/80 p-3 backdrop-blur-md sm:p-6"
+		onclick={(e) =>
+			(e.target as HTMLElement).classList.contains('modalBackdrop') && (previewPreset = null)}
 	>
 		<div
-			class="flex h-[92vh] sm:h-[88vh] max-h-[96vh] w-full max-w-4xl animate-popIn flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-[#3f3f46] bg-[#18181b] text-white shadow-2xl"
+			class="flex h-[92vh] max-h-[96vh] w-full max-w-4xl animate-popIn flex-col overflow-hidden rounded-xl border border-[#3f3f46] bg-[#18181b] text-white shadow-2xl sm:h-[88vh] sm:rounded-2xl"
 		>
-			<div class="flex items-center justify-between border-b border-[#27272a] px-4 py-3 sm:px-6 sm:py-4">
-				<div class="flex items-center gap-2 min-w-0">
-					<h2 class="m-0 text-base sm:text-lg font-bold truncate">{previewPreset.themeName}</h2>
-					<span class="rounded bg-[#2563eb]/20 px-2 py-0.5 font-mono text-xs font-bold text-[#60a5fa] shrink-0">
+			<div
+				class="flex items-center justify-between border-b border-[#27272a] px-4 py-3 sm:px-6 sm:py-4"
+			>
+				<div class="flex min-w-0 items-center gap-2">
+					<h2 class="m-0 truncate text-base font-bold sm:text-lg">{previewPreset.themeName}</h2>
+					<span
+						class="shrink-0 rounded bg-[#2563eb]/20 px-2 py-0.5 font-mono text-xs font-bold text-[#60a5fa]"
+					>
 						{previewPreset.category}
 					</span>
 				</div>
@@ -790,52 +842,79 @@
 				</button>
 			</div>
 
-			<div class="flex-1 flex flex-col overflow-hidden p-0 sm:p-6" style="background: {previewPreset.bgColor};">
+			<div
+				class="flex flex-1 flex-col overflow-hidden p-0 sm:p-6"
+				style="background: {previewPreset.bgColor};"
+			>
 				<!-- MOBILE ONLY: Transposed Grid (Time slots across top, Days down right column) -->
-				<div class="flex sm:hidden h-full w-full flex-1 flex-col overflow-x-auto">
+				<div class="flex h-full w-full flex-1 flex-col overflow-x-auto sm:hidden">
 					<div
-						class="flex h-full w-full flex-1 min-w-[320px] flex-col overflow-hidden rounded-none border shadow-md"
+						class="flex h-full w-full min-w-[320px] flex-1 flex-col overflow-hidden rounded-none border shadow-md"
 						style="border-color: {previewPreset.gridLineColor}; background: {previewPreset.gridLineColor};"
 					>
 						<!-- Header Row: Time Slots across first columns + "Day" label in last column -->
 						<div
 							class="grid gap-px"
-							style="grid-template-columns: repeat({previewPreset.slots.length}, minmax(0, 1fr)) minmax(28px, 44px); background: {previewPreset.gridLineColor};"
+							style="grid-template-columns: repeat({previewPreset.slots
+								.length}, minmax(0, 1fr)) minmax(28px, 44px); background: {previewPreset.gridLineColor};"
 						>
 							{#each previewPreset.slots as slot (slot.id)}
-								<div class="flex items-center justify-center min-w-0 truncate p-1 text-center font-mono text-[10px] font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
+								<div
+									class="flex min-w-0 items-center justify-center truncate p-1 text-center font-mono text-[10px] font-bold"
+									style="background: {previewPreset.timeBgColor}; color: {textColorFor(
+										previewPreset.timeBgColor
+									)};"
+								>
 									{slot.label}
 								</div>
 							{/each}
-							<div class="flex items-center justify-center p-1 font-mono text-[10px] font-bold uppercase min-w-0 truncate" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
+							<div
+								class="flex min-w-0 items-center justify-center truncate p-1 font-mono text-[10px] font-bold uppercase"
+								style="background: {previewPreset.timeBgColor}; color: {textColorFor(
+									previewPreset.timeBgColor
+								)};"
+							>
 								Day
 							</div>
 						</div>
 
 						<!-- Days rows grid: 1 Row per Day -->
 						<div
-							class="grid flex-1 gap-px min-h-0"
-							style="grid-template-columns: repeat({previewPreset.slots.length}, minmax(0, 1fr)) minmax(28px, 44px); grid-template-rows: repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};"
+							class="grid min-h-0 flex-1 gap-px"
+							style="grid-template-columns: repeat({previewPreset.slots
+								.length}, minmax(0, 1fr)) minmax(28px, 44px); grid-template-rows: repeat({previewPreset
+								.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};"
 						>
 							{#each previewPreset.days as d (d.id)}
 								<!-- Slot Cells for this Day -->
 								{#each previewPreset.slots as slot (slot.id)}
-									{@const cellBlocks = previewPreset.blocks.filter((b) => b.dayId === d.id && b.timeSlotId === slot.id)}
-									<div class="relative flex min-w-0 min-h-0 flex-col gap-0.5 p-0.5" style="background: {previewPreset.cellBgColor};">
+									{@const cellBlocks = previewPreset.blocks.filter(
+										(b) => b.dayId === d.id && b.timeSlotId === slot.id
+									)}
+									<div
+										class="relative flex min-h-0 min-w-0 flex-col gap-0.5 p-0.5"
+										style="background: {previewPreset.cellBgColor};"
+									>
 										{#if cellBlocks.length > 0}
 											{#each cellBlocks as b (b.id)}
 												{@const colObj = previewPreset.palette.find((c) => c.id === b.colorId)}
 												{@const bg = colObj ? colObj.color : '#55E6A5'}
 												{@const textCol = textColorFor(bg)}
 												<div
-													class="flex flex-1 flex-col justify-between rounded-md p-1 text-[9px] font-extrabold shadow-sm min-w-0 min-h-0 overflow-hidden [writing-mode:vertical-lr]"
+													class="flex min-h-0 min-w-0 flex-1 flex-col justify-between overflow-hidden rounded-md p-1 text-[9px] font-extrabold shadow-sm [writing-mode:vertical-lr]"
 													style="background: {bg}; color: {textCol};"
 												>
-													<div class="min-w-0 truncate font-bold leading-tight">{b.title}</div>
+													<div class="min-w-0 truncate leading-tight font-bold">{b.title}</div>
 													{#if b.time || b.room}
-														<div class="mt-0.5 flex flex-wrap gap-0.5 text-[8px] opacity-90 font-normal">
-															{#if b.time}<span class="rounded bg-black/15 px-1 py-0.5 font-mono">{b.time}</span>{/if}
-															{#if b.room}<span class="rounded bg-black/15 px-1 py-0.5 font-mono">{b.room}</span>{/if}
+														<div
+															class="mt-0.5 flex flex-wrap gap-0.5 text-[8px] font-normal opacity-90"
+														>
+															{#if b.time}<span class="rounded bg-black/15 px-1 py-0.5 font-mono"
+																	>{b.time}</span
+																>{/if}
+															{#if b.room}<span class="rounded bg-black/15 px-1 py-0.5 font-mono"
+																	>{b.room}</span
+																>{/if}
 														</div>
 													{/if}
 												</div>
@@ -845,7 +924,12 @@
 								{/each}
 
 								<!-- Right Day Column Cell (last column) -->
-								<div class="flex items-center justify-center p-0.5 text-center text-[10px] font-extrabold uppercase min-h-0 truncate [writing-mode:vertical-lr]" style="background: {previewPreset.dayHeaderBgColor}; color: {textColorFor(previewPreset.dayHeaderBgColor)};">
+								<div
+									class="flex min-h-0 items-center justify-center truncate p-0.5 text-center text-[10px] font-extrabold uppercase [writing-mode:vertical-lr]"
+									style="background: {previewPreset.dayHeaderBgColor}; color: {textColorFor(
+										previewPreset.dayHeaderBgColor
+									)};"
+								>
 									{d.name}
 								</div>
 							{/each}
@@ -854,18 +938,32 @@
 				</div>
 
 				<!-- DESKTOP ONLY: Standard Timetable Grid (Days across top, Time slots down left column) -->
-				<div class="hidden sm:flex h-full w-full flex-1 flex-col overflow-x-auto">
+				<div class="hidden h-full w-full flex-1 flex-col overflow-x-auto sm:flex">
 					<div
 						class="flex h-full w-full flex-1 flex-col overflow-hidden rounded-xl border shadow-2xl"
 						style="border-color: {previewPreset.gridLineColor}; background: {previewPreset.gridLineColor};"
 					>
 						<!-- Header Days row -->
-						<div class="grid gap-px" style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};">
-							<div class="flex items-center justify-center p-3 font-mono text-xs font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
+						<div
+							class="grid gap-px"
+							style="grid-template-columns: 80px repeat({previewPreset.days
+								.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};"
+						>
+							<div
+								class="flex items-center justify-center p-3 font-mono text-xs font-bold"
+								style="background: {previewPreset.timeBgColor}; color: {textColorFor(
+									previewPreset.timeBgColor
+								)};"
+							>
 								Time
 							</div>
 							{#each previewPreset.days as d (d.id)}
-								<div class="flex items-center justify-center min-w-0 truncate p-3 text-center text-xs font-extrabold uppercase" style="background: {previewPreset.dayHeaderBgColor}; color: {textColorFor(previewPreset.dayHeaderBgColor)};">
+								<div
+									class="flex min-w-0 items-center justify-center truncate p-3 text-center text-xs font-extrabold uppercase"
+									style="background: {previewPreset.dayHeaderBgColor}; color: {textColorFor(
+										previewPreset.dayHeaderBgColor
+									)};"
+								>
 									{d.name}
 								</div>
 							{/each}
@@ -874,32 +972,49 @@
 						<!-- Slots rows grid -->
 						<div
 							class="grid flex-1 gap-px"
-							style="grid-template-columns: 80px repeat({previewPreset.days.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};"
+							style="grid-template-columns: 80px repeat({previewPreset.days
+								.length}, minmax(0, 1fr)); background: {previewPreset.gridLineColor};"
 						>
 							{#each previewPreset.slots as slot (slot.id)}
 								<!-- Time Column Cell -->
-								<div class="flex items-center justify-center p-3 font-mono text-xs font-bold" style="background: {previewPreset.timeBgColor}; color: {textColorFor(previewPreset.timeBgColor)};">
+								<div
+									class="flex items-center justify-center p-3 font-mono text-xs font-bold"
+									style="background: {previewPreset.timeBgColor}; color: {textColorFor(
+										previewPreset.timeBgColor
+									)};"
+								>
 									{slot.label}
 								</div>
 
 								<!-- Day Cells -->
 								{#each previewPreset.days as d (d.id)}
-									{@const cellBlocks = previewPreset.blocks.filter((b) => b.dayId === d.id && b.timeSlotId === slot.id)}
-									<div class="relative flex min-w-0 flex-col gap-1.5 p-1.5 min-h-[90px]" style="background: {previewPreset.cellBgColor};">
+									{@const cellBlocks = previewPreset.blocks.filter(
+										(b) => b.dayId === d.id && b.timeSlotId === slot.id
+									)}
+									<div
+										class="relative flex min-h-[90px] min-w-0 flex-col gap-1.5 p-1.5"
+										style="background: {previewPreset.cellBgColor};"
+									>
 										{#if cellBlocks.length > 0}
 											{#each cellBlocks as b (b.id)}
 												{@const colObj = previewPreset.palette.find((c) => c.id === b.colorId)}
 												{@const bg = colObj ? colObj.color : '#55E6A5'}
 												{@const textCol = textColorFor(bg)}
 												<div
-													class="flex flex-1 flex-col justify-between rounded-lg p-2.5 text-xs font-extrabold shadow-sm min-w-0 overflow-hidden"
+													class="flex min-w-0 flex-1 flex-col justify-between overflow-hidden rounded-lg p-2.5 text-xs font-extrabold shadow-sm"
 													style="background: {bg}; color: {textCol};"
 												>
 													<div class="min-w-0 truncate font-bold">{b.title}</div>
 													{#if b.time || b.room}
-														<div class="mt-1 flex flex-wrap gap-1 text-[10px] opacity-90 font-normal">
-															{#if b.time}<span class="rounded bg-black/15 px-1.5 py-0.5 font-mono">{b.time}</span>{/if}
-															{#if b.room}<span class="rounded bg-black/15 px-1.5 py-0.5 font-mono">{b.room}</span>{/if}
+														<div
+															class="mt-1 flex flex-wrap gap-1 text-[10px] font-normal opacity-90"
+														>
+															{#if b.time}<span class="rounded bg-black/15 px-1.5 py-0.5 font-mono"
+																	>{b.time}</span
+																>{/if}
+															{#if b.room}<span class="rounded bg-black/15 px-1.5 py-0.5 font-mono"
+																	>{b.room}</span
+																>{/if}
 														</div>
 													{/if}
 												</div>
@@ -913,10 +1028,12 @@
 				</div>
 			</div>
 
-			<div class="flex items-center justify-end border-t border-[#27272a] px-4 py-3 sm:px-6 sm:py-4 bg-[#18181b]">
+			<div
+				class="flex items-center justify-end border-t border-[#27272a] bg-[#18181b] px-4 py-3 sm:px-6 sm:py-4"
+			>
 				<button
 					type="button"
-					class="flex cursor-pointer items-center gap-2 rounded-xl bg-[#2563eb] px-4 py-2 sm:px-5 sm:py-2.5 text-xs font-semibold text-white shadow-lg hover:bg-[#1d4ed8]"
+					class="flex cursor-pointer items-center gap-2 rounded-xl bg-[#2563eb] px-4 py-2 text-xs font-semibold text-white shadow-lg hover:bg-[#1d4ed8] sm:px-5 sm:py-2.5"
 					onclick={() => applyPresetAndNavigate(previewPreset!)}
 				>
 					{m.apply_preset()}

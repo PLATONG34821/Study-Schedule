@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick, onMount } from 'svelte';
-import { PaneGroup, Pane, PaneResizer } from 'paneforge';
+	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import { domToPng } from 'modern-screenshot';
 	import { toast } from 'svelte-sonner';
 	import hotkeys from 'hotkeys-js';
@@ -93,8 +93,6 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	let slotRowHeight = $state<number>(210);
 	let dayColumnWidth = $state<number>(270);
 	let gridBorderRadius = $state<number>(16);
-	let leftSidebarWidth = $state<number>(320);
-	let rightDrawerWidth = $state<number>(320);
 	let isLeftSidebarOpen = $state<boolean>(false);
 	let isRightDrawerOpen = $state<boolean>(false);
 	let exportPixelRatio = $state<1 | 2 | 4>(2);
@@ -117,13 +115,13 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	const zoomIn = () => {
 		const currentPercent = Math.round((previewZoom / 1.3) * 100);
 		const nextPercent = Math.min(currentPercent + 5, 300);
-		previewZoom = Math.round(((nextPercent / 100) * 1.3) * 1000) / 1000;
+		previewZoom = Math.round((nextPercent / 100) * 1.3 * 1000) / 1000;
 	};
 
 	const zoomOut = () => {
 		const currentPercent = Math.round((previewZoom / 1.3) * 100);
 		const nextPercent = Math.max(currentPercent - 5, 15);
-		previewZoom = Math.round(((nextPercent / 100) * 1.3) * 1000) / 1000;
+		previewZoom = Math.round((nextPercent / 100) * 1.3 * 1000) / 1000;
 	};
 
 	const resetPreviewView = () => {
@@ -251,7 +249,10 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 
 				if (initialPinchDist > 0) {
 					const scale = currentDist / initialPinchDist;
-					previewZoom = Math.min(Math.max(Math.round(initialPinchZoom * scale * 100) / 100, 0.2), 3);
+					previewZoom = Math.min(
+						Math.max(Math.round(initialPinchZoom * scale * 100) / 100, 0.2),
+						3
+					);
 				}
 
 				const currentCenterX = (t1.clientX + t2.clientX) / 2;
@@ -342,8 +343,6 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		window.addEventListener('pointerup', handlePointerUp);
 	};
 
-
-
 	let currentPreset = $derived.by(() => {
 		const preset = phonePresets.find((p) => p.id === selectedPresetId) || phonePresets[0];
 		if (selectedPresetId === 'custom') {
@@ -384,8 +383,12 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	let effectiveFontSizeBadge = $derived(Math.round(fontSizeBadge / safeScale));
 
 	let isDarkBg = $derived(textColorFor(bgColor) === '#ffffff');
-	let clockGuideTextColor = $derived(isDarkBg ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.35)');
-	let clockGuideBorderColor = $derived(isDarkBg ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)');
+	let clockGuideTextColor = $derived(
+		isDarkBg ? 'rgba(255, 255, 255, 0.45)' : 'rgba(0, 0, 0, 0.35)'
+	);
+	let clockGuideBorderColor = $derived(
+		isDarkBg ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)'
+	);
 
 	let blocks = $state<ClassBlock[]>([]);
 
@@ -506,13 +509,18 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 			colorHex ||
 			defaultPaletteColors.find(
 				(c) => !palette.some((p) => p.color.toLowerCase() === c.toLowerCase())
-			) || `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+			) ||
+			`#${Math.floor(Math.random() * 16777215)
+				.toString(16)
+				.padStart(6, '0')}`;
 		palette.push({ id: generateUid(), color: nextColor });
 		pushHistoryState();
 	};
 
 	const addRandomColor = () => {
-		const randomHex = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`;
+		const randomHex = `#${Math.floor(Math.random() * 16777215)
+			.toString(16)
+			.padStart(6, '0')}`;
 		palette.push({ id: generateUid(), color: randomHex });
 		pushHistoryState();
 	};
@@ -670,8 +678,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 			if (typeof st.customPresetWidth === 'number') customPresetWidth = st.customPresetWidth;
 			if (typeof st.customPresetHeight === 'number') customPresetHeight = st.customPresetHeight;
 			if (typeof st.gridRotationAngle === 'number') gridRotationAngle = st.gridRotationAngle;
-			if (typeof st.customTopGapPercent === 'number')
-				customTopGapPercent = st.customTopGapPercent;
+			if (typeof st.customTopGapPercent === 'number') customTopGapPercent = st.customTopGapPercent;
 			if (
 				typeof st.scaleMode === 'string' &&
 				(st.scaleMode === 'fillWidth' || st.scaleMode === 'fitBoth')
@@ -703,7 +710,11 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		if (isInitialLoaded && typeof window !== 'undefined') {
 			compressConfigCode(configObj).then((code) => {
 				if (code) {
-					history.replaceState(null, '', `${window.location.pathname}${window.location.search}#s=${code}`);
+					history.replaceState(
+						null,
+						'',
+						`${window.location.pathname}${window.location.search}#s=${code}`
+					);
 				}
 			});
 		}
@@ -776,7 +787,11 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	});
 </script>
 
-<div class="relative flex h-screen w-screen flex-col overflow-hidden lg:flex-row transition-opacity duration-150 {isInitialLoaded ? 'opacity-100' : 'opacity-0 pointer-events-none'}">
+<div
+	class="relative flex h-screen w-screen flex-col overflow-hidden transition-opacity duration-150 lg:flex-row {isInitialLoaded
+		? 'opacity-100'
+		: 'pointer-events-none opacity-0'}"
+>
 	{#if isLeftSidebarOpen}
 		<button
 			type="button"
@@ -795,12 +810,21 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 		></button>
 	{/if}
 
-	<PaneGroup autoSaveId="study-schedule-layout" direction="horizontal" class="relative flex h-screen w-screen overflow-hidden">
-		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full shrink-0 max-lg:!w-0 max-lg:!min-w-0 max-lg:!flex-none max-lg:overflow-visible" style="flex: 20 1 0px;">
+	<PaneGroup
+		autoSaveId="study-schedule-layout"
+		direction="horizontal"
+		class="relative flex h-screen w-screen overflow-hidden"
+	>
+		<Pane
+			defaultSize={20}
+			minSize={14}
+			maxSize={35}
+			class="h-full shrink-0 max-lg:!w-0 max-lg:!min-w-0 max-lg:!flex-none max-lg:overflow-visible"
+			style="flex: 20 1 0px;"
+		>
 			<LeftSidebar
 				isOpen={isLeftSidebarOpen}
 				onClose={() => (isLeftSidebarOpen = false)}
-				bind:width={leftSidebarWidth}
 				bind:days
 				bind:slots
 				bind:palette
@@ -817,20 +841,51 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 			/>
 		</Pane>
 
-		<PaneResizer class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block" />
+		<PaneResizer
+			class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block"
+		/>
 
-		<Pane class="relative flex flex-1 flex-col overflow-hidden bg-[#121214]" style="flex: 60 1 0px;">
-		<!-- Mobile Header Toolbar -->
-		<div
-			class="z-20 flex items-center justify-between border-b border-[#27272a] bg-[#18181b] px-4 py-2.5 text-white lg:hidden"
+		<Pane
+			class="relative flex flex-1 flex-col overflow-hidden bg-[#121214]"
+			style="flex: 60 1 0px;"
 		>
-			<div class="flex items-center gap-2">
+			<!-- Mobile Header Toolbar -->
+			<div
+				class="z-20 flex items-center justify-between border-b border-[#27272a] bg-[#18181b] px-4 py-2.5 text-white lg:hidden"
+			>
+				<div class="flex items-center gap-2">
+					<button
+						type="button"
+						class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
+						onclick={() => {
+							isLeftSidebarOpen = !isLeftSidebarOpen;
+							if (isLeftSidebarOpen) isRightDrawerOpen = false;
+						}}
+					>
+						<svg
+							width="15"
+							height="15"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line
+								x1="3"
+								y1="18"
+								x2="21"
+								y2="18"
+							/></svg
+						>
+						{m.app_title()}
+					</button>
+				</div>
+
 				<button
 					type="button"
 					class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
 					onclick={() => {
-						isLeftSidebarOpen = !isLeftSidebarOpen;
-						if (isLeftSidebarOpen) isRightDrawerOpen = false;
+						isRightDrawerOpen = !isRightDrawerOpen;
+						if (isRightDrawerOpen) isLeftSidebarOpen = false;
 					}}
 				>
 					<svg
@@ -840,253 +895,251 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 						fill="none"
 						stroke="currentColor"
 						stroke-width="2"
-						><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line
-							x1="3"
-							y1="18"
-							x2="21"
-							y2="18"
+						><circle cx="12" cy="12" r="3" /><path
+							d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
 						/></svg
 					>
-					{m.app_title()}
+					{m.display_settings()}
 				</button>
 			</div>
 
-			<button
-				type="button"
-				class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#3f3f46]"
-				onclick={() => {
-					isRightDrawerOpen = !isRightDrawerOpen;
-					if (isRightDrawerOpen) isLeftSidebarOpen = false;
-				}}
+			<!-- Top-Left Floating Undo/Redo Toolbar -->
+			<div
+				class={clsx(
+					'absolute top-16 left-4 z-30 flex items-center gap-1 rounded-full border border-[#3f3f46] bg-[#18181b]/90 p-1.5 shadow-2xl backdrop-blur-md transition-all duration-200 ease-in-out lg:top-4',
+					(isLeftSidebarOpen || isRightDrawerOpen) &&
+						'max-lg:pointer-events-none max-lg:opacity-0 max-lg:blur-md'
+				)}
 			>
-				<svg
-					width="15"
-					height="15"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					><circle cx="12" cy="12" r="3" /><path
-						d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-					/></svg
+				<button
+					type="button"
+					class="flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
+					onclick={undoState}
+					disabled={!canUndo}
+					aria-label={m.undo()}
+					title="{m.undo()} (Ctrl+Z / ⌘Z)"
 				>
-				{m.display_settings()}
-			</button>
-		</div>
-
-		<!-- Top-Left Floating Undo/Redo Toolbar -->
-		<div
-			class={clsx(
-				'absolute top-16 left-4 z-30 flex items-center gap-1 rounded-full border border-[#3f3f46] bg-[#18181b]/90 p-1.5 shadow-2xl backdrop-blur-md transition-all duration-200 ease-in-out lg:top-4',
-				(isLeftSidebarOpen || isRightDrawerOpen) && 'max-lg:pointer-events-none max-lg:opacity-0 max-lg:blur-md'
-			)}
-		>
-			<button
-				type="button"
-				class="flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
-				onclick={undoState}
-				disabled={!canUndo}
-				aria-label={m.undo()}
-				title="{m.undo()} (Ctrl+Z / ⌘Z)"
-			>
-				<Undo2 class="h-4 w-4" />
-			</button>
-			<button
-				type="button"
-				class="flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
-				onclick={redoState}
-				disabled={!canRedo}
-				aria-label={m.redo()}
-				title="{m.redo()} (Ctrl+Y / ⌘⇧Z)"
-			>
-				<Redo2 class="h-4 w-4" />
-			</button>
-		</div>
-		<div
-			bind:this={touchContainerEl}
-			class="box-border flex h-full w-full items-center justify-center p-3 sm:p-6 lg:p-10 touch-none"
-			style="cursor: {isCanvasPanning
-				? 'grabbing'
-				: 'grab'}; transform: translate({previewPanX}px, {previewPanY}px);"
-			onpointerdown={handleCanvasPointerDown}
-			role="region"
-			aria-label="Schedule Canvas"
-		>
-			{#if isWallpaperMode}
-				<div
-					class="relative shrink-0 origin-center transition-transform duration-75 ease-out"
-					style="transform: scale({0.35 * previewZoom});"
+					<Undo2 class="h-4 w-4" />
+				</button>
+				<button
+					type="button"
+					class="flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46] disabled:cursor-not-allowed disabled:opacity-40"
+					onclick={redoState}
+					disabled={!canRedo}
+					aria-label={m.redo()}
+					title="{m.redo()} (Ctrl+Y / ⌘⇧Z)"
 				>
+					<Redo2 class="h-4 w-4" />
+				</button>
+			</div>
+			<div
+				bind:this={touchContainerEl}
+				class="box-border flex h-full w-full touch-none items-center justify-center p-3 sm:p-6 lg:p-10"
+				style="cursor: {isCanvasPanning
+					? 'grabbing'
+					: 'grab'}; transform: translate({previewPanX}px, {previewPanY}px);"
+				onpointerdown={handleCanvasPointerDown}
+				onwheel={handleCanvasWheel}
+				role="region"
+				aria-label="Schedule Canvas"
+			>
+				{#if isWallpaperMode}
 					<div
-						class={clsx(
-							'flex flex-col overflow-hidden p-0 shadow-none',
-							selectedPresetId === 'iphone' ? 'rounded-[48px]' : 'rounded-2xl'
-						)}
-						bind:this={captureWrapEl}
-						style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor};"
+						class="relative shrink-0 origin-center transition-transform duration-75 ease-out"
+						style="transform: scale({0.35 * previewZoom});"
 					>
 						<div
-							class="relative box-border flex items-center justify-center"
-							style="height: {currentPreset.height * (customTopGapPercent / 100)}px;"
+							class={clsx(
+								'flex flex-col overflow-hidden p-0 shadow-none',
+								selectedPresetId === 'iphone' ? 'rounded-[48px]' : 'rounded-2xl'
+							)}
+							bind:this={captureWrapEl}
+							style="width: {currentPreset.width}px; height: {currentPreset.height}px; background: {bgColor};"
 						>
-							{#if !isExporting && customTopGapPercent > 0}
-								<div
-									class="rounded-[20px] border-2 border-dashed px-10 py-4 text-center font-[Space_Grotesk,sans-serif]"
-									style="color: {clockGuideTextColor}; border-color: {clockGuideBorderColor};"
-								>
-									<div class="text-[64px] leading-none font-bold">12:08</div>
-									<div class="mt-1.5 font-[JetBrains_Mono,monospace] text-sm">
-										{m.clock_space_guide()}
-									</div>
-								</div>
-							{/if}
-						</div>
-
-						<div class="flex flex-1 flex-col items-center justify-start overflow-hidden pt-2.5">
 							<div
-								class="relative"
-								style="width: {is90or270
-									? gridUnrotatedHeight * finalScale
-									: gridUnrotatedWidth * finalScale}px; height: {is90or270
-									? gridUnrotatedWidth * finalScale
-									: gridUnrotatedHeight * finalScale}px;"
+								class="relative box-border flex items-center justify-center"
+								style="height: {currentPreset.height * (customTopGapPercent / 100)}px;"
 							>
+								{#if !isExporting && customTopGapPercent > 0}
+									<div
+										class="rounded-[20px] border-2 border-dashed px-10 py-4 text-center font-[Space_Grotesk,sans-serif]"
+										style="color: {clockGuideTextColor}; border-color: {clockGuideBorderColor};"
+									>
+										<div class="text-[64px] leading-none font-bold">12:08</div>
+										<div class="mt-1.5 font-[JetBrains_Mono,monospace] text-sm">
+											{m.clock_space_guide()}
+										</div>
+									</div>
+								{/if}
+							</div>
+
+							<div class="flex flex-1 flex-col items-center justify-start overflow-hidden pt-2.5">
 								<div
-									class="absolute top-1/2 left-1/2 box-border origin-center"
-									style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({-gridRotationAngle}deg) scale({finalScale});"
+									class="relative"
+									style="width: {is90or270
+										? gridUnrotatedHeight * finalScale
+										: gridUnrotatedWidth * finalScale}px; height: {is90or270
+										? gridUnrotatedWidth * finalScale
+										: gridUnrotatedHeight * finalScale}px;"
 								>
-									<ScheduleGrid
-										{days}
-										{slots}
-										{blocks}
-										{palette}
-										{selectedId}
-										{isExporting}
-										{dayColumnWidth}
-										{slotRowHeight}
-										{isWallpaperMode}
-										{gridBorderRadius}
-										{gridLineColor}
-										{timeBgColor}
-										{dayHeaderBgColor}
-										{cellBgColor}
-										fontSizeDay={effectiveFontSizeDay}
-										fontSizeTime={effectiveFontSizeTime}
-										fontSizeTitle={effectiveFontSizeTitle}
-										fontSizeBadge={effectiveFontSizeBadge}
-										onSelectBlock={(id: string) => (selectedId = id)}
-										onAddBlock={addBlock}
-										onMoveBlock={moveBlock}
-									/>
+									<div
+										class="absolute top-1/2 left-1/2 box-border origin-center"
+										style="width: {gridUnrotatedWidth}px; height: {gridUnrotatedHeight}px; transform: translate(-50%, -50%) rotate({-gridRotationAngle}deg) scale({finalScale});"
+									>
+										<ScheduleGrid
+											{days}
+											{slots}
+											{blocks}
+											{palette}
+											{selectedId}
+											{isExporting}
+											{dayColumnWidth}
+											{slotRowHeight}
+											{isWallpaperMode}
+											{gridBorderRadius}
+											{gridLineColor}
+											{timeBgColor}
+											{dayHeaderBgColor}
+											{cellBgColor}
+											fontSizeDay={effectiveFontSizeDay}
+											fontSizeTime={effectiveFontSizeTime}
+											fontSizeTitle={effectiveFontSizeTitle}
+											fontSizeBadge={effectiveFontSizeBadge}
+											onSelectBlock={(id: string) => (selectedId = id)}
+											onAddBlock={addBlock}
+											onMoveBlock={moveBlock}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			{:else}
-				<div
-					class="box-border inline-block origin-center p-10 transition-transform duration-75 ease-out"
-					bind:this={captureWrapEl}
-					style="background: {bgColor}; transform: scale({previewZoom});"
+				{:else}
+					<div
+						class="box-border inline-block origin-center p-10 transition-transform duration-75 ease-out"
+						bind:this={captureWrapEl}
+						style="background: {bgColor}; transform: scale({previewZoom});"
+					>
+						<ScheduleGrid
+							{days}
+							{slots}
+							{blocks}
+							{palette}
+							{selectedId}
+							{isExporting}
+							{dayColumnWidth}
+							{slotRowHeight}
+							{isWallpaperMode}
+							{gridBorderRadius}
+							{gridLineColor}
+							{timeBgColor}
+							{dayHeaderBgColor}
+							{cellBgColor}
+							fontSizeDay={effectiveFontSizeDay}
+							fontSizeTime={effectiveFontSizeTime}
+							fontSizeTitle={effectiveFontSizeTitle}
+							fontSizeBadge={effectiveFontSizeBadge}
+							onSelectBlock={(id: string) => (selectedId = id)}
+							onAddBlock={addBlock}
+							onMoveBlock={moveBlock}
+						/>
+					</div>
+				{/if}
+			</div>
+
+			<!-- Floating View & Zoom Toolbar -->
+			<div
+				class={clsx(
+					'absolute bottom-6 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-1.5 overflow-x-auto rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-2.5 py-1.5 text-[#e4e4e7] shadow-2xl backdrop-blur-md transition-all duration-200 ease-in-out sm:gap-2 sm:px-3.5 sm:py-2',
+					(isLeftSidebarOpen || isRightDrawerOpen) &&
+						'max-lg:pointer-events-none max-lg:opacity-0 max-lg:blur-md'
+				)}
+			>
+				<button
+					type="button"
+					class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46]"
+					onclick={zoomOut}
+					aria-label="Zoom Out"
+					title="Zoom Out"
 				>
-					<ScheduleGrid
-						{days}
-						{slots}
-						{blocks}
-						{palette}
-						{selectedId}
-						{isExporting}
-						{dayColumnWidth}
-						{slotRowHeight}
-						{isWallpaperMode}
-						{gridBorderRadius}
-						{gridLineColor}
-						{timeBgColor}
-						{dayHeaderBgColor}
-						{cellBgColor}
-						fontSizeDay={effectiveFontSizeDay}
-						fontSizeTime={effectiveFontSizeTime}
-						fontSizeTitle={effectiveFontSizeTitle}
-						fontSizeBadge={effectiveFontSizeBadge}
-						onSelectBlock={(id: string) => (selectedId = id)}
-						onAddBlock={addBlock}
-						onMoveBlock={moveBlock}
-					/>
-				</div>
-			{/if}
-		</div>
+					<svg
+						width="12"
+						height="12"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+					>
+						<line x1="5" y1="12" x2="19" y2="12" />
+					</svg>
+				</button>
 
-		<!-- Floating View & Zoom Toolbar -->
-		<div
-			class={clsx(
-				'absolute bottom-6 left-1/2 z-30 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-1.5 overflow-x-auto rounded-full border border-[#3f3f46] bg-[#18181b]/90 px-2.5 py-1.5 text-[#e4e4e7] shadow-2xl backdrop-blur-md transition-all duration-200 ease-in-out sm:gap-2 sm:px-3.5 sm:py-2',
-				(isLeftSidebarOpen || isRightDrawerOpen) && 'max-lg:pointer-events-none max-lg:opacity-0 max-lg:blur-md'
-			)}
-		>
-			<button
-				type="button"
-				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46]"
-				onclick={zoomOut}
-				aria-label="Zoom Out"
-				title="Zoom Out"
-			>
-				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-					<line x1="5" y1="12" x2="19" y2="12" />
-				</svg>
-			</button>
+				<button
+					type="button"
+					class="cursor-pointer rounded border-none bg-transparent px-2 py-1 font-mono text-xs font-semibold text-white transition-colors hover:bg-[#27272a]"
+					onclick={resetPreviewView}
+					title="Reset Zoom & Position"
+				>
+					{Math.round((previewZoom / 1.3) * 100)}%
+				</button>
 
-			<button
-				type="button"
-				class="cursor-pointer rounded border-none bg-transparent px-2 py-1 font-mono text-xs font-semibold text-white transition-colors hover:bg-[#27272a]"
-				onclick={resetPreviewView}
-				title="Reset Zoom & Position"
-			>
-				{Math.round((previewZoom / 1.3) * 100)}%
-			</button>
+				<button
+					type="button"
+					class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46]"
+					onclick={zoomIn}
+					aria-label="Zoom In"
+					title="Zoom In"
+				>
+					<svg
+						width="12"
+						height="12"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+					>
+						<line x1="12" y1="5" x2="12" y2="19" />
+						<line x1="5" y1="12" x2="19" y2="12" />
+					</svg>
+				</button>
 
-			<button
-				type="button"
-				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-[#3f3f46] bg-[#27272a] text-white transition-colors hover:bg-[#3f3f46]"
-				onclick={zoomIn}
-				aria-label="Zoom In"
-				title="Zoom In"
-			>
-				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-					<line x1="12" y1="5" x2="12" y2="19" />
-					<line x1="5" y1="12" x2="19" y2="12" />
-				</svg>
-			</button>
+				<div class="mx-1 h-4 w-px bg-[#3f3f46]"></div>
 
-			<div class="mx-1 h-4 w-px bg-[#3f3f46]"></div>
+				<button
+					type="button"
+					class="cursor-pointer rounded-full border border-[#3f3f46] bg-[#27272a] px-3 py-1 text-xs font-semibold text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
+					onclick={centerPreviewPosition}
+					title="Center Canvas Position"
+				>
+					Center
+				</button>
 
-			<button
-				type="button"
-				class="cursor-pointer rounded-full border border-[#3f3f46] bg-[#27272a] px-3 py-1 text-xs font-semibold text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
-				onclick={centerPreviewPosition}
-				title="Center Canvas Position"
-			>
-				Center
-			</button>
-
-			<button
-				type="button"
-				class="cursor-pointer rounded-full border border-[#3f3f46] bg-[#27272a] px-3 py-1 text-xs font-semibold text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
-				onclick={resetPreviewView}
-				title="Reset Pan & Zoom"
-			>
-				Reset
-			</button>
-		</div>
+				<button
+					type="button"
+					class="cursor-pointer rounded-full border border-[#3f3f46] bg-[#27272a] px-3 py-1 text-xs font-semibold text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
+					onclick={resetPreviewView}
+					title="Reset Pan & Zoom"
+				>
+					Reset
+				</button>
+			</div>
 		</Pane>
 
-		<PaneResizer class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block" />
+		<PaneResizer
+			class="hidden w-1.5 cursor-col-resize bg-[#27272a] transition-colors hover:bg-[#2563eb] active:bg-[#2563eb] lg:block"
+		/>
 
-		<Pane defaultSize={20} minSize={14} maxSize={35} class="h-full shrink-0 max-lg:!w-0 max-lg:!min-w-0 max-lg:!flex-none max-lg:overflow-visible" style="flex: 20 1 0px;">
+		<Pane
+			defaultSize={20}
+			minSize={14}
+			maxSize={35}
+			class="h-full shrink-0 max-lg:!w-0 max-lg:!min-w-0 max-lg:!flex-none max-lg:overflow-visible"
+			style="flex: 20 1 0px;"
+		>
 			<RightDrawer
 				{phonePresets}
 				isOpen={isRightDrawerOpen}
 				onClose={() => (isRightDrawerOpen = false)}
-				bind:width={rightDrawerWidth}
 				bind:selectedPresetId
 				bind:customPresetWidth
 				bind:customPresetHeight
@@ -1141,7 +1194,7 @@ import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 
 	{#if dndState.isDragging && dndState.draggedItem}
 		<div
-			class="pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-1/2 origin-center shadow-2xl transition-transform duration-75 ease-out scale-65 sm:scale-100 rotate-2 opacity-95"
+			class="pointer-events-none fixed z-[9999] origin-center -translate-x-1/2 -translate-y-1/2 scale-65 rotate-2 opacity-95 shadow-2xl transition-transform duration-75 ease-out sm:scale-100"
 			style="left: {dragPointerX}px; top: {dragPointerY}px; width: {dayColumnWidth}px; height: {slotRowHeight}px;"
 		>
 			<BlockCard

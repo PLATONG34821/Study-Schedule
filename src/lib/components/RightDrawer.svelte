@@ -26,7 +26,6 @@
 		fontSizeBadge: number;
 		currentPreset: PhonePreset;
 		isWallpaperMode: boolean;
-		width?: number;
 		isOpen?: boolean;
 		onClose?: () => void;
 	}
@@ -54,11 +53,9 @@
 		fontSizeBadge = $bindable(),
 		currentPreset,
 		isWallpaperMode,
-		width = $bindable(320),
 		isOpen = true,
 		onClose
 	}: Props = $props();
-
 </script>
 
 <aside
@@ -89,7 +86,7 @@
 	</div>
 	<div class="relative w-full">
 		<select
-			class="w-full cursor-pointer appearance-none rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 pr-8 font-[inherit] text-[13px] text-white focus:outline-none focus:ring-2 focus:ring-[#2563eb]"
+			class="w-full cursor-pointer appearance-none rounded-lg border border-[#3f3f46] bg-[#27272a] px-3 py-2.5 pr-8 font-[inherit] text-[13px] text-white focus:ring-2 focus:ring-[#2563eb] focus:outline-none"
 			bind:value={selectedPresetId}
 			style="color-scheme: dark; -webkit-appearance: none;"
 		>
@@ -100,9 +97,18 @@
 				<option value={selectedPresetId} class="bg-[#18181b] text-white">{selectedPresetId}</option>
 			{/if}
 		</select>
-		<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-[#a1a1aa]">
-			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-				<path d="M6 9l6 6 6-6"/>
+		<div
+			class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-[#a1a1aa]"
+		>
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2.5"
+			>
+				<path d="M6 9l6 6 6-6" />
 			</svg>
 		</div>
 	</div>
@@ -190,7 +196,7 @@
 							max="60"
 							step="1"
 							bind:value={customTopGapPercent}
-							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 						/>
 						<span class="text-xs text-[#71717a]">%</span>
 					</div>
@@ -221,7 +227,7 @@
 								const val = parseInt((e.target as HTMLInputElement).value) || 100;
 								gridScaleModifier = Math.min(Math.max(val, 70), 115) / 100;
 							}}
-							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 						/>
 						<span class="text-xs text-[#71717a]">%</span>
 					</div>
@@ -249,7 +255,7 @@
 							max="1000"
 							step="5"
 							bind:value={slotRowHeight}
-							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 						/>
 						<span class="text-xs text-[#71717a]">px</span>
 					</div>
@@ -277,7 +283,7 @@
 							max="1000"
 							step="5"
 							bind:value={dayColumnWidth}
-							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 						/>
 						<span class="text-xs text-[#71717a]">px</span>
 					</div>
@@ -305,7 +311,7 @@
 							max="60"
 							step="1"
 							bind:value={gridBorderRadius}
-							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+							class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 						/>
 						<span class="text-xs text-[#71717a]">px</span>
 					</div>
@@ -340,7 +346,7 @@
 						max="36"
 						step="1"
 						bind:value={fontSizeTitle}
-						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 					/>
 					<span class="text-xs text-[#71717a]">px</span>
 				</div>
@@ -368,7 +374,7 @@
 						max="36"
 						step="1"
 						bind:value={fontSizeDay}
-						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 					/>
 					<span class="text-xs text-[#71717a]">px</span>
 				</div>
@@ -396,7 +402,7 @@
 						max="28"
 						step="1"
 						bind:value={fontSizeTime}
-						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 					/>
 					<span class="text-xs text-[#71717a]">px</span>
 				</div>
@@ -424,7 +430,7 @@
 						max="20"
 						step="1"
 						bind:value={fontSizeBadge}
-						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 font-[JetBrains_Mono,monospace] text-xs text-white text-right"
+						class="w-16 rounded border border-[#3f3f46] bg-[#18181b] px-2 py-0.5 text-right font-[JetBrains_Mono,monospace] text-xs text-white"
 					/>
 					<span class="text-xs text-[#71717a]">px</span>
 				</div>
@@ -448,7 +454,11 @@
 	<div class="flex flex-col gap-1">
 		<label class="block text-xs text-[#a1a1aa]" for="gridLineColorInput">{m.line_color()}</label>
 		<div class="flex items-center gap-2.5">
-			<ColorWheelPicker color={gridLineColor} onChange={(c) => (gridLineColor = c)} label={m.line_color()} />
+			<ColorWheelPicker
+				color={gridLineColor}
+				onChange={(c) => (gridLineColor = c)}
+				label={m.line_color()}
+			/>
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{gridLineColor}</span>
 		</div>
 	</div>
@@ -458,7 +468,11 @@
 			>{m.day_header_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
-			<ColorWheelPicker color={dayHeaderBgColor} onChange={(c) => (dayHeaderBgColor = c)} label={m.day_header_color()} />
+			<ColorWheelPicker
+				color={dayHeaderBgColor}
+				onChange={(c) => (dayHeaderBgColor = c)}
+				label={m.day_header_color()}
+			/>
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{dayHeaderBgColor}</span>
 		</div>
 	</div>
@@ -466,7 +480,11 @@
 	<div class="flex flex-col gap-1">
 		<label class="block text-xs text-[#a1a1aa]" for="timeBgColorInput">{m.time_slot_color()}</label>
 		<div class="flex items-center gap-2.5">
-			<ColorWheelPicker color={timeBgColor} onChange={(c) => (timeBgColor = c)} label={m.time_slot_color()} />
+			<ColorWheelPicker
+				color={timeBgColor}
+				onChange={(c) => (timeBgColor = c)}
+				label={m.time_slot_color()}
+			/>
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{timeBgColor}</span>
 		</div>
 	</div>
@@ -476,7 +494,11 @@
 			>{m.subject_cell_color()}</label
 		>
 		<div class="flex items-center gap-2.5">
-			<ColorWheelPicker color={cellBgColor} onChange={(c) => (cellBgColor = c)} label={m.subject_cell_color()} />
+			<ColorWheelPicker
+				color={cellBgColor}
+				onChange={(c) => (cellBgColor = c)}
+				label={m.subject_cell_color()}
+			/>
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{cellBgColor}</span>
 		</div>
 	</div>
@@ -484,7 +506,11 @@
 	<div class="flex flex-col gap-1">
 		<label class="block text-xs text-[#a1a1aa]" for="bgColorInput">{m.wallpaper_bg_color()}</label>
 		<div class="flex items-center gap-2.5">
-			<ColorWheelPicker color={bgColor} onChange={(c) => (bgColor = c)} label={m.wallpaper_bg_color()} />
+			<ColorWheelPicker
+				color={bgColor}
+				onChange={(c) => (bgColor = c)}
+				label={m.wallpaper_bg_color()}
+			/>
 			<span class="font-[JetBrains_Mono,monospace] text-xs opacity-70">{bgColor}</span>
 		</div>
 	</div>

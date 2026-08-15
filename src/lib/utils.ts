@@ -16,13 +16,21 @@ export const getContrastRatio = (colorA: string, colorB: string): number => {
 	return colord(colorA).contrast(colorB);
 };
 
-
-
 export const textColorFor = (hexColor: string): string => {
 	const colorObj = colord(hexColor);
 	return colorObj.contrast('#ffffff') >= colorObj.contrast('#111111') ? '#ffffff' : '#111111';
 };
-import { type as structType, array, string, boolean, nullable, optional, any, is, type Infer } from 'superstruct';
+import {
+	type as structType,
+	array,
+	string,
+	boolean,
+	nullable,
+	optional,
+	any,
+	is,
+	type Infer
+} from 'superstruct';
 
 export const daySchema = structType({
 	id: string(),
@@ -116,7 +124,9 @@ export const compressConfigCode = async (data: unknown): Promise<string> => {
 	return 'schedule:' + lzString.compressToEncodedURIComponent(jsonStr);
 };
 
-export const decompressConfigCode = async (codeString: string): Promise<ScheduleConfigData | null> => {
+export const decompressConfigCode = async (
+	codeString: string
+): Promise<ScheduleConfigData | null> => {
 	let parsedData: unknown = null;
 	const trimmed = codeString.trim();
 	const rawCode = trimmed.startsWith('schedule:') ? trimmed.slice(9) : trimmed;
@@ -172,12 +182,7 @@ export const decompressConfigCode = async (codeString: string): Promise<Schedule
 
 import type { AutoAnimationPlugin } from '@formkit/auto-animate';
 
-export const smoothAnimate: AutoAnimationPlugin = (
-	el,
-	action,
-	oldCoordinates,
-	newCoordinates
-) => {
+export const smoothAnimate: AutoAnimationPlugin = (el, action, oldCoordinates, newCoordinates) => {
 	let keyframes: Keyframe[] = [];
 	if (action === 'add') {
 		keyframes = [
@@ -260,5 +265,3 @@ export const calculateMaxTextWidth = (
 	}
 	return Math.ceil(maxWidth);
 };
-
-
