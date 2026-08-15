@@ -3,7 +3,7 @@
 	import { createVirtualizer } from '@tanstack/svelte-virtual';
 	import autoAnimate from '@formkit/auto-animate';
 	import type { Day, Slot, PaletteColor, ClassBlock } from '$lib/types';
-	import { textColorFor, compressConfigCode, smoothAnimate } from '$lib/utils';
+	import { textColorFor, compressConfigCode, smoothAnimate, estimatePresetCardHeight } from '$lib/utils';
 	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import * as m from '$lib/paraglide/messages';
 
@@ -546,7 +546,10 @@
 		return createVirtualizer({
 			count: filteredPresets.length,
 			getScrollElement: () => scrollContainerEl,
-			estimateSize: () => 380,
+			estimateSize: (index) => {
+				const item = filteredPresets[index];
+				return item ? estimatePresetCardHeight(item.title, item.description) : 380;
+			},
 			overscan: 4
 		});
 	});

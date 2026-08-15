@@ -203,4 +203,62 @@ export const smoothAnimate: AutoAnimationPlugin = (
 	});
 };
 
+import { prepare, layout, type LayoutResult } from '@chenglou/pretext';
+
+export const measureTextLayout = (
+	text: string,
+	font: string,
+	maxWidth: number,
+	lineHeight: number
+): LayoutResult => {
+	const prepared = prepare(text, font);
+	return layout(prepared, maxWidth, lineHeight);
+};
+
+export const estimatePresetCardHeight = (
+	title: string,
+	description: string,
+	cardWidth = 360
+): number => {
+	const titleLayout = measureTextLayout(title, '700 16px "Space Grotesk"', cardWidth - 32, 20);
+	const descLayout = measureTextLayout(description, '400 12px "Space Grotesk"', cardWidth - 32, 16);
+	const basePadding = 260;
+	return basePadding + titleLayout.height + descLayout.height;
+};
+
+export const calculateAutoFitFontSize = (
+	text: string,
+	baseFontSize: number,
+	maxWidth = 240,
+	maxLines = 2
+): number => {
+	if (!text) return baseFontSize;
+	for (let size = baseFontSize; size >= 11; size -= 1) {
+		const fontSpec = `700 ${size}px "Space Grotesk"`;
+		const res = measureTextLayout(text, fontSpec, maxWidth, size * 1.25);
+		if (res.lineCount <= maxLines) {
+			return size;
+		}
+	}
+	return 11;
+};
+
+import { prepareWithSegments, measureLineStats } from '@chenglou/pretext';
+
+export const calculateMaxTextWidth = (
+	textList: string[],
+	font = '700 16px "Space Grotesk"'
+): number => {
+	let maxWidth = 0;
+	for (const text of textList) {
+		if (!text) continue;
+		const prepared = prepareWithSegments(text, font);
+		const stats = measureLineStats(prepared, 2000);
+		if (stats.maxLineWidth > maxWidth) {
+			maxWidth = stats.maxLineWidth;
+		}
+	}
+	return Math.ceil(maxWidth);
+};
+
 
