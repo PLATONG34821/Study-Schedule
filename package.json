@@ -54,6 +54,7 @@
 		"immer": "^11.1.16",
 		"lucide-svelte": "^1.0.1",
 		"lz-string": "^1.5.0",
+		"modern-normalize": "^3.0.1",
 		"modern-screenshot": "^4.7.0",
 		"nanoid": "^6.0.1",
 		"paneforge": "^1.0.2",

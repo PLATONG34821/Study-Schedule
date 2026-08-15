@@ -22,6 +22,7 @@
         "immer": "^11.1.16",
         "lucide-svelte": "^1.0.1",
         "lz-string": "^1.5.0",
+        "modern-normalize": "^3.0.1",
         "modern-screenshot": "^4.7.0",
         "nanoid": "^6.0.1",
         "paneforge": "^1.0.2",
@@ -575,6 +576,8 @@
     "miniflare": ["miniflare@5.20260811.0-alpha", "", { "dependencies": { "@cspotcode/source-map-support": "0.8.1", "sharp": "0.35.2", "undici": "7.29.0", "workerd": "1.20260811.1", "ws": "8.21.0", "youch": "4.1.0-beta.10" } }, "sha512-sypXsD5fjY88fZNedPqnwrwR1dwfnfbfW7MfvMyIfPJdtRiCCOpUnjWGeFVYYZ+0fQVICye6Juu+vZgzTEx8XA=="],
 
     "minimatch": ["minimatch@10.2.6", "", { "dependencies": { "brace-expansion": "^5.0.8" } }, "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A=="],
+
+    "modern-normalize": ["modern-normalize@3.0.1", "", {}, "sha512-VqlMdYi59Uch6fnUPxnpijWUQe+TW6zeWCvyr6Mb7JibheHzSuAAoJi2c71ZwIaWKpECpGpYHoaaBp6rBRr+/g=="],
 
     "modern-screenshot": ["modern-screenshot@4.7.0", "", {}, "sha512-9YxN+ddPSMMlhylOv25VHzXrl9u67QRxoh7+SEewGtgUw7t6hHTrjptSDJUSne9oG4Xk/h2cwG15nIt4Hc9ujg=="],
 
