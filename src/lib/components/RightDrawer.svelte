@@ -122,12 +122,12 @@
 				min="100"
 				max="5000"
 				step="10"
-				value={selectedPresetId === 'custom' ? customPresetWidth : currentPreset.width || 1206}
+				value={selectedPresetId === 'custom' ? customPresetWidth : currentPreset.width || 1920}
 				oninput={(e) => {
 					const val = parseInt((e.target as HTMLInputElement).value) || 100;
 					if (selectedPresetId !== 'custom') {
-						customPresetWidth = currentPreset.width || 1206;
-						customPresetHeight = currentPreset.height || 2622;
+						customPresetWidth = currentPreset.width || 1920;
+						customPresetHeight = currentPreset.height || 1080;
 						selectedPresetId = 'custom';
 					}
 					customPresetWidth = val;
@@ -143,12 +143,12 @@
 				min="100"
 				max="5000"
 				step="10"
-				value={selectedPresetId === 'custom' ? customPresetHeight : currentPreset.height || 2622}
+				value={selectedPresetId === 'custom' ? customPresetHeight : currentPreset.height || 1080}
 				oninput={(e) => {
 					const val = parseInt((e.target as HTMLInputElement).value) || 100;
 					if (selectedPresetId !== 'custom') {
-						customPresetWidth = currentPreset.width || 1206;
-						customPresetHeight = currentPreset.height || 2622;
+						customPresetWidth = currentPreset.width || 1920;
+						customPresetHeight = currentPreset.height || 1080;
 						selectedPresetId = 'custom';
 					}
 					customPresetHeight = val;

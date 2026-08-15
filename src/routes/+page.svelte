@@ -82,9 +82,19 @@
 				customPresetWidth = prevPreset.width;
 				customPresetHeight = prevPreset.height;
 			} else if (selectedPresetId === 'desktop') {
+				const desktopPreset = phonePresets.find((p) => p.id === 'desktop');
+				if (desktopPreset) {
+					customPresetWidth = desktopPreset.width;
+					customPresetHeight = desktopPreset.height;
+				}
 				gridRotationAngle = 0;
 				customTopGapPercent = 0;
 			} else if (selectedPresetId === 'iphone') {
+				const iphonePreset = phonePresets.find((p) => p.id === 'iphone');
+				if (iphonePreset) {
+					customPresetWidth = iphonePreset.width;
+					customPresetHeight = iphonePreset.height;
+				}
 				gridRotationAngle = 270;
 				customTopGapPercent = 24;
 			}
