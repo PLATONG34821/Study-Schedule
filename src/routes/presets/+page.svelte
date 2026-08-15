@@ -684,7 +684,7 @@
 				>
 					<!-- Custom Days & Slots Header Preview Box -->
 					<div
-						class="relative flex min-h-[180px] w-full flex-col overflow-hidden border-b border-[#27272a] p-2.5 sm:min-h-[230px] sm:p-3.5"
+						class="relative flex min-h-45 w-full flex-col overflow-hidden border-b border-[#27272a] p-2.5 sm:min-h-57.5 sm:p-3.5"
 						style="background: {preset.bgColor};"
 					>
 						<div class="z-10 mb-1.5 flex items-center justify-between">
@@ -815,7 +815,7 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="modalBackdrop fixed inset-0 z-[999] flex items-center justify-center bg-black/80 p-3 backdrop-blur-md sm:p-6"
+		class="modalBackdrop fixed inset-0 z-999 flex items-center justify-center bg-black/80 p-3 backdrop-blur-md sm:p-6"
 		onclick={(e) =>
 			(e.target as HTMLElement).classList.contains('modalBackdrop') && (previewPreset = null)}
 	>
@@ -992,7 +992,7 @@
 										(b) => b.dayId === d.id && b.timeSlotId === slot.id
 									)}
 									<div
-										class="relative flex min-h-[90px] min-w-0 flex-col gap-1.5 p-1.5"
+										class="relative flex min-h-22.5 min-w-0 flex-col gap-1.5 p-1.5"
 										style="background: {previewPreset.cellBgColor};"
 									>
 										{#if cellBlocks.length > 0}

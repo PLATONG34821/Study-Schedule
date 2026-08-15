@@ -116,10 +116,10 @@
 
 	<Popover.Portal>
 		<Popover.Content
-			class="z-[999] flex flex-col items-center gap-3 rounded-2xl border border-[#3f3f46] bg-[#18181b] p-4 text-white shadow-2xl backdrop-blur-md"
+			class="z-999 flex flex-col items-center gap-3 rounded-2xl border border-[#3f3f46] bg-[#18181b] p-4 text-white shadow-2xl backdrop-blur-md"
 			sideOffset={8}
 		>
-			<div class="relative flex h-[220px] w-[170px] items-center justify-center overflow-hidden">
+			<div class="relative flex h-55 w-42.5 items-center justify-center overflow-hidden">
 				{#if !isLoaded}
 					<div class="absolute inset-0 flex items-center justify-center">
 						<Loader2 class="h-6 w-6 animate-spin text-[#60a5fa]" />

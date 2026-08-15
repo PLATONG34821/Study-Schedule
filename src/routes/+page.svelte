@@ -819,7 +819,7 @@
 			defaultSize={20}
 			minSize={14}
 			maxSize={35}
-			class="h-full shrink-0 max-lg:!w-0 max-lg:!min-w-0 max-lg:!flex-none max-lg:overflow-visible"
+			class="h-full shrink-0 max-lg:w-0! max-lg:min-w-0! max-lg:flex-none! max-lg:overflow-visible"
 			style="flex: 20 1 0px;"
 		>
 			<LeftSidebar
@@ -1133,7 +1133,7 @@
 			defaultSize={20}
 			minSize={14}
 			maxSize={35}
-			class="h-full shrink-0 max-lg:!w-0 max-lg:!min-w-0 max-lg:!flex-none max-lg:overflow-visible"
+			class="h-full shrink-0 max-lg:w-0! max-lg:min-w-0! max-lg:flex-none! max-lg:overflow-visible"
 			style="flex: 20 1 0px;"
 		>
 			<RightDrawer
@@ -1194,7 +1194,7 @@
 
 	{#if dndState.isDragging && dndState.draggedItem}
 		<div
-			class="pointer-events-none fixed z-[9999] origin-center -translate-x-1/2 -translate-y-1/2 scale-65 rotate-2 opacity-95 shadow-2xl transition-transform duration-75 ease-out sm:scale-100"
+			class="pointer-events-none fixed z-9999 origin-center -translate-x-1/2 -translate-y-1/2 scale-65 rotate-2 opacity-95 shadow-2xl transition-transform duration-75 ease-out sm:scale-100"
 			style="left: {dragPointerX}px; top: {dragPointerY}px; width: {dayColumnWidth}px; height: {slotRowHeight}px;"
 		>
 			<BlockCard

@@ -139,7 +139,7 @@
 					{#if !hasBlock && !isExporting}
 						<button
 							type="button"
-							class="box-border flex h-full min-h-[50px] w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-[#cbd5e1] bg-transparent px-0 py-1.5 font-[inherit] text-xs text-[#94a3b8] transition-colors hover:border-[#2563eb] hover:text-[#2563eb]"
+							class="box-border flex h-full min-h-12.5 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-[#cbd5e1] bg-transparent px-0 py-1.5 font-[inherit] text-xs text-[#94a3b8] transition-colors hover:border-[#2563eb] hover:text-[#2563eb]"
 							onclick={() => onAddBlock(day.id, slot.id)}>{m.add_subject()}</button
 						>
 					{/if}

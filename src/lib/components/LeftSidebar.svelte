@@ -54,7 +54,7 @@
 >
 	<div class="flex items-start justify-between">
 		<div>
-			<h1 class="m-0 text-[22px] font-bold -tracking-[0.5px] text-white">{m.app_title()}</h1>
+			<h1 class="m-0 text-[22px] font-bold tracking-[-0.5px] text-white">{m.app_title()}</h1>
 			<p class="mt-1 text-xs text-[#a1a1aa]">{m.app_subtitle()}</p>
 		</div>
 		<div class="flex items-center gap-2">
@@ -264,7 +264,7 @@
 
 		<button
 			type="button"
-			class="flex h-[34px] w-[34px] shrink-0 cursor-pointer items-center justify-center rounded-md border border-[#3f3f46] bg-[#27272a] text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
+			class="flex h-8.5 w-8.5 shrink-0 cursor-pointer items-center justify-center rounded-md border border-[#3f3f46] bg-[#27272a] text-[#a1a1aa] transition-colors hover:bg-[#3f3f46] hover:text-white"
 			onclick={onAddRandomColor}
 			aria-label="Add random color"
 			title="Add random color"

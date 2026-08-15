@@ -65,7 +65,7 @@
 >
 	<div class="flex items-start justify-between">
 		<div>
-			<h2 class="m-0 text-xl font-bold -tracking-[0.5px] text-white">{m.display_settings()}</h2>
+			<h2 class="m-0 text-xl font-bold tracking-[-0.5px] text-white">{m.display_settings()}</h2>
 			<p class="mt-1 text-xs text-[#a1a1aa]">{m.display_subtitle()}</p>
 		</div>
 		{#if onClose}

@@ -50,8 +50,8 @@
 			style="background: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,255,255,0.4) 10px, rgba(255,255,255,0.4) 20px);"
 		></div>
 	{/if}
-	<div class="relative z-[1] flex h-full w-full flex-col justify-start gap-1.5">
-		<div class="leading-snug font-extrabold break-words" style="font-size: {fontSizeTitle}px;">
+	<div class="relative z-1 flex h-full w-full flex-col justify-start gap-1.5">
+		<div class="leading-snug font-extrabold wrap-break-word" style="font-size: {fontSizeTitle}px;">
 			{block.title}
 		</div>
 		<div class="flex flex-col gap-1.5">

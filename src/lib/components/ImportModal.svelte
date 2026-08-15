@@ -35,9 +35,9 @@
 
 <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
 	<Dialog.Portal>
-		<Dialog.Overlay class="fixed inset-0 z-[999] bg-black/60 backdrop-blur-xs" />
+		<Dialog.Overlay class="fixed inset-0 z-999 bg-black/60 backdrop-blur-xs" />
 		<Dialog.Content
-			class="fixed top-1/2 left-1/2 z-[999] flex max-h-[90vh] w-[calc(100vw-2rem)] max-w-[460px] -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] p-0 text-[#e4e4e7] shadow-2xl"
+			class="fixed top-1/2 left-1/2 z-999 flex max-h-[90vh] w-[calc(100vw-2rem)] max-w-115 -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border border-[#3f3f46] bg-[#18181b] p-0 text-[#e4e4e7] shadow-2xl"
 		>
 			<!-- Header -->
 			<div class="flex items-center justify-between border-b border-[#27272a] px-5 py-4">
